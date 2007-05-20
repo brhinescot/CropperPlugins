@@ -120,6 +120,7 @@ namespace Cropper.SendToS3
                     _opts.AccessKeyId = _settings.AccessKeyId;
                     _opts.SecretAccessKey = _settings.SecretAccessKey;
                     _opts.BucketName = _settings.BucketName;
+                    _opts.BaseKey = _settings.BaseKey;
                     _opts.LoadList();
                 }
 
@@ -132,6 +133,8 @@ namespace Cropper.SendToS3
             _settings.AccessKeyId = ((Options)sender).AccessKeyId;
             _settings.SecretAccessKey = ((Options)sender).SecretAccessKey;
             _settings.BucketName = ((Options)sender).BucketName;
+            _settings.BaseKey = ((Options)sender).BaseKey;
+
             _settings.Save();
         }
 
