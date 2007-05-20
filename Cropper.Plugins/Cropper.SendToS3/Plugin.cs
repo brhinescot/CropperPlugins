@@ -33,6 +33,10 @@ namespace Cropper.SendToS3
             get { return this; }
         }
 
+        public override string ToString()
+        {
+            return "Send to Amazon S3 [paltman.com]";
+        }
 
         public void Connect(IPersistableOutput persistableOutput)
         {
