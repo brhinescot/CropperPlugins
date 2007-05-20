@@ -15,9 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToFlickr", "Cro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToTinyPic", "Cropper.SendToTinyPic\Cropper.SendToTinyPic.csproj", "{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToS3", "Cropper.SendToS3\Cropper.SendToS3.csproj", "{341A7D6E-783B-48D3-9FA3-39A0581A40ED}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 9
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
@@ -42,6 +44,9 @@ Global
 		SccProjectUniqueName7 = Cropper.SendToTinyPic\\Cropper.SendToTinyPic.csproj
 		SccProjectName7 = Cropper.SendToTinyPic
 		SccLocalPath7 = Cropper.SendToTinyPic
+		SccProjectUniqueName8 = Cropper.SendToS3\\Cropper.SendToS3.csproj
+		SccProjectName8 = Cropper.SendToS3
+		SccLocalPath8 = Cropper.SendToS3
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AutomatedDebug|Any CPU = AutomatedDebug|Any CPU
@@ -106,6 +111,14 @@ Global
 		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
