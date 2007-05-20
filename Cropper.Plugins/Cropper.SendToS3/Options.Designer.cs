@@ -35,12 +35,16 @@ namespace Cropper.SendToS3
             this._cmbBucket = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this._linkRefreshBucketList = new System.Windows.Forms.LinkLabel();
+            this._txtBaseKey = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this._txtBaseKey);
+            this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this._linkRefreshBucketList);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this._cmbBucket);
@@ -79,7 +83,7 @@ namespace Cropper.SendToS3
             "$OPERATINGSYSTEM$",
             "$COMPUTERNAME$"});
             this._txtSecretAccessKey.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this._txtSecretAccessKey.Location = new System.Drawing.Point(25, 68);
+            this._txtSecretAccessKey.Location = new System.Drawing.Point(25, 69);
             this._txtSecretAccessKey.Name = "_txtSecretAccessKey";
             this._txtSecretAccessKey.Size = new System.Drawing.Size(259, 20);
             this._txtSecretAccessKey.TabIndex = 13;
@@ -87,7 +91,7 @@ namespace Cropper.SendToS3
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 52);
+            this.label1.Location = new System.Drawing.Point(8, 53);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 13);
             this.label1.TabIndex = 12;
@@ -96,7 +100,7 @@ namespace Cropper.SendToS3
             // _cmbBucket
             // 
             this._cmbBucket.FormattingEnabled = true;
-            this._cmbBucket.Location = new System.Drawing.Point(25, 115);
+            this._cmbBucket.Location = new System.Drawing.Point(25, 119);
             this._cmbBucket.Name = "_cmbBucket";
             this._cmbBucket.Size = new System.Drawing.Size(259, 21);
             this._cmbBucket.TabIndex = 14;
@@ -104,7 +108,7 @@ namespace Cropper.SendToS3
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 99);
+            this.label2.Location = new System.Drawing.Point(8, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 15;
@@ -115,7 +119,7 @@ namespace Cropper.SendToS3
             this._linkRefreshBucketList.ActiveLinkColor = System.Drawing.Color.DarkOrange;
             this._linkRefreshBucketList.AutoSize = true;
             this._linkRefreshBucketList.LinkColor = System.Drawing.Color.Blue;
-            this._linkRefreshBucketList.Location = new System.Drawing.Point(55, 99);
+            this._linkRefreshBucketList.Location = new System.Drawing.Point(55, 103);
             this._linkRefreshBucketList.Name = "_linkRefreshBucketList";
             this._linkRefreshBucketList.Size = new System.Drawing.Size(44, 13);
             this._linkRefreshBucketList.TabIndex = 16;
@@ -123,6 +127,28 @@ namespace Cropper.SendToS3
             this._linkRefreshBucketList.Text = "Refresh";
             this._linkRefreshBucketList.VisitedLinkColor = System.Drawing.Color.Blue;
             this._linkRefreshBucketList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._linkRefreshBucketList_LinkClicked);
+            // 
+            // _txtBaseKey
+            // 
+            this._txtBaseKey.AutoCompleteCustomSource.AddRange(new string[] {
+            "$NAME$",
+            "$SIZE$",
+            "$OPERATINGSYSTEM$",
+            "$COMPUTERNAME$"});
+            this._txtBaseKey.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this._txtBaseKey.Location = new System.Drawing.Point(25, 169);
+            this._txtBaseKey.Name = "_txtBaseKey";
+            this._txtBaseKey.Size = new System.Drawing.Size(259, 20);
+            this._txtBaseKey.TabIndex = 18;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 153);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 13);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "Base Key";
             // 
             // Options
             // 
@@ -147,5 +173,7 @@ namespace Cropper.SendToS3
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox _cmbBucket;
         private System.Windows.Forms.LinkLabel _linkRefreshBucketList;
+        private System.Windows.Forms.TextBox _txtBaseKey;
+        private System.Windows.Forms.Label label3;
     }
 }

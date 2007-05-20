@@ -12,6 +12,7 @@ namespace Cropper.SendToS3
         public string AccessKeyId;
         public string SecretAccessKey;
         public string BucketName;
+        public string BaseKey;
 
         public void Save()
         {
@@ -56,6 +57,7 @@ namespace Cropper.SendToS3
             AccessKeyId = reader.ReadElementString("AccessKeyId");
             SecretAccessKey = reader.ReadElementString("SecretAccessKey");
             BucketName = reader.ReadElementString("BucketName");
+            BaseKey = reader.ReadElementString("BaseKey");
         }
 
         public void WriteXml(XmlWriter writer)
@@ -65,6 +67,7 @@ namespace Cropper.SendToS3
             writer.WriteElementString("AccessKeyId", AccessKeyId);
             writer.WriteElementString("SecretAccessKey", SecretAccessKey);
             writer.WriteElementString("BucketName", BucketName);
+            writer.WriteElementString("BaseKey", BaseKey);
 
             writer.WriteEndElement();
         }

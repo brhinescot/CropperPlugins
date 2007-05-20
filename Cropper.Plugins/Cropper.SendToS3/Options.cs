@@ -30,7 +30,7 @@ namespace Cropper.SendToS3
                 _cmbBucket.Items.Clear();
 
                 Service az = new Service(AccessKeyId, SecretAccessKey);
-
+                
                 try
                 {
                     ListAllMyBucketsResponse buckets = az.ListAllMyBuckets(null);
@@ -74,6 +74,30 @@ namespace Cropper.SendToS3
             set
             {
                 _bucketName = value;
+            }
+        }
+
+        public string BaseKey
+        {
+            get
+            {
+                string key = _txtBaseKey.Text.Trim();
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    key.Replace('\\', '/');
+                    if (key[key.Length - 1] != '/')
+                    {
+                        key += "/";
+                    }
+                }
+
+                return key;
+            }
+
+            set
+            {
+                _txtBaseKey.Text = value;
             }
         }
     }
