@@ -1,0 +1,113 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.CountdownPng", "Cropper.CountdownPng\Cropper.CountdownPng.csproj", "{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.AnimatedGif", "Cropper.AnimatedGif\Plugin\Cropper.AnimatedGif.csproj", "{8CCDC380-259C-41BC-86EF-826DFF7A7A46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToEmail", "Cropper.SendToEmail\Cropper.SendToEmail.csproj", "{0BB64436-04DC-4D67-B385-892F2FD20EA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.AviFormat", "Cropper.AviFormat\Cropper.AviFormat.csproj", "{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToOneNote", "Cropper.SendToOneNote\Cropper.SendToOneNote.csproj", "{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToFlickr", "Cropper.SendToFlickr\Cropper.SendToFlickr.csproj", "{75E4EF73-D1B0-486E-982B-B3B492E5642B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToTinyPic", "Cropper.SendToTinyPic\Cropper.SendToTinyPic.csproj", "{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs02.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Cropper.AnimatedGif\\Plugin\\Cropper.AnimatedGif.csproj
+		SccProjectName1 = Cropper.AnimatedGif/Plugin
+		SccLocalPath1 = Cropper.AnimatedGif\\Plugin
+		SccProjectUniqueName2 = Cropper.AviFormat\\Cropper.AviFormat.csproj
+		SccProjectName2 = Cropper.AviFormat
+		SccLocalPath2 = Cropper.AviFormat
+		SccProjectUniqueName3 = Cropper.CountdownPng\\Cropper.CountdownPng.csproj
+		SccProjectName3 = Cropper.CountdownPng
+		SccLocalPath3 = Cropper.CountdownPng
+		SccProjectUniqueName4 = Cropper.SendToEmail\\Cropper.SendToEmail.csproj
+		SccProjectName4 = Cropper.SendToEmail
+		SccLocalPath4 = Cropper.SendToEmail
+		SccProjectUniqueName5 = Cropper.SendToOneNote\\Cropper.SendToOneNote.csproj
+		SccProjectName5 = Cropper.SendToOneNote
+		SccLocalPath5 = Cropper.SendToOneNote
+		SccProjectUniqueName6 = Cropper.SendToFlickr\\Cropper.SendToFlickr.csproj
+		SccProjectName6 = Cropper.SendToFlickr
+		SccLocalPath6 = Cropper.SendToFlickr
+		SccProjectUniqueName7 = Cropper.SendToTinyPic\\Cropper.SendToTinyPic.csproj
+		SccProjectName7 = Cropper.SendToTinyPic
+		SccLocalPath7 = Cropper.SendToTinyPic
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AutomatedDebug|Any CPU = AutomatedDebug|Any CPU
+		AutomatedRelease|Any CPU = AutomatedRelease|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CCDC380-259C-41BC-86EF-826DFF7A7A46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB64436-04DC-4D67-B385-892F2FD20EA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.AutomatedDebug|Any CPU.ActiveCfg = AutomatedDebug|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.AutomatedDebug|Any CPU.Build.0 = AutomatedDebug|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.AutomatedRelease|Any CPU.ActiveCfg = AutomatedRelease|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.AutomatedRelease|Any CPU.Build.0 = AutomatedRelease|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E4EF73-D1B0-486E-982B-B3B492E5642B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
