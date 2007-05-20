@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 using System.IO;
 using System.Drawing;
@@ -61,21 +61,28 @@ namespace Cropper.SendToS3
             }
         }
 
-        void SaveImage(Stream stream, Image image)
-        {
-            Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
-            //image.Save(stream, ImageFormat.Png);
-        }
-
         void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
-        {
-            //_output.FetchOutputStream(new StreamHandler(this.SendImage), e.ImageNames.FullSize, e.FullSizeImage);
-            //FileInfo file = new FileInfo(e.ImageNames.FullSize);
-            //string subject = replaceTokens(PluginSettings.Subject, file);
-            //string body = replaceTokens(PluginSettings.Message, file);
-            //MapiMailMessage message = new MapiMailMessage(subject, body);
-            //message.Files.Add(e.ImageNames.FullSize);
-            //message.ShowDialog();
+        {            
+            Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
+            MemoryStream imageStream = new MemoryStream();
+            e.FullSizeImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
+            imageStream.Position = 0;
+            S3Object obj = new S3Object(imageStream, null);
+            SortedList headers = new SortedList();
+            headers.Add("x-amz-acl", "public-read");
+            headers.Add("Content-Type", "image/png");
+            string imageName = _settings.BaseKey + Guid.NewGuid().ToString() + ".png";
+            Response r = amazon.Put(_settings.BucketName, imageName, obj, headers);
+
+            if (r.Status.ToString() != "OK")
+            {
+                MessageBox.Show(r.Status.ToString() + ": " + r.getResponseMessage());
+            }
+            else
+            {
+                string url = string.Format("http://s3.amazonaws.com/{0}/{1}", _settings.BucketName, imageName);
+                Clipboard.SetText(url, TextDataFormat.Text);
+            }
         }
 
 
@@ -161,7 +168,5 @@ namespace Cropper.SendToS3
         }
 
         #endregion
-
-
     }
 }
