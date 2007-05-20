@@ -20,17 +20,60 @@ namespace Cropper.SendToS3
 
         private void _linkRefreshBucketList_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            _cmbBucket.Items.Clear();
+            LoadList();
+        }
 
-            Service az = new Service(_txtAccessKeyID.Text.Trim(), _txtSecretAccessKey.Text.Trim());
-
-            //AWSAuthConnection conn = new AWSAuthConnection(_txtAccessKeyID.Text.Trim(), _txtSecretAccessKey.Text.Trim());
-
-            ListAllMyBucketsResponse buckets = az.ListAllMyBuckets(null); 
-
-            foreach (string bucket in buckets.Buckets)
+        public void LoadList()
+        {
+            if (!string.IsNullOrEmpty(AccessKeyId) && !string.IsNullOrEmpty(SecretAccessKey))
             {
-                _cmbBucket.Items.Add(bucket);
+                _cmbBucket.Items.Clear();
+
+                Service az = new Service(AccessKeyId, SecretAccessKey);
+
+                try
+                {
+                    ListAllMyBucketsResponse buckets = az.ListAllMyBuckets(null);
+                    
+                    foreach (Bucket bucket in buckets.Buckets)
+                    {
+                        _cmbBucket.Items.Add(bucket.Name);
+                    }
+
+                    if (!string.IsNullOrEmpty(_bucketName))
+                    {
+                        _cmbBucket.SelectedItem = _bucketName;
+                    }
+                }
+                catch (System.Net.WebException e)
+                {
+                    MessageBox.Show("Error: " + e.Message);
+                }
+
+                
+            }
+        }
+
+        public string AccessKeyId
+        {
+            get { return _txtAccessKeyID.Text.Trim(); }
+            set { _txtAccessKeyID.Text = value; }
+        }
+
+        public string SecretAccessKey
+        {
+            get { return _txtSecretAccessKey.Text.Trim(); }
+            set { _txtSecretAccessKey.Text = value; }
+        }
+
+        string _bucketName; 
+
+        public string BucketName
+        {
+            get { return _cmbBucket.SelectedItem.ToString(); }
+            set
+            {
+                _bucketName = value;
             }
         }
     }
