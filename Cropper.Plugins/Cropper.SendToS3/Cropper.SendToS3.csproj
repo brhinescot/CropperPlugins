@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AWSConnection.cs" />
     <Compile Include="Options.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,65 +60,57 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="S3Settings.cs" />
-    <Compile Include="Web References\com.amazonaws.s3\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
+    <Compile Include="S3\Bucket.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\CommonPrefixEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\FileUploadCompleteEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\GetResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\ListAllMyBucketsResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\ListBucketResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\ListEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\Owner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\PutDataEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\Response.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\S3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\S3Formatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\S3Object.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="S3\Utils.cs">
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://s3.amazonaws.com/doc/2006-03-01/AmazonS3.wsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\com.amazonaws.s3\</RelPath>
-      <UpdateFromURL>http://s3.amazonaws.com/doc/2006-03-01/AmazonS3.wsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Cropper_SendToS3_com_amazonaws_s3_AmazonS3</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\AccessControlPolicy.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\AmazonS3.wsdl" />
-    <None Include="Web References\com.amazonaws.s3\AmazonS3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\BucketLoggingStatus.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\CreateBucketResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\GetObjectResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\ListAllMyBucketsResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\ListBucketResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\PutObjectResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\com.amazonaws.s3\Status.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
