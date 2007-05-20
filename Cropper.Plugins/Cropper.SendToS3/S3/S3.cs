@@ -230,23 +230,24 @@ namespace Cropper.SendToS3.S3
 			}
 		}
 
-		private void write(string key, System.IO.Stream source, System.IO.Stream destination)
-		{
-			int read = 0;
-			long totalSize = source.Length;
-			long totalWritten = 0;
+        private void write(string key, System.IO.Stream source, System.IO.Stream destination)
+        {
+            int read = 0;
+            long totalSize = source.Length;
+            long totalWritten = 0;
 
-			byte[] buffer = new byte[_chunkSize];
-			while((read = source.Read(buffer, 0, buffer.Length)) > 0)
-			{
-				destination.Write(buffer, 0, read);
-				totalWritten += read;
+            byte[] buffer = new byte[_chunkSize];
 
-				OnPutData(key, read, totalWritten, totalSize);
-			}
+            while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                destination.Write(buffer, 0, read);
+                totalWritten += read;
 
-			OnFileUploadComplete(key);
-		}
+                OnPutData(key, read, totalWritten, totalSize);
+            }
+
+            OnFileUploadComplete(key);
+        }
 
 		/// <summary>
 		/// Get the ACL for a given bucket.
