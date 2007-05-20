@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
-using Cropper.SendToS3.com.amazonaws.s3;
+using Cropper.SendToS3.S3;
 
 namespace Cropper.SendToS3
 {
@@ -62,8 +62,7 @@ namespace Cropper.SendToS3
 
         void SaveImage(Stream stream, Image image)
         {
-            AWSAuthConnection con = new AWSAuthConnection(_settings.AccessKeyId, _settings.SecretAccessKey);
-            
+            Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
             //image.Save(stream, ImageFormat.Png);
         }
 

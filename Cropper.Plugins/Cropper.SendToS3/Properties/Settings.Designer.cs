@@ -22,15 +22,5 @@ namespace Cropper.SendToS3.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://s3.amazonaws.com/soap")]
-        public string Cropper_SendToS3_com_amazonaws_s3_AmazonS3 {
-            get {
-                return ((string)(this["Cropper_SendToS3_com_amazonaws_s3_AmazonS3"]));
-            }
-        }
     }
 }
