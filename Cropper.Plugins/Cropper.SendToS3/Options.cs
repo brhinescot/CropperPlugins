@@ -70,7 +70,17 @@ namespace Cropper.SendToS3
 
         public string BucketName
         {
-            get { return _cmbBucket.SelectedItem.ToString(); }
+            get 
+            {
+                if (_cmbBucket.SelectedItem != null)
+                {
+                    return _cmbBucket.SelectedItem.ToString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
             set
             {
                 _bucketName = value;
