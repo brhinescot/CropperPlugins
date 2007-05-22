@@ -35,6 +35,11 @@ namespace CropperPlugins
 			this.description = FORMAT_NAME;
 		}
 
+        public override string ToString()
+        {
+            return "Send to e-mail [Jon Galloway]";
+        }
+
 		private void SaveImage(Stream stream, Image image)
 		{
 			image.Save(stream, ImageFormat.Png);
