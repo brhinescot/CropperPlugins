@@ -66,26 +66,41 @@ namespace Cropper.SendToS3
         }
 
         void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
-        {            
-            Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
-            MemoryStream imageStream = new MemoryStream();
-            e.FullSizeImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
-            imageStream.Position = 0;
-            S3Object obj = new S3Object(imageStream, null);
-            SortedList headers = new SortedList();
-            headers.Add("x-amz-acl", "public-read");
-            headers.Add("Content-Type", "image/png");
-            string imageName = _settings.BaseKey + Guid.NewGuid().ToString() + ".png";
-            Response r = amazon.Put(_settings.BucketName, imageName, obj, headers);
-
-            if (r.Status.ToString() != "OK")
+        {
+            if (string.IsNullOrEmpty(_settings.AccessKeyId) || string.IsNullOrEmpty(_settings.SecretAccessKey) || string.IsNullOrEmpty(_settings.BucketName))
             {
-                MessageBox.Show(r.Status.ToString() + ": " + r.getResponseMessage());
+                string setupInformation = "Please configure Amazon S3 settings on the Cropper Options / Plug-ins tab.\n\n" +
+                    "For information on these settings, see http://aws.amazon.com/s3\n";
+                MessageBox.Show(setupInformation, "Missing S3 Settings");
+                return;
             }
-            else
+
+            try
             {
-                string url = string.Format("http://s3.amazonaws.com/{0}/{1}", _settings.BucketName, imageName);
-                Clipboard.SetText(url, TextDataFormat.Text);
+                Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
+                MemoryStream imageStream = new MemoryStream();
+                e.FullSizeImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
+                imageStream.Position = 0;
+                S3Object obj = new S3Object(imageStream, null);
+                SortedList headers = new SortedList();
+                headers.Add("x-amz-acl", "public-read");
+                headers.Add("Content-Type", "image/png");
+                string imageName = _settings.BaseKey + Guid.NewGuid().ToString() + ".png";
+                Response r = amazon.Put(_settings.BucketName, imageName, obj, headers);
+
+                if (r.Status.ToString() != "OK")
+                {
+                    MessageBox.Show(r.Status.ToString() + ": " + r.getResponseMessage());
+                }
+                else
+                {
+                    string url = string.Format("http://s3.amazonaws.com/{0}/{1}", _settings.BucketName, imageName);
+                    Clipboard.SetText(url, TextDataFormat.Text);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception");
             }
         }
 
