@@ -22,9 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.TFSWorkItem", "Cropper.TFSWorkItem\Cropper.TFSWorkItem.csproj", "{3D524BF5-8CF8-4586-A6A3-49F767A44794}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
+		SccNumberOfProjects = 10
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
@@ -52,6 +54,9 @@ Global
 		SccProjectUniqueName8 = Cropper.SendToS3\\Cropper.SendToS3.csproj
 		SccProjectName8 = Cropper.SendToS3
 		SccLocalPath8 = Cropper.SendToS3
+		SccProjectUniqueName9 = Cropper.TFSWorkItem\\Cropper.TFSWorkItem.csproj
+		SccProjectName9 = Cropper.TFSWorkItem
+		SccLocalPath9 = Cropper.TFSWorkItem
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AutomatedDebug|Any CPU = AutomatedDebug|Any CPU
@@ -124,6 +129,14 @@ Global
 		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{341A7D6E-783B-48D3-9FA3-39A0581A40ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D524BF5-8CF8-4586-A6A3-49F767A44794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
