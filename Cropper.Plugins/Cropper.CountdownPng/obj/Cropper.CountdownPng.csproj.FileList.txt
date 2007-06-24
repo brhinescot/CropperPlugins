@@ -1,8 +1,0 @@
-..\Output\Release\Cropper.CountdownPng.dll
-obj\Release\ResolveAssemblyReference.cache
-obj\Release\Cropper.CountdownPng.dll
-..\Output\Debug\Cropper.CountdownPng.dll
-..\Output\Debug\Cropper.CountdownPng.pdb
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\Cropper.CountdownPng.dll
-obj\Debug\Cropper.CountdownPng.pdb
