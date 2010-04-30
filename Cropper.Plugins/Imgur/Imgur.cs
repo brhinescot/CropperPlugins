@@ -4,8 +4,10 @@ using System;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Diagnostics;         // for Conditional
+using System.Threading;           // for Thread.Sleep
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;      // GZipStream, DeflateStream
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,10 +25,9 @@ namespace Cropper.SendToImgur
     {
         public Imgur ()
         {
-            SetupDebugConsole(); // for debugging purposes
-            _cookieJar = PersistentCookies.GetCookieContainerForUrl(_baseUri);            
+            Tracing.SetupDebugConsole(); // for debugging purposes
         }
-        
+
         public event ImageFormatClickEventHandler ImageFormatClick;
 
         public void Connect(IPersistableOutput persistableOutput)
@@ -42,13 +43,13 @@ namespace Cropper.SendToImgur
                                     RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
-        
+
         public void Disconnect()
         {
             this._output.ImageCaptured -= new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
         }
 
-        
+
         private void menuItem_Click(object sender, EventArgs e)
         {
             ImageFormatEventArgs args1 = new ImageFormatEventArgs();
@@ -58,7 +59,7 @@ namespace Cropper.SendToImgur
         }
 
 
-        
+
         private void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
             ImagePairNames names1 = e.ImageNames;
@@ -77,7 +78,7 @@ namespace Cropper.SendToImgur
 
 
         /// <summary>
-        ///   Saves the captured image to an on-disk file. 
+        ///   Saves the captured image to an on-disk file.
         /// </summary>
         ///
         /// <remarks>
@@ -90,8 +91,8 @@ namespace Cropper.SendToImgur
             bool success = false;
             try
             {
-                Trace("+--------------------------------");
-                Trace("SaveImage ({0})", _fileName);
+                Tracing.Trace("+--------------------------------");
+                Tracing.Trace("SaveImage ({0})", _fileName);
                 image.Save(stream, ImageFormat.Png);
 
                 if (this._isThumbEnabled)
@@ -126,12 +127,12 @@ namespace Cropper.SendToImgur
                     UploadImage();
                     _mostRecentUpload= DateTime.UtcNow;
                 }
-//                 else
-//                 {
-//                     int moreToWait = (int)((_timeDelta - (DateTime.UtcNow - _mostRecentUpload)).TotalSeconds);
-//                     string msg = String.Format("It's too soon to upload another image! Figuring a 6 minute delay, you'll have to wait {0}s", moreToWait);
-//                     MessageBox.Show(msg);
-//                 }
+                //                 else
+                //                 {
+                //                     int moreToWait = (int)((_timeDelta - (DateTime.UtcNow - _mostRecentUpload)).TotalSeconds);
+                //                     string msg = String.Format("It's too soon to upload another image! Figuring a 6 minute delay, you'll have to wait {0}s", moreToWait);
+                //                     MessageBox.Show(msg);
+                //                 }
             }
         }
 
@@ -149,65 +150,60 @@ namespace Cropper.SendToImgur
         /// </remarks>
         private void UploadImage()
         {
-            Trace("UploadImage");
-            
+            Tracing.Trace("UploadImage");
+
             _errorMessage = null;
             try
             {
                 string imageUrl = string.Empty;
-                string responsePageUri = this.UploadFileToImgur(this._fileName);
-
-                string responsePageMarkup= GetPageMarkup(responsePageUri);
-                
-                Match match = this._regex.Match(responsePageMarkup);
-            
-                if (!match.Success)
+                string responsePageUri = this.DoUpload();
+                if (String.IsNullOrEmpty(responsePageUri))
                 {
                     Clipboard.SetDataObject(this._fileName, true);
-                    string msg = "Failed to upload to Imgur.";
+                    string msg = "Whoops!";
                     if (_errorMessage != null)
                         msg += " " + _errorMessage;
                     else
-                        msg += " Seems like there was a problem with the Regex." ;
-                    MessageBox.Show(msg + "  Upload this file manually: " + this._fileName);
+                        msg += " There was a problem with the Upload." ;
+                    MessageBox.Show(msg + Environment.NewLine + "  Upload this file manually: " + this._fileName);
                     return;
                 }
 
                 System.Diagnostics.Process.Start(responsePageUri);
-                
+
                 // The page that comes back displays the image, the raw url for the image,
                 // and a bunch of ads.  We want the raw image url.
-                imageUrl = match.Groups["imgurl"].Value.ToString();
 
-                Trace("Raw img url: {0}", imageUrl);
-                
+                imageUrl = responsePageUri + Path.GetExtension(this._fileName);
                 Clipboard.SetDataObject(imageUrl, true);
-                if (!this._isThumbEnabled)
-                {
-                    this._logger.Log(imageUrl);
-                }
-                
-                if (this._isThumbEnabled)
-                {
-                    responsePageUri = this.UploadFileToImgur(this._thumbFileName);
-                    responsePageMarkup= GetPageMarkup(responsePageUri);
+                this._logger.Log(imageUrl);
 
-                    match = this._regex.Match(responsePageMarkup);
-                    if (!match.Success)
-                    {
-                        Clipboard.SetDataObject(imageUrl + ", " + this._thumbFileName, true);
-                        string msg = String.Format("The main image was successfully uploaded and is available at {0}, but the thumbnail didn't go.  You will have to upload this manually: {1}", imageUrl, this._thumbFileName);
-                        MessageBox.Show(msg);
-                        return;
-                    }
 
-                    string text2 = match.Groups["imgurl"].Value.ToString();
-                    Clipboard.SetDataObject(imageUrl + ", " + text2, true);
-                    this._logger.Log(imageUrl, text2);
-                }
-                
-                Trace("all done.");
-                Trace("---------------------------------");
+                //                 if (!this._isThumbEnabled)
+                //                 {
+                //                     this._logger.Log(imageUrl);
+                //                 }
+                //                 if (this._isThumbEnabled)
+                //                 {
+                //                     responsePageUri = this.UploadFileToImgur(this._thumbFileName);
+                //                     responsePageMarkup= GetPageMarkup(responsePageUri);
+                //
+                //                     match = this._regex.Match(responsePageMarkup);
+                //                     if (!match.Success)
+                //                     {
+                //                         Clipboard.SetDataObject(imageUrl + ", " + this._thumbFileName, true);
+                //                         string msg = String.Format("The main image was successfully uploaded and is available at {0}, but the thumbnail didn't go.  You will have to upload this manually: {1}", imageUrl, this._thumbFileName);
+                //                         MessageBox.Show(msg);
+                //                         return;
+                //                     }
+                //
+                //                     string text2 = match.Groups["imgurl"].Value.ToString();
+                //                     Clipboard.SetDataObject(imageUrl + ", " + text2, true);
+                //                     this._logger.Log(imageUrl, text2);
+                //                 }
+
+                Tracing.Trace("all done.");
+                Tracing.Trace("---------------------------------");
             }
             catch (Exception exception2)
             {
@@ -218,73 +214,97 @@ namespace Cropper.SendToImgur
 
 
 
-        
-        /// <summary>
-        ///   Returns the URL at which the uploaded image is visible. 
-        /// </summary>
-        ///
-        /// <remarks>
-        ///   Do a GET on the returned URL in order to get the page  content.
-        /// </remarks>
-        ///
-        private string UploadFileToImgur(string fileToUpload)
+
+
+        private string DoUpload()
         {
-            ImgurUploadParams p = GetParams();
+            var rnd = new System.Random();
+            HttpWebRequest hwr;
+            HttpWebResponse resp;
 
-            SendUploadProgressRequest(p);
+            Tracing.SetupDebugConsole();   // For Debugging only
 
-            //System.Diagnostics.Debugger.Break();
-            
-            // the divider can be "anything", but by convention it looks like this
-            string divider = "-----------------------------" + DateTime.Now.Ticks.ToString("x");
+            Tracing.Trace("hello");
 
-            Trace("WebRequest.Create");
+            // Get the initial page, and any cookies the page wants us to
+            // retain.
+            hwr = WebRequestFactory.Create(0, _baseUri);
+            resp = (HttpWebResponse) hwr.GetResponse();
+            Tracing.Trace("Initial status = " + resp.StatusCode.ToString());
+            if ((int)(resp.StatusCode) != 200)
+                return null;
 
-            HttpWebRequest req = (HttpWebRequest) WebRequest.Create(_baseUri + ImgurUploadParams.UploadUri1);
-            req.Referer=_baseUri;
-            req.UserAgent= _userAgent;
-            req.Headers.Add("Pragma","no-cache");
-            req.AllowAutoRedirect = false;
-            req.CookieContainer = _cookieJar;
-            //req.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            req.Method = "POST";
-            req.ContentType = "multipart/form-data; boundary=" + divider;
-            divider = "--" + divider + "\r\n";
-            
-            StringBuilder sb1 = new StringBuilder();
-            foreach (var key in p.Dict.Keys)
+            string frontPage = GetReplyString(resp);
+
+            if (resp.Cookies != null)
+                hwr.CookieContainer.Add(new Uri(_baseUri),
+                                        new Cookie("IMGURSESSION", resp.Cookies["IMGURSESSION"].Value));
+
+            // find sid here
+            string sid = GetSid(frontPage);
+
+            if (String.IsNullOrEmpty(sid))
             {
-                if (key!="action")
-                {
-                    Trace("{0} = {1}", key, p.Dict[key]);
-                    AddField(sb1, key, p.Dict[key], divider);
-                }                    
+                Tracing.Trace("Null or empty sid");
+                return null;
             }
+            Tracing.Trace("sid = {0}", sid);
 
-            string contentType;
-            if (fileToUpload.EndsWith(".png"))
-                contentType = "image/x-png";
-            else if (fileToUpload.EndsWith(".jpg"))
-                contentType = "image/pjpeg";
-            else
-                contentType = "application/octet-stream";
-                
+            Thread.Sleep(130 + rnd.Next(450)); // in ms
+
+            // get the swf page
+            hwr = WebRequestFactory.Create(1,"http://imgur.com/include/flash/swfupload.swf?preventswfcaching=" + PhpTime.ToString());
+            resp = (HttpWebResponse) hwr.GetResponse();
+            Tracing.Trace("get swf status = " + resp.StatusCode.ToString());
+            if ((int)(resp.StatusCode) != 200)
+                return null;
+
+            byte[] swf = GetReplyBytes(hwr);
+
+            // do the check thing
+            hwr = WebRequestFactory.Create(2, "http://imgur.com/include/checkCaptcha.php");
+            Tracing.Trace("checkCaptcha status = " + resp.StatusCode.ToString());
+            var s = hwr.GetRequestStream();
+            byte[] data = Encoding.UTF8.GetBytes("files=1");
+            s.Write(data, 0, data.Length);
+            s.Close();
+            string captchaCheck = GetReplyString(hwr);
+
+            // finally, upload the file data
+            return UploadFileToImgur(sid);
+        }
+
+
+        private string UploadFileToImgur(string sid)
+        {
+            string fileToUpload = this._fileName;
+            HttpWebRequest hwr = WebRequestFactory.Create(3, "http://imgur.com/processFlash.php");
+            string divider = "-------------------" + DateTime.Now.Ticks.ToString("x");
+            hwr.ContentType = "multipart/form-data; boundary=" + divider;
+            divider = "--" + divider + "\r\n";
+
+            StringBuilder sb1 = new StringBuilder();
+            AddField(sb1, "Filename", Path.GetFileName(fileToUpload), divider);
+            AddField(sb1, "createAlbum", "0", divider);
+            AddField(sb1, "sid", sid, divider);
+            AddField(sb1, "albumTitle", "Optional Album Title", divider);
+            AddField(sb1, "edit", "0", divider);
             sb1.Append(divider)
-                .Append("Content-Disposition: form-data; name=\"file[]\"; filename=\"")
+                .Append("Content-Disposition: form-data; name=\"Filedata\"; filename=\"")
                 .Append(Path.GetFileName(fileToUpload))
                 .Append("\"\r\n")
-                .Append("Content-Type: ")
-                .Append(contentType)
+                .Append("Content-Type: application/octet-stream")
                 .Append("\r\n\r\n");
-           
+
             Stream s = null;
 
             try
             {
-                Trace("GetRequestStream");
-                s = req.GetRequestStream();
+                s = hwr.GetRequestStream();
                 byte[] formData = Encoding.UTF8.GetBytes(sb1.ToString());
                 s.Write(formData, 0, formData.Length);
+
+                // write the file data
                 using (FileStream fs = new FileStream(fileToUpload, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     byte[] buffer = new byte[Math.Min(0x1000, (int)fs.Length)];
@@ -297,7 +317,7 @@ namespace Cropper.SendToImgur
 
                 sb1 = new StringBuilder();
                 sb1.Append("\r\n");
-                AddField(sb1, "submit", "", divider);
+                AddField(sb1, "Upload", "Submit Query", divider);
                 sb1.Append(divider)
                     .Append("--");
                 byte[] finalDivider = Encoding.ASCII.GetBytes(sb1.ToString());
@@ -305,60 +325,90 @@ namespace Cropper.SendToImgur
                 s.Close();
                 s = null;
 
-                Trace("writing all bytes");
-
                 // get the response
                 try
                 {
-                    Trace("GetResponse");
-                    //System.Diagnostics.Debugger.Break();
-                    
-                    HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
+                    HttpWebResponse resp = (HttpWebResponse) hwr.GetResponse();
                     if (resp == null)
                         return null;
 
-                    // expected response is a 302 with a redirect to /processUpload2.php
-                    if ((int)(resp.StatusCode) != 302)
-                        throw new Exception(String.Format("unexpected status code ({0} ({1}))", resp.StatusCode, (int)resp.StatusCode));
-                    
-                    Trace("Redirect to: {0}", resp.Headers["Location"]);
-                    string redirect = _baseUri + resp.Headers["Location"];
+                    // expected response is a 200
+                    if ((int)(resp.StatusCode) != 200)
+                        throw new Exception(String.Format("unexpected status code ({0})", resp.StatusCode));
 
-                    /// process cookies 
-                    if (resp.Headers["Set-Cookie"] != null)
-                        _cookieJar.Add(new Uri(_baseUri), resp.Cookies);
-                    
-                    resp = SendImgurGetRequest(redirect);
-                    
-                    // expected response from *that* is a 302 with a redirect to the short image URL
-                    if ((int)(resp.StatusCode) != 302)
-                        throw new Exception(String.Format("unexpected status code ({0} ({1}))", resp.StatusCode, (int)resp.StatusCode));
+                    string reply = GetReplyString(resp);
 
-                    Trace("Redirect to: {0}", resp.Headers["Location"]);
-                    redirect = _baseUri + resp.Headers["Location"];
-
-                    return redirect;
+                    string donePage = (_baseUri + reply).Replace(".com//", ".com/");
+                    Tracing.Trace("Result: " + donePage);
+                    return donePage;
                 }
                 catch (Exception ex1)
                 {
-                    Trace("HttpPost: Response error: " + ex1.Message);
+                    Tracing.Trace("HttpPost: Response error: " + ex1.Message);
                     _errorMessage = "HttpPost: Response error: " + ex1.Message;
-                    throw ;
                 }
             }
             catch (Exception ex2)
             {
-                Trace("HttpPost: Request error: " + ex2.Message);
+                Tracing.Trace("HttpPost: Request error: " + ex2.Message);
                 _errorMessage = "HttpPost: Request error: " + ex2.Message;
-                throw ;
             }
             finally
-            { 
+            {
                 if (s!=null)
                     s.Close();
-            }        
+            }
+
+            return null;
         }
 
+
+        private string GetReplyString(HttpWebRequest hwr)
+        {
+            HttpWebResponse resp = (HttpWebResponse) hwr.GetResponse();
+            return GetReplyString(resp);
+        }
+
+        private string GetReplyString(HttpWebResponse resp)
+        {
+            Stream s = resp.GetResponseStream();
+            if (resp.ContentEncoding.ToLower().Contains("gzip"))
+                s = new GZipStream(s, CompressionMode.Decompress);
+            else if (resp.ContentEncoding.ToLower().Contains("deflate"))
+                s = new DeflateStream(s, CompressionMode.Decompress);
+
+            string cs = String.IsNullOrEmpty(resp.CharacterSet) ? "UTF-8" : resp.CharacterSet;
+            Encoding e = Encoding.GetEncoding(cs);
+            using (StreamReader sr = new StreamReader(s, e))
+            {
+                string r = sr.ReadToEnd();
+                if (r.Length > 80)
+                    Tracing.Trace("Reply: {0}...", r.Substring(0,78));
+                else
+                    Tracing.Trace("Reply: {0}", r);
+                return r;
+            }
+        }
+
+
+        private byte[] GetReplyBytes(HttpWebRequest hwr)
+        {
+            HttpWebResponse resp = (HttpWebResponse) hwr.GetResponse();
+            Stream s = resp.GetResponseStream();
+            if (resp.ContentEncoding.ToLower().Contains("gzip"))
+                s = new GZipStream(s, CompressionMode.Decompress);
+            else if (resp.ContentEncoding.ToLower().Contains("deflate"))
+                s = new DeflateStream(s, CompressionMode.Decompress);
+
+            byte[] buffer = new byte[1024];
+            int n = 0;
+            var ms = new MemoryStream();
+            while ((n = s.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                ms.Write(buffer, 0, n);
+            }
+            return ms.GetBuffer();
+        }
 
 
         /// <summary>
@@ -372,9 +422,21 @@ namespace Cropper.SendToImgur
                 .Append("\"\r\n\r\n")
                 .Append(value)
                 .Append("\r\n");
-            
+
         }
 
+        private string GetSid(string html)
+        {
+            const string regex =  @"<input id=""sid"" name=""UPLOAD_IDENTIFIER"" type=""hidden"" value=""([^""]+)"" />";
+            var r = new Regex(regex);
+            var m = r.Match(html);
+            if (m.Success)
+            {
+                Group g = m.Groups[1];
+                return g.Value.ToString();
+            }
+            return null;
+        }
 
         /// <summary>
         ///   The image submission requires a timestamp on the form.
@@ -388,50 +450,14 @@ namespace Cropper.SendToImgur
                 System.DateTime now = System.DateTime.Now;
                 System.TimeSpan ts = tz.GetUtcOffset(now);
                 System.DateTime utc = System.DateTime.Now - ts;
-
                 System.TimeSpan delta =  utc - _unixEpoch;
                 Int64 phpTime = (System.Int64)(delta.TotalSeconds * 1000);
-
-                Trace("phpTime = {0}", phpTime);
-                
+                Tracing.Trace("phpTime = {0}", phpTime);
                 return phpTime;
             }
         }
 
 
-        
-        
-        private ImgurUploadParams GetParams()
-        {
-            ImgurUploadParams p = new ImgurUploadParams();
-           
-            string homePageMarkup= GetPageMarkup(_baseUri);
-
-            foreach (var key in ImgurUploadParams.Regexi.Keys)
-            {
-                var r = new Regex(ImgurUploadParams.Regexi[key]);
-                var m = r.Match(homePageMarkup);
-                if (m.Success)
-                {
-                    Group g = m.Groups[key];
-                    p.Dict.Add(key, g.Value.ToString());
-                }
-            }
-                
-            return p;
-        }
-
-
-
-
-        private string GetPageMarkup(string uri)
-        {
-            using (WebClientEx client = new WebClientEx(_cookieJar))
-            {
-                return client.DownloadString(uri);
-            }
-        }
-        
 
         public string Description
         {
@@ -471,143 +497,80 @@ namespace Cropper.SendToImgur
 
 
 
-
         /// <summary>
-        /// This class holds HTML FORM parameters for image upload to imgur.com
+        ///   Like Webclient, but attaches a cookie container to each request
         /// </summary>
-        ///
-        /// <remarks>
-        ///   The HTTP transaction flow for imgur.com is this:
-        ///     1. open http://imgur.com (submitting cookies, if any).  
-        ///     2. Receive response containing a FORM, with a generated UPLOAD_IDENTIFIER <input>. '
-        ///     3. POST the form to processUpload1.php
-        ///     4. Receive a 302 Found (redirect), to processUpload2.php
-        ///     5. Submit a GET to processUpload2.php
-        ///     6. Receive a 302 Found (redirect), to the actual, new URL
-        ///     7. Submit a GET to the new generated URL
-        ///     8. Embedded in that page is an <img src="..."> tag
-        ///
-        ///   What this class does is hold info for steps 1 - 3.  The Form action,
-        ///   The UPLOAD_IDENTIFIER, and the /processUpload1.php path. 
-        ///
-        /// </remarks>
-        class ImgurUploadParams
+        public class WebRequestFactory
         {
-            public Dictionary<String, String> Dict = new Dictionary<String, String>();
+            private static readonly string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; .NET CLR 3.5.30729; Zune 3.0;)";
+            private static readonly string DefaultAccept =
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+            private static readonly string _baseUri = "http://imgur.com/";
 
-            public static readonly String UploadUri1;
-            public static readonly Dictionary<String,String> Regexi;
-
-            static ImgurUploadParams()
+            public static HttpWebRequest Create (int flavor, string uri)
             {
-                UploadUri1 = "processUpload1.php";
-                    
-                Regexi = new Dictionary<String, String>();
+                HttpWebRequest hwr = (HttpWebRequest) WebRequest.Create(uri);
+                Condition(hwr, uri);
 
-                // <form action="uploadprogress.php" ...
-                Regexi.Add("action", "<form\\s+action=\"(?<action>[^\"]+)\"");
+                switch(flavor)
+                {
+                    case 0:
+                        hwr.Accept = DefaultAccept;
+                        hwr.Method = "GET";
+                        hwr.UserAgent = WebRequestFactory.DefaultUserAgent;
+                        hwr.Headers.Add(HttpRequestHeader.KeepAlive, "300");
+                        break;
 
-                // <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
-                Regexi.Add("MAX_FILE_SIZE", "<input\\s+(.*?)name=\"MAX_FILE_SIZE\"(.*?) value=\"(?<MAX_FILE_SIZE>[^\"]+)\"");
-                
-                // <input id="sid" name="UPLOAD_IDENTIFIER" type="hidden" value="92c2e1e62c290ca5a296ae670a507804" />
-                Regexi.Add("UPLOAD_IDENTIFIER", "<input\\s+(.*?)name=\"UPLOAD_IDENTIFIER\"(.*?) value=\"(?<UPLOAD_IDENTIFIER>[^\"]+)\"");
+                    case 1:
+                        hwr.UserAgent = WebRequestFactory.DefaultUserAgent;
+                        hwr.Accept = DefaultAccept;
+                        hwr.Method = "GET";
+                        hwr.Headers.Add(HttpRequestHeader.KeepAlive, "300");
+                        hwr.Referer = _baseUri;
+                        break;
+
+                    case 2:
+                        hwr.Accept = "application/json, text/javascript, */*";
+                        hwr.Headers.Add("X-Requested-With", "XMLHttpRequest");
+                        hwr.Headers.Add(HttpRequestHeader.Pragma,"no-cache");
+                        hwr.Headers.Add(HttpRequestHeader.CacheControl,"no-cache");
+                        hwr.UserAgent = WebRequestFactory.DefaultUserAgent;
+                        hwr.Headers.Add(HttpRequestHeader.KeepAlive, "300");
+                        hwr.Method = "POST";
+                        hwr.Referer = _baseUri;
+                        hwr.ContentType = "application/x-www-form-urlencoded; charset=UTF-8";
+                        break;
+
+                    case 3:
+                        hwr.Method = "POST";
+                        hwr.Accept = "text/*";
+                        hwr.UserAgent = "Shockwave Flash";
+                        hwr.Headers.Add(HttpRequestHeader.Pragma,"no-cache");
+                        break;
+
+                    default:
+                        break;
+                }
+
+                return hwr;
+            }
+
+            private static void Condition(HttpWebRequest hwr, string address)
+            {
+                hwr.CookieContainer =
+                    PersistentCookies.GetCookieContainerForUrl(_baseUri);
+                hwr.Headers.Add(HttpRequestHeader.AcceptLanguage, "en-us,en;q=0.5");
+                hwr.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                hwr.Headers.Add(HttpRequestHeader.AcceptCharset, "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+                hwr.KeepAlive = true;
             }
         }
 
 
 
-        /// <summary>
-        ///   Imgur.com allows for asynch status inquiry of in-process uploads. 
-        /// </summary>
-        private void SendUploadProgressRequest(ImgurUploadParams p)
-        {
-            string url = _baseUri + "uploadprogress.php";
-            string format = "{0}?id={1}&_={2}";
-
-            string requestUri= String.Format(format, url, p.Dict["action"], p.Dict["UPLOAD_IDENTIFIER"], PhpTime);
-
-            HttpWebResponse resp = SendImgurGetRequest(requestUri);
-        }
-        
-
-        
-        private HttpWebResponse SendImgurGetRequest(string requestUri)
-        {
-            try
-            {
-                Trace("SendImgurGetRequest");
-                
-                HttpWebRequest req = (HttpWebRequest) WebRequest.Create(requestUri);
-                req.CookieContainer = _cookieJar;
-                req.Method = "GET";
-                req.AllowAutoRedirect = false;
-                req.UserAgent= _userAgent;
-                req.Headers.Add("x-requested-with", "XMLHttpRequest"); 
-                req.Headers.Add("Accept-Language", "en-us");
-                req.ProtocolVersion=System.Net.HttpVersion.Version11;
-                req.Referer= _baseUri;
-                req.Accept="application/json, text/javascript, */*";
-                HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
-
-                if (resp.Headers["Set-Cookie"] != null)
-                    _cookieJar.Add(new Uri(_baseUri), resp.Cookies);
-                
-                Trace("A-OK (SendImgurGetRequest)");
-                return resp;
-            }
-            catch (WebException)
-            {
-
-            }
-            return null;
-        }
-        
-
-        
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int pid);
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        public static extern bool FreeConsole();
-
-
-        /// <summary>
-        /// This pops a console window to emit debugging messages into,
-        /// at runtime.  It is compiled with Conditiona("Trace") so these messages
-        /// never appear when Trace is not #define'd. 
-        /// </summary>
-        [Conditional("Trace")]
-        private void SetupDebugConsole()
-        {
-            if ( !AttachConsole(-1) )  // Attach to a parent process console
-                AllocConsole();        // Allocate a new console
-
-            _process= System.Diagnostics.Process.GetCurrentProcess();
-            System.Console.WriteLine();
-        }
-
-    
-        [Conditional("Trace")]
-        private void Trace(string format, params object[] args)
-        {
-            // these messages appear in the allocated console.
-            System.Console.Write("{0:D5} ", _process.Id);
-            System.Console.WriteLine(format, args);
-        }
-
-
-        
-        private string _errorMessage; 
-        private System.Diagnostics.Process _process;  // debugging only
-        private static readonly string _userAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; .NET CLR 3.5.30729; Zune 3.0;)";
+        private string _errorMessage;
         private static readonly string _baseUri= "http://imgur.com/";
         private static System.DateTime _unixEpoch = new System.DateTime(1970,1,1, 0,0,0, DateTimeKind.Utc);
-        private CookieContainer _cookieJar; 
         private string _fileName;
         private bool _isThumbEnabled;
         private ImgurLogWriter _logger;
@@ -617,45 +580,48 @@ namespace Cropper.SendToImgur
         private Regex _regex;
         private string _thumbFileName;
         private Image _thumbnailImage;
-        
-    }
 
-
-
-            
-    class WebClientEx : WebClient
-    {
-        private CookieContainer _cookieJar; 
-            
-        public WebClientEx(CookieContainer cc)
-        {
-            _cookieJar = cc;
-        }
-            
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            WebRequest request = base.GetWebRequest(address);
-            if (request is HttpWebRequest)
-            {
-                request.Headers.Add("Pragma","no-cache");
-                (request as HttpWebRequest).CookieContainer = _cookieJar;
-            }
-            return request;
-        }
     }
 
 
 
 
-   
-    
-
-    class PersistentCookies
+    internal static class Tracing
     {
-        // to get persistent cookies for Imgur
-        [DllImport("wininet.dll", CharSet=CharSet.Auto , SetLastError=true)] 
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int pid);
+
+        [Conditional("Trace")]
+        public static void SetupDebugConsole()
+        {
+            if ( !AttachConsole(-1) )  // Attach to a parent process console
+                AllocConsole(); // Alloc a new console
+
+            _process= System.Diagnostics.Process.GetCurrentProcess();
+            System.Console.WriteLine();
+        }
+
+        [Conditional("Trace")]
+        public static void Trace(string format, params object[] args)
+        {
+            System.Console.Write("{0:D5} ", _process.Id);
+            System.Console.WriteLine(format, args);
+        }
+
+        private static System.Diagnostics.Process _process;
+    }
+
+
+
+
+    public static class PersistentCookies
+    {
+        // To get persistent cookies for any website.
+        [DllImport("wininet.dll", CharSet=CharSet.Auto , SetLastError=true)]
         private static extern bool InternetGetCookie (string url, string name, StringBuilder data, ref int dataSize);
-
 
         private static string RetrieveIECookiesForUrl(string url)
         {
@@ -663,7 +629,7 @@ namespace Cropper.SendToImgur
             int datasize = cookieHeader.Length;
             if (!InternetGetCookie(url, null, cookieHeader, ref datasize))
             {
-                if (datasize < 0) 
+                if (datasize < 0)
                     return String.Empty;
                 cookieHeader = new StringBuilder(datasize); // resize with new datasize
                 InternetGetCookie(url, null, cookieHeader, ref datasize);
@@ -672,9 +638,19 @@ namespace Cropper.SendToImgur
             return cookieHeader.ToString();
         }
 
+        private static Dictionary<String, CookieContainer> _cache = new Dictionary<String, CookieContainer>();
+
         public static CookieContainer GetCookieContainerForUrl(string url)
         {
-            return GetCookieContainerForUrl(new Uri(url));
+            if (_cache.ContainsKey(url))
+            {
+                Tracing.Trace("CC[{0}]= {1:X8} (cached)", url, _cache[url].GetHashCode());
+                return _cache[url];
+            }
+            var x = GetCookieContainerForUrl(new Uri(url));
+            _cache[url] = x;
+            Tracing.Trace("CC[{0}]= {1:X8} (new)", url, x.GetHashCode());
+            return x;
         }
 
         public static CookieContainer GetCookieContainerForUrl(Uri url)
@@ -692,7 +668,6 @@ namespace Cropper.SendToImgur
             return container;
         }
     }
-
 
 
 }
