@@ -1,9 +1,21 @@
-//#define Trace
+// Imgur.cs
+//
+// Code for a cropper plugin that sends a screen snap to
+// Imgur.com
+//
+// To enable tracing for this DLL, build like so:
+//    msbuild /p:Platform=x86 /p:DefineConstants=Trace
+//
+//
+// Dino Chiesa
+// 2010 Nov 9
+//
+
+// #define Trace
 
 using System;
 using System.Collections.Specialized;
 using System.Drawing;
-using System.Diagnostics;         // for Conditional
 using System.Threading;           // for Thread.Sleep
 using System.Drawing.Imaging;
 using System.IO;
@@ -16,51 +28,36 @@ using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
 using System.Collections.Generic;
-
+using CropperPlugins.Utils;       // for Tracing
 
 
 namespace Cropper.SendToImgur
 {
-    public class Imgur : IPersistableImageFormat
+    public class Imgur : DesignablePluginThatUsesFetchOutputStream
     {
-        public Imgur ()
+
+#if Trace
+        // these methods are needed only for diagnostic purposes.
+        public override void Connect(IPersistableOutput persistableOutput)
         {
-            Tracing.SetupDebugConsole(); // for debugging purposes
+            Tracing.Trace("Imgur::Connect");
+            base.Connect(persistableOutput);
         }
 
-        public event ImageFormatClickEventHandler ImageFormatClick;
-
-        public void Connect(IPersistableOutput persistableOutput)
+        public override void Disconnect()
         {
-            if (persistableOutput == null)
-                throw new ArgumentNullException("persistableOutput");
-
-            this._output = persistableOutput;
-            this._output.ImageCaptured += new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
-            // <input type="text" id="htmlimage" value='&lt;img src="http://imgur.com/kuER2.jpg" alt="Hosted by imgur.com" /&gt;' readonly="readonly" />
-
-            this._regex = new Regex("<input type=\"text\" id=\"htmlimage\" value='.+?src=\"(?<imgurl>[^\"]+)\"[^']+' readonly",
-                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            Tracing.Trace("Imgur::Disconnect");
+            base.Disconnect();
         }
 
-
-        public void Disconnect()
+        protected override void OnImageFormatClick(object sender, ImageFormatEventArgs e)
         {
-            this._output.ImageCaptured -= new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
+            Tracing.Trace("Imgur::MenuClick");
+            base.OnImageFormatClick(sender, e);
         }
+#endif
 
-
-        private void menuItem_Click(object sender, EventArgs e)
-        {
-            ImageFormatEventArgs args1 = new ImageFormatEventArgs();
-            args1.ClickedMenuItem = (MenuItem) sender;
-            args1.ImageOutputFormat = this;
-            this.ImageFormatClick.Invoke(sender, args1);
-        }
-
-
-
-        private void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
+        protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
             ImagePairNames names1 = e.ImageNames;
             this._logger = new ImgurLogWriter(new FileInfo(names1.FullSize).DirectoryName);
@@ -72,9 +69,8 @@ namespace Cropper.SendToImgur
             }
 
             this._fileName = e.ImageNames.FullSize;
-            this._output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
+            output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
-
 
 
         /// <summary>
@@ -86,13 +82,15 @@ namespace Cropper.SendToImgur
         ///   of the image via the HTML FORM, but it's nice to have a cached version of
         ///   the image in the filesystem.
         /// </remarks>
-        private void SaveImage(Stream stream, Image image)
+        protected override void SaveImage(Stream stream, Image image)
         {
             bool success = false;
             try
             {
                 Tracing.Trace("+--------------------------------");
                 Tracing.Trace("SaveImage ({0})", _fileName);
+
+                // TODO: make the actual format be selectable
                 image.Save(stream, ImageFormat.Png);
 
                 if (this._isThumbEnabled)
@@ -101,13 +99,14 @@ namespace Cropper.SendToImgur
                     {
                         this._thumbnailImage.Save(stream1, ImageFormat.Png);
                         this._thumbnailImage.Dispose();
-                        stream1.Close();
+                        //stream1.Close();
                     }
                 }
                 success = true;
             }
             catch (Exception exception1)
             {
+                Tracing.Trace("Exception while saving the image: {0}", exception1.Message);
                 string msg = "There's been an exception while saving the image: " +
                     exception1.Message + "\n" + exception1.StackTrace;
                 msg+= "\n\nYou will have to Upload this file manually: " + this._fileName ;
@@ -222,9 +221,7 @@ namespace Cropper.SendToImgur
             HttpWebRequest hwr;
             HttpWebResponse resp;
 
-            Tracing.SetupDebugConsole();   // For Debugging only
-
-            Tracing.Trace("hello");
+            Tracing.Trace("Imgur::DoUpload");
 
             // Get the initial page, and any cookies the page wants us to
             // retain.
@@ -234,7 +231,7 @@ namespace Cropper.SendToImgur
             if ((int)(resp.StatusCode) != 200)
                 return null;
 
-            string frontPage = GetReplyString(resp);
+            string frontPage = GetReplyString(resp, "initial");
 
             if (resp.Cookies != null)
                 hwr.CookieContainer.Add(new Uri(_baseUri),
@@ -244,31 +241,32 @@ namespace Cropper.SendToImgur
             string sid = GetSid(frontPage);
 
             if (String.IsNullOrEmpty(sid))
-            {
-                Tracing.Trace("Null or empty sid");
                 return null;
-            }
-            Tracing.Trace("sid = {0}", sid);
 
             Thread.Sleep(130 + rnd.Next(450)); // in ms
 
             // get the swf page
             hwr = WebRequestFactory.Create(1,"http://imgur.com/include/flash/swfupload.swf?preventswfcaching=" + PhpTime.ToString());
             resp = (HttpWebResponse) hwr.GetResponse();
-            Tracing.Trace("get swf status = " + resp.StatusCode.ToString());
+            Tracing.Trace("swfupload.swf status = " + resp.StatusCode.ToString());
             if ((int)(resp.StatusCode) != 200)
                 return null;
 
+            // get the Shockwave Flash app.  Do I need this?
             byte[] swf = GetReplyBytes(hwr);
 
+#if NOT
+            // This was removed sometime between July 2010 and November 2010.
             // do the check thing
             hwr = WebRequestFactory.Create(2, "http://imgur.com/include/checkCaptcha.php");
-            Tracing.Trace("checkCaptcha status = " + resp.StatusCode.ToString());
             var s = hwr.GetRequestStream();
             byte[] data = Encoding.UTF8.GetBytes("files=1");
             s.Write(data, 0, data.Length);
             s.Close();
-            string captchaCheck = GetReplyString(hwr);
+            resp = (HttpWebResponse) hwr.GetResponse();
+            Tracing.Trace("checkCaptcha status = " + resp.StatusCode.ToString());
+            string captchaCheck = GetReplyString(resp, "checkCaptcha");
+#endif
 
             // finally, upload the file data
             return UploadFileToImgur(sid);
@@ -278,17 +276,17 @@ namespace Cropper.SendToImgur
         private string UploadFileToImgur(string sid)
         {
             string fileToUpload = this._fileName;
-            HttpWebRequest hwr = WebRequestFactory.Create(3, "http://imgur.com/processFlash.php");
+            HttpWebRequest hwr = WebRequestFactory.Create(3, "http://imgur.com/upload");
             string divider = "-------------------" + DateTime.Now.Ticks.ToString("x");
             hwr.ContentType = "multipart/form-data; boundary=" + divider;
             divider = "--" + divider + "\r\n";
 
             StringBuilder sb1 = new StringBuilder();
             AddField(sb1, "Filename", Path.GetFileName(fileToUpload), divider);
-            AddField(sb1, "createAlbum", "0", divider);
-            AddField(sb1, "sid", sid, divider);
-            AddField(sb1, "albumTitle", "Optional Album Title", divider);
+            AddField(sb1, "create_album", "0", divider);
             AddField(sb1, "edit", "0", divider);
+            AddField(sb1, "album_title", "Optional Album Title", divider);
+            AddField(sb1, "sid", sid, divider);
             sb1.Append(divider)
                 .Append("Content-Disposition: form-data; name=\"Filedata\"; filename=\"")
                 .Append(Path.GetFileName(fileToUpload))
@@ -336,7 +334,7 @@ namespace Cropper.SendToImgur
                     if ((int)(resp.StatusCode) != 200)
                         throw new Exception(String.Format("unexpected status code ({0})", resp.StatusCode));
 
-                    string reply = GetReplyString(resp);
+                    string reply = GetReplyString(resp, "upload");
 
                     string donePage = (_baseUri + reply).Replace(".com//", ".com/");
                     Tracing.Trace("Result: " + donePage);
@@ -363,14 +361,16 @@ namespace Cropper.SendToImgur
         }
 
 
-        private string GetReplyString(HttpWebRequest hwr)
+        private string GetReplyString(HttpWebRequest hwr, string label)
         {
             HttpWebResponse resp = (HttpWebResponse) hwr.GetResponse();
-            return GetReplyString(resp);
+            return GetReplyString(resp, label);
         }
 
-        private string GetReplyString(HttpWebResponse resp)
+        private string GetReplyString(HttpWebResponse resp, string label)
         {
+            Tracing.Trace("Imgur::GetReplyString({0})", label);
+
             Stream s = resp.GetResponseStream();
             if (resp.ContentEncoding.ToLower().Contains("gzip"))
                 s = new GZipStream(s, CompressionMode.Decompress);
@@ -427,14 +427,19 @@ namespace Cropper.SendToImgur
 
         private string GetSid(string html)
         {
+            Tracing.Trace("Imgur::GetSid");
+
             const string regex =  @"<input id=""sid"" name=""UPLOAD_IDENTIFIER"" type=""hidden"" value=""([^""]+)"" />";
             var r = new Regex(regex);
             var m = r.Match(html);
             if (m.Success)
             {
                 Group g = m.Groups[1];
-                return g.Value.ToString();
+                var sid = g.Value.ToString();
+                Tracing.Trace("sid = {0}", sid);
+                return sid;
             }
+            Tracing.Trace("sid = null");
             return null;
         }
 
@@ -457,9 +462,7 @@ namespace Cropper.SendToImgur
             }
         }
 
-
-
-        public string Description
+        public override string Description
         {
             get
             {
@@ -467,34 +470,13 @@ namespace Cropper.SendToImgur
             }
         }
 
-        public string Extension
+        public override string Extension
         {
             get
             {
                 return "png";
             }
         }
-
-        public IPersistableImageFormat Format
-        {
-            get
-            {
-                return this;
-            }
-        }
-
-        public MenuItem Menu
-        {
-            get
-            {
-                MenuItem item1 = new MenuItem();
-                item1.RadioCheck = true;
-                item1.Text = Description;
-                item1.Click += new EventHandler(this.menuItem_Click);
-                return item1;
-            }
-        }
-
 
 
         /// <summary>
@@ -574,44 +556,17 @@ namespace Cropper.SendToImgur
         private string _fileName;
         private bool _isThumbEnabled;
         private ImgurLogWriter _logger;
-        private IPersistableOutput _output;
+
         private DateTime _mostRecentUpload = new System.DateTime(1970,1,1, 0,0,0, DateTimeKind.Utc);
         private TimeSpan _timeDelta = new TimeSpan(0,6,0); // six mins
-        private Regex _regex;
+
+        // private Regex _regex =
+        //   new Regex("<input type=\"text\" id=\"htmlimage\" value='.+?src=\"(?<imgurl>[^\"]+)\"[^']+' readonly",
+        //   RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private string _thumbFileName;
         private Image _thumbnailImage;
 
-    }
-
-
-
-
-    internal static class Tracing
-    {
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int pid);
-
-        [Conditional("Trace")]
-        public static void SetupDebugConsole()
-        {
-            if ( !AttachConsole(-1) )  // Attach to a parent process console
-                AllocConsole(); // Alloc a new console
-
-            _process= System.Diagnostics.Process.GetCurrentProcess();
-            System.Console.WriteLine();
-        }
-
-        [Conditional("Trace")]
-        public static void Trace(string format, params object[] args)
-        {
-            System.Console.Write("{0:D5} ", _process.Id);
-            System.Console.WriteLine(format, args);
-        }
-
-        private static System.Diagnostics.Process _process;
     }
 
 
@@ -668,7 +623,5 @@ namespace Cropper.SendToImgur
             return container;
         }
     }
-
-
 }
 
