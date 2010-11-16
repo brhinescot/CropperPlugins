@@ -7,8 +7,8 @@
     <ProjectGuid>{0C9F6C4A-0D51-4A74-91F0-363B55FA47C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cropper.SendToImgurl</RootNamespace>
-    <AssemblyName>Cropper.SendToImgurl</AssemblyName>
+    <RootNamespace>Cropper.SendToImgur</RootNamespace>
+    <AssemblyName>Cropper.SendToImgur</AssemblyName>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
