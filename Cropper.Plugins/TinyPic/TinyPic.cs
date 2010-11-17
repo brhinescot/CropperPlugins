@@ -1,5 +1,3 @@
-//#define Trace
-
 using System;
 using System.Collections.Specialized;
 using System.Drawing;
@@ -10,71 +8,25 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Diagnostics;         // for Conditional
 
 using Fusion8.Cropper.Extensibility;
 using System.Collections.Generic;
 
+using CropperPlugins.Utils;       // for Tracing
+
 namespace Cropper.SendToTinyPic
 {
-    public class TinyPic : IPersistableImageFormat
+    public class TinyPic : DesignablePluginThatUsesFetchOutputStream
     {
-        private string _fileName;
-        private bool _isThumbEnabled;
-        private TinyPicLogWriter _logger;
-        private IPersistableOutput _output;
-        private Regex _regex;
-        private string _thumbFileName;
-        private string _errorMessage;
-        private Image _thumbnailImage;
-        private System.Diagnostics.Process _process;  // debugging only
 
-        //private const string DESCRIPTION = "TinyPic Hosted Image";
-        //private const string EXTENSION = "png"; //??
-
-
-        public TinyPic()
+        protected override void OnImageFormatClick(object sender,
+                                                   ImageFormatEventArgs e)
         {
-            SetupDebugConsole(); // for debugging purposes only
+            Tracing.Trace("TinyPic::MenuClick");
+            base.OnImageFormatClick(sender, e);
         }
 
-
-        public event ImageFormatClickEventHandler ImageFormatClick;
-
-        public void Connect(IPersistableOutput persistableOutput)
-        {
-            if (persistableOutput == null)
-                throw new ArgumentNullException("persistableOutput");
-
-            Trace("+--------------------------------");
-            Trace("connect");
-
-            this._output = persistableOutput;
-            this._output.ImageCaptured += new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
-            this._regex = new Regex("<strong><a href=\"(?<imgurl>[^\"]+)\" ([^>]*?)>Click here</a> to view your image</strong>",
-                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            // example line:
-            // <strong><a href="http://tinypic.com/view.php?pic=2ajnhx4&s=5" target="_blank">Click here</a> to view your image</strong>
-
-        }
-
-        public void Disconnect()
-        {
-            this._output.ImageCaptured -= new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
-
-            Trace("disconnect");
-            Trace("+--------------------------------");
-        }
-
-        private void menuItem_Click(object sender, EventArgs e)
-        {
-            ImageFormatEventArgs args1 = new ImageFormatEventArgs();
-            args1.ClickedMenuItem = (MenuItem) sender;
-            args1.ImageOutputFormat = this;
-            this.ImageFormatClick.Invoke(sender, args1);
-        }
-
-        private void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
+        protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
             ImagePairNames names1 = e.ImageNames;
             this._logger = new TinyPicLogWriter(new FileInfo(names1.FullSize).DirectoryName);
@@ -86,13 +38,14 @@ namespace Cropper.SendToTinyPic
             }
 
             this._fileName = e.ImageNames.FullSize;
-            this._output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
+            output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
 
 
-        private void SaveImage(Stream stream, Image image)
+        protected override void SaveImage(Stream stream, Image image)
         {
-            Trace("SaveImage");
+            Tracing.Trace("+--------------------------------");
+            Tracing.Trace("TinyPic::SaveImage");
             bool success = false;
             try
             {
@@ -104,7 +57,6 @@ namespace Cropper.SendToTinyPic
                     {
                         this._thumbnailImage.Save(stream1, ImageFormat.Png);
                         this._thumbnailImage.Dispose();
-                        stream1.Close();
                     }
                 }
                 success = true;
@@ -130,7 +82,7 @@ namespace Cropper.SendToTinyPic
 
         private void UploadImage()
         {
-            Trace("UploadImage");
+            Tracing.Trace("TinyPic::UploadImage");
             _errorMessage = null;
             try
             {
@@ -140,7 +92,7 @@ namespace Cropper.SendToTinyPic
 
                 if (!match.Success)
                 {
-                    Trace("Did not find response in expected format.");
+                    Tracing.Trace("Did not find response in expected format.");
                     Clipboard.SetDataObject(this._fileName, true);
                     string msg = "Failed to upload to TinyPic.";
                     if (_errorMessage != null)
@@ -216,7 +168,7 @@ namespace Cropper.SendToTinyPic
 
             string escapedUrl = m2.Groups["escapedUrl"].Value.ToString();
             string decodedUrl = System.Web.HttpUtility.UrlDecode(escapedUrl);
-            Trace("\n\nraw image Url: {0}", decodedUrl);
+            Tracing.Trace("\n\nraw image Url: {0}", decodedUrl);
             return decodedUrl;
         }
 
@@ -358,8 +310,8 @@ namespace Cropper.SendToTinyPic
             p.UploadUri = g.Value.ToString();
             p.HiddenFields = new Dictionary<String,String>();
             // only search on what's left:
-            Trace("index: {0}", g.Index);
-            Trace("length: {0}", g.Length);
+            Tracing.Trace("index: {0}", g.Index);
+            Tracing.Trace("length: {0}", g.Length);
 
             // now look for the name of the file-to-upload field
             string remainder = homePageMarkup.Substring(g.Index);
@@ -399,7 +351,7 @@ namespace Cropper.SendToTinyPic
         }
 
 
-        public string Description
+        public override string Description
         {
             get
             {
@@ -407,31 +359,11 @@ namespace Cropper.SendToTinyPic
             }
         }
 
-        public string Extension
+        public override string Extension
         {
             get
             {
                 return "png";
-            }
-        }
-
-        public IPersistableImageFormat Format
-        {
-            get
-            {
-                return this;
-            }
-        }
-
-        public MenuItem Menu
-        {
-            get
-            {
-                MenuItem item1 = new MenuItem();
-                item1.RadioCheck = true;
-                item1.Text = Description;
-                item1.Click += new EventHandler(this.menuItem_Click);
-                return item1;
             }
         }
 
@@ -497,47 +429,18 @@ namespace Cropper.SendToTinyPic
         }
 
 
+        private string _fileName;
+        private bool _isThumbEnabled;
+        private TinyPicLogWriter _logger;
+        private Regex _regex =
+               new Regex("<strong><a href=\"(?<imgurl>[^\"]+)\" ([^>]*?)>Click here</a> to view your image</strong>",
+                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // example line:
+            // <strong><a href="http://tinypic.com/view.php?pic=2ajnhx4&s=5" target="_blank">Click here</a> to view your image</strong>
 
-
-        // everything below here is used only for debugging purposes The
-        // methods get compiled in conditionally, when the symbol
-        // "Trace" is defined.
-
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int pid);
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        public static extern bool FreeConsole();
-
-
-        /// <summary>
-        /// This pops a console window to emit debugging messages into,
-        /// at runtime.  It is compiled with Conditiona("Trace") so these messages
-        /// never appear when Trace is not #define'd.
-        /// </summary>
-        [Conditional("Trace")]
-        private void SetupDebugConsole()
-        {
-            if ( !AttachConsole(-1) )  // Attach to a parent process console
-                AllocConsole();        // Allocate a new console
-
-            _process= System.Diagnostics.Process.GetCurrentProcess();
-            System.Console.WriteLine();
-        }
-
-
-        [Conditional("Trace")]
-        private void Trace(string format, params object[] args)
-        {
-            // these messages appear in the allocated console.
-            System.Console.Write("{0:D5} ", _process.Id);
-            System.Console.WriteLine(format, args);
-        }
-
+        private string _thumbFileName;
+        private string _errorMessage;
+        private Image _thumbnailImage;
 
     }
 
