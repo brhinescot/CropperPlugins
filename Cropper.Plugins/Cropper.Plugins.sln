@@ -6,23 +6,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
                 SolutionInfo.cs = SolutionInfo.cs
         EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.CountdownPng", "Cropper.CountdownPng\Cropper.CountdownPng.csproj", "{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountdownPng", "CountdownPng\CountdownPng.csproj", "{36BF73E8-11B4-4906-98ED-2BF8023ACDE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.AnimatedGif", "Cropper.AnimatedGif\Plugin\Cropper.AnimatedGif.csproj", "{8CCDC380-259C-41BC-86EF-826DFF7A7A46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimatedGif", "AnimatedGif\Plugin\AnimatedGif.csproj", "{8CCDC380-259C-41BC-86EF-826DFF7A7A46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToEmail", "Cropper.SendToEmail\Cropper.SendToEmail.csproj", "{0BB64436-04DC-4D67-B385-892F2FD20EA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Email", "Email\Email.csproj", "{0BB64436-04DC-4D67-B385-892F2FD20EA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.AviFormat", "Cropper.AviFormat\Cropper.AviFormat.csproj", "{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AviFormat", "AviFormat\AviFormat.csproj", "{11FDC48F-FD62-4BEC-B21D-C3722996DAA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToOneNote", "Cropper.SendToOneNote\Cropper.SendToOneNote.csproj", "{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneNote", "OneNote\OneNote.csproj", "{D3C342D3-A10A-4AAF-A16E-8B66ED93E91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToFlickr", "Cropper.SendToFlickr\Cropper.SendToFlickr.csproj", "{75E4EF73-D1B0-486E-982B-B3B492E5642B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flickr", "Flickr\Flickr.csproj", "{75E4EF73-D1B0-486E-982B-B3B492E5642B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPic", "TinyPic\TinyPic.csproj", "{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.SendToS3", "Cropper.SendToS3\Cropper.SendToS3.csproj", "{341A7D6E-783B-48D3-9FA3-39A0581A40ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S3", "S3\S3.csproj", "{341A7D6E-783B-48D3-9FA3-39A0581A40ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropper.TFSWorkItem", "Cropper.TFSWorkItem\Cropper.TFSWorkItem.csproj", "{3D524BF5-8CF8-4586-A6A3-49F767A44794}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSWorkItem", "TFSWorkItem\TFSWorkItem.csproj", "{3D524BF5-8CF8-4586-A6A3-49F767A44794}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imgur", "Imgur\Imgur.csproj", "{0C9F6C4A-0D51-4A74-91F0-363B55FA47C5}"
 EndProject
@@ -34,33 +34,33 @@ Global
                 SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
                 SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs02
                 SccLocalPath0 = .
-                SccProjectUniqueName1 = Cropper.AnimatedGif\\Plugin\\Cropper.AnimatedGif.csproj
-                SccProjectName1 = Cropper.AnimatedGif/Plugin
-                SccLocalPath1 = Cropper.AnimatedGif\\Plugin
-                SccProjectUniqueName2 = Cropper.AviFormat\\Cropper.AviFormat.csproj
-                SccProjectName2 = Cropper.AviFormat
-                SccLocalPath2 = Cropper.AviFormat
-                SccProjectUniqueName3 = Cropper.CountdownPng\\Cropper.CountdownPng.csproj
-                SccProjectName3 = Cropper.CountdownPng
-                SccLocalPath3 = Cropper.CountdownPng
-                SccProjectUniqueName4 = Cropper.SendToEmail\\Cropper.SendToEmail.csproj
-                SccProjectName4 = Cropper.SendToEmail
-                SccLocalPath4 = Cropper.SendToEmail
-                SccProjectUniqueName5 = Cropper.SendToOneNote\\Cropper.SendToOneNote.csproj
-                SccProjectName5 = Cropper.SendToOneNote
-                SccLocalPath5 = Cropper.SendToOneNote
-                SccProjectUniqueName6 = Cropper.SendToFlickr\\Cropper.SendToFlickr.csproj
-                SccProjectName6 = Cropper.SendToFlickr
-                SccLocalPath6 = Cropper.SendToFlickr
+                SccProjectUniqueName1 = AnimatedGif\\Plugin\\AnimatedGif.csproj
+                SccProjectName1 = AnimatedGif/Plugin
+                SccLocalPath1 = AnimatedGif\\Plugin
+                SccProjectUniqueName2 = AviFormat\\AviFormat.csproj
+                SccProjectName2 = AviFormat
+                SccLocalPath2 = AviFormat
+                SccProjectUniqueName3 = CountdownPng\\CountdownPng.csproj
+                SccProjectName3 = CountdownPng
+                SccLocalPath3 = CountdownPng
+                SccProjectUniqueName4 = Email\\Email.csproj
+                SccProjectName4 = Email
+                SccLocalPath4 = Email
+                SccProjectUniqueName5 = OneNote\\OneNote.csproj
+                SccProjectName5 = OneNote
+                SccLocalPath5 = OneNote
+                SccProjectUniqueName6 = Flickr\\Flickr.csproj
+                SccProjectName6 = Flickr
+                SccLocalPath6 = Flickr
                 SccProjectUniqueName7 = TinyPic\\TinyPic.csproj
                 SccProjectName7 = TinyPic
                 SccLocalPath7 = TinyPic
-                SccProjectUniqueName8 = Cropper.SendToS3\\Cropper.SendToS3.csproj
-                SccProjectName8 = Cropper.SendToS3
-                SccLocalPath8 = Cropper.SendToS3
-                SccProjectUniqueName9 = Cropper.TFSWorkItem\\Cropper.TFSWorkItem.csproj
-                SccProjectName9 = Cropper.TFSWorkItem
-                SccLocalPath9 = Cropper.TFSWorkItem
+                SccProjectUniqueName8 = S3\\S3.csproj
+                SccProjectName8 = S3
+                SccLocalPath8 = S3
+                SccProjectUniqueName9 = TFSWorkItem\\TFSWorkItem.csproj
+                SccProjectName9 = TFSWorkItem
+                SccLocalPath9 = TFSWorkItem
                 SccProjectUniqueName10 = Imgur\\Imgur.csproj
                 SccProjectName10 = Imgur
                 SccLocalPath10 = Imgur
