@@ -80,7 +80,7 @@
       <SpecificVersion>True</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PrivateAssemblies\Microsoft.TeamFoundation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Client, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" >
       <SpecificVersion>True</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PrivateAssemblies\Microsoft.TeamFoundation.Client.dll</HintPath>
     </Reference>
@@ -105,13 +105,12 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="CaptureOptionsForm.cs">
+    <Compile Include="AttachDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CaptureOptionsForm.Designer.cs">
-      <DependentUpon>CaptureOptionsForm.cs</DependentUpon>
+    <Compile Include="AttachDialog.Designer.cs">
+      <DependentUpon>AttachDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Constants.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -129,7 +128,7 @@
     <Compile Include="SelectWorkItemForm.Designer.cs">
       <DependentUpon>SelectWorkItemForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
+    <Compile Include="TfsSettings.cs" />
     <Compile Include="TFS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorkItemEditorForm.cs">
@@ -138,14 +137,17 @@
     <Compile Include="WorkItemEditorForm.Designer.cs">
       <DependentUpon>WorkItemEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Utils\Tracing.cs">
+      <Link>Tracing.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CaptureOptionsForm.resx">
+    <EmbeddedResource Include="AttachDialog.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CaptureOptionsForm.cs</DependentUpon>
+      <DependentUpon>AttachDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OptionsForm.resx">
       <SubType>Designer</SubType>

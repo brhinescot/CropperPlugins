@@ -10,27 +10,20 @@ using Cropper.SendToS3.S3;
 
 namespace Cropper.SendToS3
 {
-    public class Plugin : IPersistableImageFormat, IConfigurablePlugin
+    public class Plugin : DesignablePlugin, IConfigurablePlugin
     {
-        Options _opts;
+        OptionsForm _optionsForm;
         S3Settings _settings;
-        IPersistableOutput _output;
 
-        #region IPersistableImageFormat Members
-                
-        public string Description
+        public override string Description
         {
-            get { return "Send screenshot to Amazon S3 account."; }
+            get { return "Send to Amazon S3"; }
         }
 
-        public string Extension
+        public override string Extension
         {
+            // TODO: make the output format configurable
             get { return "Png"; }
-        }
-
-        public IPersistableImageFormat Format
-        {
-            get { return this; }
         }
 
         public override string ToString()
@@ -38,42 +31,10 @@ namespace Cropper.SendToS3
             return "Send to Amazon S3 [paltman.com]";
         }
 
-        public void Connect(IPersistableOutput persistableOutput)
-        {
-            if (persistableOutput == null)
-            {
-                throw new ArgumentNullException("persistableOutput");
-            }
-            _output = persistableOutput;
-            _output.ImageCaptured += new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
-            _output.ImageCapturing += new ImageCapturingEventHandler(this.persistableOutput_ImageCapturing);
-        }
 
-        public void Disconnect()
+        protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            _output.ImageCaptured -= new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
-            _output.ImageCapturing -= new ImageCapturingEventHandler(this.persistableOutput_ImageCapturing);
-        }
-
-        public event ImageFormatClickEventHandler ImageFormatClick;
-
-        private void OnImageFormatClick(object sender, ImageFormatEventArgs e)
-        {
-            if (ImageFormatClick != null)
-            {
-                ImageFormatClick(sender, e);
-            }
-        }
-
-        void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(_settings.AccessKeyId) || string.IsNullOrEmpty(_settings.SecretAccessKey) || string.IsNullOrEmpty(_settings.BucketName))
-            {
-                string setupInformation = "Please configure Amazon S3 settings on the Cropper Options / Plug-ins tab.\n\n" +
-                    "For information on these settings, see http://aws.amazon.com/s3\n";
-                MessageBox.Show(setupInformation, "Missing S3 Settings");
-                return;
-            }
+            if (!VerifyBasicSettings()) return;
 
             try
             {
@@ -105,63 +66,45 @@ namespace Cropper.SendToS3
         }
 
 
-        void persistableOutput_ImageCapturing(object sender, ImageCapturingEventArgs e)
+        private bool VerifyBasicSettings()
         {
-        }
-
-        public MenuItem Menu
-        {
-            get
+            if (!PluginSettings.Completed)
             {
-                MenuItem item = new MenuItem();
-                item.RadioCheck = true;
-                item.Text = "Send to Amazon S3";
-                item.Click += new EventHandler(this.MenuItemClick);
-                return item;
+                var dlg = new OptionsForm(PluginSettings);
+                dlg.MakeButtonsVisible();
+                dlg.ShowDialog();
             }
+
+            if (!PluginSettings.Completed)
+            {
+                MessageBox.Show("You must configure S3 settings before " +
+                                "saving an image to the service.\n\n" +
+                                "For information on these settings, see " +
+                                "http://aws.amazon.com/s3\n",
+                                "Missing S3 Settings");
+                return false;
+            }
+            return true;
         }
 
-        private void MenuItemClick(object sender, EventArgs e)
-        {
-            ImageFormatEventArgs args = new ImageFormatEventArgs();
-            args.ClickedMenuItem = (MenuItem)sender;
-            args.ImageOutputFormat = this;
-            this.OnImageFormatClick(sender, args);
-        }
 
 
-        #endregion
+
 
         #region IConfigurablePlugin Members
 
         public BaseConfigurationForm ConfigurationForm
         {
-            get 
+            get
             {
-                if (_opts == null)
+                if (_optionsForm == null)
                 {
-                    _settings = S3Settings.Load();
-                    _opts = new Options();
-                    _opts.OptionsSaved += new EventHandler(opts_OptionsSaved);
-                    _opts.AccessKeyId = _settings.AccessKeyId;
-                    _opts.SecretAccessKey = _settings.SecretAccessKey;
-                    _opts.BucketName = _settings.BucketName;
-                    _opts.BaseKey = _settings.BaseKey;
-                    _opts.LoadList();
+                    _optionsForm = new OptionsForm(PluginSettings);
+                    _optionsForm.OptionsSaved += OptionsSaved;
                 }
 
-                return _opts;
+                return _optionsForm;
             }
-        }
-
-        void opts_OptionsSaved(object sender, EventArgs e)
-        {
-            _settings.AccessKeyId = ((Options)sender).AccessKeyId;
-            _settings.SecretAccessKey = ((Options)sender).SecretAccessKey;
-            _settings.BucketName = ((Options)sender).BucketName;
-            _settings.BaseKey = ((Options)sender).BaseKey;
-
-            _settings.Save();
         }
 
         public bool HostInOptions
@@ -171,21 +114,40 @@ namespace Cropper.SendToS3
 
         public object Settings
         {
+            /// <summary>
+            ///   The getter.  This gets invoked by Cropper Core when
+            ///   Cropper exits, so that Cropper can store the settings
+            ///   into the cropper.config file.
+            /// </summary>
+            get { return PluginSettings; }
+
+            /// <summary>
+            ///   The setter.  This gets called by the Cropper Core when it
+            ///   reads in cropper.config file; Cropper will provide *just
+            ///   the settings for thie plugin* with this setter.
+            /// </summary>
+            set { PluginSettings = value as S3Settings; }
+        }
+        #endregion
+
+
+        private void OptionsSaved(object sender, EventArgs e)
+        {
+            OptionsForm form = sender as OptionsForm;
+            if (form == null) return;
+            form.ApplySettings();
+        }
+
+        private S3Settings PluginSettings
+        {
             get
             {
                 if (_settings == null)
-                {
-                    _settings = S3Settings.Load();
-                }
+                    _settings = new S3Settings();
 
                 return _settings;
             }
-            set
-            {
-                _settings = value as S3Settings;
-            }
+            set { _settings = value; }
         }
-
-        #endregion
     }
 }

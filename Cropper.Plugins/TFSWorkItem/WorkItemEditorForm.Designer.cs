@@ -37,9 +37,9 @@ namespace Cropper.TFSWorkItem
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // toolStrip1
-            // 
+            //
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbSave,
             this.tsbRefresh});
@@ -48,9 +48,9 @@ namespace Cropper.TFSWorkItem
             this.toolStrip1.Size = new System.Drawing.Size(509, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
-            // 
+            //
             // statusStrip1
-            // 
+            //
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.tsslBugId});
@@ -59,20 +59,20 @@ namespace Cropper.TFSWorkItem
             this.statusStrip1.Size = new System.Drawing.Size(509, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
-            // 
+            //
             // toolStripStatusLabel1
-            // 
+            //
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(42, 17);
             this.toolStripStatusLabel1.Text = "Bug Id:";
-            // 
+            //
             // tsslBugId
-            // 
+            //
             this.tsslBugId.Name = "tsslBugId";
             this.tsslBugId.Size = new System.Drawing.Size(0, 17);
-            // 
+            //
             // tsbSave
-            // 
+            //
             this.tsbSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbSave.Image = global::Cropper.TFSWorkItem.Properties.Resources.disk;
             this.tsbSave.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -80,9 +80,9 @@ namespace Cropper.TFSWorkItem
             this.tsbSave.Size = new System.Drawing.Size(23, 22);
             this.tsbSave.Text = "Save";
             this.tsbSave.Click += new System.EventHandler(this.tsbSave_Click);
-            // 
+            //
             // tsbRefresh
-            // 
+            //
             this.tsbRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbRefresh.Image = global::Cropper.TFSWorkItem.Properties.Resources.arrow_refresh;
             this.tsbRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -90,9 +90,9 @@ namespace Cropper.TFSWorkItem
             this.tsbRefresh.Size = new System.Drawing.Size(23, 22);
             this.tsbRefresh.Text = "Refresh";
             this.tsbRefresh.Click += new System.EventHandler(this.tsbRefresh_Click);
-            // 
+            //
             // WorkItemEditorForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(509, 431);
