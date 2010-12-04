@@ -31,9 +31,9 @@ namespace Cropper.TFSWorkItem
 
         public string WorkItemId
         {
-            get 
-            { 
-                return (string)workItemResultGrid.SelectedRows[0].Cells[0].Value; 
+            get
+            {
+                return (string)workItemResultGrid.SelectedRows[0].Cells[0].Value;
             }
         }
 

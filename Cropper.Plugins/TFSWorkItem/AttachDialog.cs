@@ -12,9 +12,16 @@ using System.IO;
 
 namespace Cropper.TFSWorkItem
 {
-    public partial class CaptureOptionsForm : Form
+    public partial class AttachDialog : Form
     {
-        public CaptureOptionsForm(Settings settings, TeamFoundationServer tfs)
+        private TfsSettings settings;
+        private WorkItemStore wis;
+        private WorkItemTypeCollection workItemTypeCollection;
+
+        private TeamFoundationServer tfs;
+
+
+        public AttachDialog(TfsSettings settings, TeamFoundationServer tfs)
         {
             InitializeComponent();
             this.settings = settings;
@@ -45,12 +52,6 @@ namespace Cropper.TFSWorkItem
             txtImageEditor.Text = settings.ImageEditor;
             cbOpenImageInEditor.Checked = settings.OpenImageInEditor;
         }
-
-        private Settings settings;
-        private WorkItemStore wis;
-        private WorkItemTypeCollection workItemTypeCollection;
-
-        private TeamFoundationServer tfs;
 
         public TeamFoundationServer TFS
         {
@@ -101,12 +102,12 @@ namespace Cropper.TFSWorkItem
 
         public WorkItem SelectedWorkItem
         {
-            get 
-            { 
-                return selectedWorkItem; 
+            get
+            {
+                return selectedWorkItem;
             }
-            set 
-            { 
+            set
+            {
                 selectedWorkItem = value;
             }
         }
@@ -160,13 +161,13 @@ namespace Cropper.TFSWorkItem
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return workItem;
         }
@@ -187,16 +188,16 @@ namespace Cropper.TFSWorkItem
                 }
                 else
                 {
-                    MessageBox.Show("Please select a valid work item.", Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please select a valid work item.", Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else if (String.IsNullOrEmpty(imageName))
             {
-                MessageBox.Show("Please enter image name.", Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter image name.", Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (cbOpenImageInEditor.Checked && String.IsNullOrEmpty(txtImageEditor.Text))
             {
-                MessageBox.Show("Please enter image editor.", Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter image editor.", Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -222,7 +223,7 @@ namespace Cropper.TFSWorkItem
             SelectWorkItemForm frmSelectWorkItem = new SelectWorkItemForm(wis, teamProject);
             if (frmSelectWorkItem.ShowDialog() == DialogResult.OK)
             {
-                txtWorkItemId.Text = frmSelectWorkItem.WorkItemId;    
+                txtWorkItemId.Text = frmSelectWorkItem.WorkItemId;
             }
         }
 

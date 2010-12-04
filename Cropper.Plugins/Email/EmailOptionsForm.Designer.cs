@@ -12,7 +12,7 @@ You may use the Software for any commercial or noncommercial purpose,
 including distributing derivative works.
 
 In return, we simply require that you agree:
-1. Not to remove any copyright or other notices from the Software. 
+1. Not to remove any copyright or other notices from the Software.
 2. That if you distribute the Software in source code form you do so only
    under this license (i.e. you must include a complete copy of this license
    with your distribution), and if you distribute the Software solely in
@@ -55,9 +55,9 @@ In return, we simply require that you agree:
 
 #endregion
 
-namespace CropperPlugins
+namespace Cropper.Email
 {
-    partial class Options
+    partial class EmailOptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -98,13 +98,13 @@ namespace CropperPlugins
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.qualitySlider)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // themedTabControl1
-            // 
+            //
             this.themedTabControl1.Size = new System.Drawing.Size(324, 391);
-            // 
+            //
             // tabPage1
-            // 
+            //
             this.tabPage1.Controls.Add(this.txtMessage);
             this.tabPage1.Controls.Add(this.lblMessage);
             this.tabPage1.Controls.Add(this.txtSubjectLine);
@@ -115,9 +115,23 @@ namespace CropperPlugins
             this.tabPage1.Controls.Add(this.radioPng);
             this.tabPage1.Size = new System.Drawing.Size(316, 365);
             this.tabPage1.Text = "Format";
-            // 
+            //
+            // cmbImageFormat
+            //
+            this.cmbDefaultImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDefaultImageFormat.FormattingEnabled = false;
+            this.cmbDefaultImageFormat.Items.AddRange(new object[] {
+            "png",
+            "jpg",
+            "bmp"});
+            this.cmbDefaultImageFormat.Location = new System.Drawing.Point(94, 112);
+            this.cmbDefaultImageFormat.Name = "cmbDefaultOutputExtension";
+            this.cmbDefaultImageFormat.Size = new System.Drawing.Size(72, 21);
+            this.cmbDefaultImageFormat.TabIndex = 3;
+
+            //
             // radioBitmap
-            // 
+            //
             this.radioBitmap.AutoSize = true;
             this.radioBitmap.Checked = true;
             this.radioBitmap.Location = new System.Drawing.Point(21, 217);
@@ -125,11 +139,11 @@ namespace CropperPlugins
             this.radioBitmap.Size = new System.Drawing.Size(57, 17);
             this.radioBitmap.TabIndex = 0;
             this.radioBitmap.TabStop = true;
-            this.radioBitmap.Text = "&Bitmap";
+            this.radioBitmap.Text = "&Bmp";
             this.radioBitmap.UseVisualStyleBackColor = true;
-            // 
+            //
             // radioJpg
-            // 
+            //
             this.radioJpg.AutoSize = true;
             this.radioJpg.Location = new System.Drawing.Point(21, 263);
             this.radioJpg.Name = "radioJpg";
@@ -137,9 +151,10 @@ namespace CropperPlugins
             this.radioJpg.TabIndex = 4;
             this.radioJpg.Text = "&Jpeg";
             this.radioJpg.UseVisualStyleBackColor = true;
-            // 
+            this.radioJpg.CheckedChanged += new System.EventHandler(this.JpgButtonCheckedChanged);
+            //
             // radioPng
-            // 
+            //
             this.radioPng.AutoSize = true;
             this.radioPng.Location = new System.Drawing.Point(21, 240);
             this.radioPng.Name = "radioPng";
@@ -147,9 +162,9 @@ namespace CropperPlugins
             this.radioPng.TabIndex = 2;
             this.radioPng.Text = "&Png";
             this.radioPng.UseVisualStyleBackColor = true;
-            // 
+            //
             // qualitySlider
-            // 
+            //
             this.qualitySlider.LargeChange = 10;
             this.qualitySlider.Location = new System.Drawing.Point(35, 286);
             this.qualitySlider.Maximum = 100;
@@ -160,9 +175,9 @@ namespace CropperPlugins
             this.qualitySlider.TickFrequency = 10;
             this.qualitySlider.Value = 80;
             this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
-            // 
+            //
             // tabPage2
-            // 
+            //
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -170,18 +185,18 @@ namespace CropperPlugins
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
+            //
             // lblSubjectLine
-            // 
+            //
             this.lblSubjectLine.AutoSize = true;
             this.lblSubjectLine.Location = new System.Drawing.Point(21, 7);
             this.lblSubjectLine.Name = "lblSubjectLine";
             this.lblSubjectLine.Size = new System.Drawing.Size(66, 13);
             this.lblSubjectLine.TabIndex = 8;
             this.lblSubjectLine.Text = "Subject Line";
-            // 
+            //
             // txtSubjectLine
-            // 
+            //
             this.txtSubjectLine.AutoCompleteCustomSource.AddRange(new string[] {
             "$NAME$",
             "$SIZE$",
@@ -192,10 +207,10 @@ namespace CropperPlugins
             this.txtSubjectLine.Name = "txtSubjectLine";
             this.txtSubjectLine.Size = new System.Drawing.Size(259, 20);
             this.txtSubjectLine.TabIndex = 9;
-            this.txtSubjectLine.Text = "Image Attached: $NAME$";
-            // 
+            this.txtSubjectLine.Text = "Screen shot: $NAME$";
+            //
             // txtMessage
-            // 
+            //
             this.txtMessage.AcceptsReturn = true;
             this.txtMessage.AutoCompleteCustomSource.AddRange(new string[] {
             "$NAME$",
@@ -209,21 +224,21 @@ namespace CropperPlugins
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtMessage.Size = new System.Drawing.Size(259, 148);
             this.txtMessage.TabIndex = 11;
-            this.txtMessage.Text = "Screenshot attached.\r\nName: $NAME$\r\nSize: $SIZE$\r\nOS Version: $OPERATINGSYSTEM$\r\n" +
-                "Computer: $COMPUTERNAME$\r\n\r\nTaken with Cropper.\r\nhttp://blogs.geekdojo.net/brian" +
-                "/ar\r\nticles/Cropper.aspx";
-            // 
+            this.txtMessage.Text = "Here's a screenshot for you.\r\nName: $NAME$\r\nSize: $SIZE$\r\n" +
+                "Taken with Cropper - http://cropper.codeplex.com\r\n";
+
+            //
             // lblMessage
-            // 
+            //
             this.lblMessage.AutoSize = true;
             this.lblMessage.Location = new System.Drawing.Point(21, 47);
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(50, 13);
             this.lblMessage.TabIndex = 10;
             this.lblMessage.Text = "Message";
-            // 
+            //
             // Options
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(324, 391);

@@ -32,7 +32,7 @@ namespace Cropper.TFSWorkItem
             if (frmWorkItemControl.Item.IsDirty)
             {
                 DialogResult dialogResult = MessageBox.Show("Would you like to save the work item?",
-                    Constants.PluginDescription, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (dialogResult == DialogResult.Yes)
                 {
                     Cursor = Cursors.WaitCursor;
@@ -42,7 +42,7 @@ namespace Cropper.TFSWorkItem
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK,
+                        MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
                         e.Cancel = true;
                     }
@@ -70,7 +70,7 @@ namespace Cropper.TFSWorkItem
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK,
+                    MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
                 finally
@@ -92,7 +92,7 @@ namespace Cropper.TFSWorkItem
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK,
+                    MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
                 finally

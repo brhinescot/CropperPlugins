@@ -11,18 +11,25 @@ using Microsoft.TeamFoundation.Client;
 using System.Configuration;
 using Microsoft.TeamFoundation.WorkItemTracking.Controls;
 
+
 namespace Cropper.TFSWorkItem
 {
-    public partial class OptionsForm : Form
+    public partial class OptionsForm : Fusion8.Cropper.Extensibility.BaseConfigurationForm
     {
-        public OptionsForm(Settings settings)
+        private TfsSettings settings;
+        private WorkItemTypeCollection workItemTypeCollection;
+        private TeamFoundationServer _tfs;
+        private string _teamProject;
+
+
+        public OptionsForm(TfsSettings settings)
         {
             InitializeComponent();
+
             this.settings = settings;
             if (!String.IsNullOrEmpty(settings.TeamServer))
             {
-                TFS = new TeamFoundationServer(
-                    settings.TeamServer);
+                TFS = new TeamFoundationServer(settings.TeamServer);
                 TFS.EnsureAuthenticated();
                 if (!String.IsNullOrEmpty(settings.TeamProject))
                 {
@@ -34,64 +41,87 @@ namespace Cropper.TFSWorkItem
                     }
                 }
             }
-            txtDefaultImageName.Text = settings.DefaultImageName;
-            cmbDefaultOutputExtension.SelectedItem = settings.DefaultOutputExtension;
-            txtDefaultAttachmentComment.Text = settings.DefaultAttachmentComment;
-            cbDoNotShowAgain.Checked = settings.DoNotShowOptionsDialogAgain;
-            txtImageEditor.Text = settings.ImageEditor;
-            cbOpenImageInEditor.Checked = settings.OpenImageInEditor;
+            txtDefaultImageName.Text           = settings.DefaultImageName;
+            cmbDefaultImageFormat.SelectedItem = settings.DefaultImageFormat;
+            txtDefaultAttachmentComment.Text   = settings.DefaultAttachmentComment;
+            txtImageEditor.Text                = settings.ImageEditor;
+            cbOpenImageInEditor.Checked        = settings.OpenImageInEditor;
+            SelectedImageFormatChanged(null,null);
+            HandleQualitySliderValueChanged(null,null);
         }
 
-        private Settings settings;
-        private WorkItemTypeCollection workItemTypeCollection;
 
-        private TeamFoundationServer tfs;
+        /// <summary>
+        ///   Show the OK and Cancel buttons.
+        /// </summary>
+        ///
+        /// <remarks>
+        ///   This form can be shown in two ways: as a standalone
+        ///   dialog, and hosted within the tabbed "Options" UI provided
+        ///   by the Cropper Core.  By default, the OK and Cancel
+        ///   buttons are not visible.  When used as a standalone dialog
+        ///   the caller should invoke this method before calling
+        ///   ShowDialog().
+        /// </remarks>
+        public void MakeButtonsVisible()
+        {
+            btnOK.Visible = true;
+            btnCancel.Visible = true;
+        }
 
         public TeamFoundationServer TFS
         {
-            get 
-            { 
-                return tfs; 
+            get
+            {
+                return _tfs;
             }
-            set 
-            { 
-                tfs = value;
-                if (tfs != null)
+            set
+            {
+                _tfs = value;
+                if (_tfs != null)
                 {
-                    lblTeamServer.Text = tfs.Uri.AbsoluteUri;
+                    lblTeamServer.Text = _tfs.Uri.AbsoluteUri;
                 }
             }
         }
 
-        private string teamProject;
 
         public string TeamProject
         {
-            get { return teamProject; }
-            set 
-            { 
-                teamProject = value;
-                if (!String.IsNullOrEmpty(teamProject))
+            get { return _teamProject; }
+            set
+            {
+                _teamProject = value;
+                if (String.IsNullOrEmpty(_teamProject))
                 {
-                    lblTeamProject.Text = teamProject;
-                    if (tfs != null)
+                    lblTeamProject.Text = "(not set)";
+                }
+                else
+                {
+                    lblTeamProject.Text = _teamProject;
+                    if (_tfs != null)
                     {
                         cmbWorkItemType.Enabled = true;
                         cmbWorkItemType.Items.Clear();
-                        WorkItemStore wis = tfs.GetService(typeof(WorkItemStore)) as WorkItemStore;
-                        workItemTypeCollection = wis.Projects[teamProject].WorkItemTypes;
+                        WorkItemStore wis = _tfs.GetService(typeof(WorkItemStore)) as WorkItemStore;
+                        workItemTypeCollection = wis.Projects[_teamProject].WorkItemTypes;
                         foreach (WorkItemType workItemType in workItemTypeCollection)
                         {
                             cmbWorkItemType.Items.Add(workItemType.Name);
                         }
                     }
                 }
-                else
-                {
-                    lblTeamProject.Text = "{Press button to select project}";
-                }
             }
         }
+
+        public int JpgImageQuality
+        {
+            get
+            {
+                return this.qualitySlider.Value;
+            }
+        }
+
 
         private void btnSelectTeamProject_Click(object sender, EventArgs e)
         {
@@ -107,35 +137,59 @@ namespace Cropper.TFSWorkItem
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            settings.TeamServer = lblTeamServer.Text; ;
-            settings.TeamProject = lblTeamProject.Text;
-            settings.WorkItemType = cmbWorkItemType.Text;
-            settings.DoNotShowOptionsDialogAgain = cbDoNotShowAgain.Checked;
-            settings.DefaultImageName = txtDefaultImageName.Text;
-            settings.DefaultOutputExtension = cmbDefaultOutputExtension.Text;
-            settings.DefaultAttachmentComment = txtDefaultAttachmentComment.Text;
-            settings.ImageEditor = txtImageEditor.Text;
-            settings.OpenImageInEditor = cbOpenImageInEditor.Checked;
+            this.ApplySettings();
+        }
+
+        public void ApplySettings()
+        {
+            //System.Diagnostics.Debugger.Break();
+            if (this.TFS != null)
+            {
+                settings.TeamServer           = this.TFS.Uri.AbsoluteUri;
+                settings.TeamProject          = this.lblTeamProject.Text;
+            }
+            settings.WorkItemType             = this.cmbWorkItemType.Text;
+            settings.DefaultImageName         = this.txtDefaultImageName.Text;
+            settings.DefaultImageFormat       = this.cmbDefaultImageFormat.Text;
+            settings.DefaultAttachmentComment = this.txtDefaultAttachmentComment.Text;
+            settings.ImageEditor              = this.txtImageEditor.Text;
+            settings.OpenImageInEditor        = this.cbOpenImageInEditor.Checked;
+            settings.JpgImageQuality          = this.JpgImageQuality;
+
         }
 
         private void cmbWorkItemType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbWorkItemType.SelectedItem != null)
-            {
-                btnOK.Enabled = true;
-            }
-            else
-            {
-                btnOK.Enabled = false;
-            }
+            // if (cmbWorkItemType.SelectedItem != null)
+            // {
+            //     btnOK.Enabled = true;
+            // }
+            // else
+            // {
+            //     btnOK.Enabled = false;
+            // }
+        }
+
+        private void SelectedImageFormatChanged(object sender, EventArgs e)
+        {
+            qualitySlider.Enabled = (this.cmbDefaultImageFormat.Text == "jpg");
         }
 
         private void btnBrowseImageEditor_Click(object sender, EventArgs e)
         {
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            var dlg = new OpenFileDialog();
+            dlg.Filter = "EXE Files|*.exe";
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
-                txtImageEditor.Text = openFileDialog.FileName;
+                if (System.IO.File.Exists(dlg.FileName))
+                    txtImageEditor.Text = dlg.FileName;
             }
         }
-    }
+
+        private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)
+        {
+            this.tooltip.SetToolTip(qualitySlider,
+                                    "quality=" + qualitySlider.Value.ToString());
+        }
+   }
 }

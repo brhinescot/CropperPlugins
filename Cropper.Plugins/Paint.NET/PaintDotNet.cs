@@ -27,33 +27,6 @@ namespace Cropper.SendToPaintDotNet
     public class PaintDotNet : DesignablePluginThatUsesFetchOutputStream
     {
 
-#if NOTNOTNOT
-        public void Connect(IPersistableOutput persistableOutput)
-        {
-            if (persistableOutput == null)
-                throw new ArgumentNullException("persistableOutput");
-
-            this._output = persistableOutput;
-            this._output.ImageCaptured += this.ImageCaptured;
-
-        }
-
-        public void Disconnect()
-        {
-            this._output.ImageCaptured -= this.ImageCaptured;
-        }
-
-
-        private void menuItem_Click(object sender, EventArgs e)
-        {
-            ImageFormatEventArgs args1 = new ImageFormatEventArgs();
-            args1.ClickedMenuItem = (MenuItem) sender;
-            args1.ImageOutputFormat = this;
-            this.ImageFormatClick.Invoke(sender, args1);
-        }
-
-#endif
-
         protected override void OnImageFormatClick(object sender, ImageFormatEventArgs e)
         {
             Tracing.Trace("Imgur::MenuClick");
@@ -199,7 +172,7 @@ namespace Cropper.SendToPaintDotNet
         {
             if (String.IsNullOrEmpty(filename))
             {
-                Tracing.Trace("FileExists: file is empty.");
+                Tracing.Trace("FileExists: filename is empty.");
                 return false;
             }
             if (File.Exists(filename))

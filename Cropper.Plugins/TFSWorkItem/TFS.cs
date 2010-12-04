@@ -10,107 +10,203 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Client;
 using System.Diagnostics;
 
+using CropperPlugins.Utils;       // for Tracing
+
+
+
 namespace Cropper.TFSWorkItem
 {
-    public class TFS : IPersistableImageFormat
+    public class TFS : DesignablePlugin, IConfigurablePlugin
     {
-        private IPersistableOutput _output;
-        private Settings settings = new Settings();
-        private TeamFoundationServer tfs;
-        private WorkItemStore wis;
+        public static  string PluginDescription = "TFS Work Item";
 
-        private WorkItemType selectedWorkItemType;
+        private TfsSettings _settings = new TfsSettings();
+        private TeamFoundationServer _tfs;
+        private WorkItemStore _wis;
+        private string _fileName;
+        private OptionsForm _configForm;
 
-        public WorkItemType SelectedWorkItemType
+
+        public override string ToString()
         {
-            get { return selectedWorkItemType; }
-            set { selectedWorkItemType = value; }
+            return "Send to TFS Work Item";
         }
 
-        public void Connect(IPersistableOutput persistableOutput)
+
+        public override void Connect(IPersistableOutput persistableOutput)
         {
-            if (persistableOutput == null)
-            {
-                throw new ArgumentNullException("persistableOutput");
-            }
-            _output = persistableOutput;
-            _output.ImageCaptured += new ImageCapturedEventHandler(persistableOutput_ImageCaptured);
-            LoadSettings();
+            Tracing.Trace("TFSWI::Connect");
+            base.Connect(persistableOutput);
         }
 
-        private ImageFormat GetImageFormat(string extension)
+
+        protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (String.Compare(extension, "jpg", true) == 0)
+            Tracing.Trace("+--------------------------------");
+            Tracing.Trace("TFSWI::ImageCaptured ({0})", _fileName);
+
+            this._fileName = e.ImageNames.FullSize;
+            output.FetchOutputStream(new StreamHandler(this.SaveImage),
+                                     this._fileName, e.FullSizeImage);
+        }
+
+
+
+        /// <summary>
+        ///   Saves the captured image to an on-disk file, then
+        ///   attaches it to a TFS workitem.
+        /// </summary>
+        private void SaveImage(Stream stream, System.Drawing.Image image)
+        {
+            bool success = false;
+            try
             {
-                return ImageFormat.Jpeg;
+                Tracing.Trace("+--------------------------------");
+                Tracing.Trace("TFSWI::SaveImage ({0})", _fileName);
+
+                SaveImageInDesiredFormat(stream, image);
+
+                success = true;
             }
-            else if (String.Compare(extension, "bmp", true) == 0)
+            catch (Exception exception1)
             {
-                return ImageFormat.Bmp;
+                Tracing.Trace("Exception while saving the image: {0}", exception1.Message);
+                string msg = "There's been an exception while saving the image: " +
+                    exception1.Message + "\n" + exception1.StackTrace;
+                MessageBox.Show(msg);
+                return;
+            }
+            finally
+            {
+                image.Dispose();
+                stream.Close();
+            }
+
+            if (success)
+                AttachImageToWorkItem();
+        }
+
+
+
+
+        private ImageFormat DesiredImageFormat
+        {
+            get
+            {
+                if (String.Compare(Extension, "jpg", true) == 0)
+                {
+                    return ImageFormat.Jpeg;
+                }
+                else if (String.Compare(Extension, "bmp", true) == 0)
+                {
+                    return ImageFormat.Bmp;
+                }
+                else
+                {
+                    return ImageFormat.Png;
+                }
+            }
+        }
+
+
+
+        private void SaveImageInDesiredFormat(Stream stream, System.Drawing.Image image)
+        {
+            Tracing.Trace("TFS::SaveImageInDesiredFormat");
+            if (String.Compare(Extension, "jpg", true) == 0)
+            {
+                SaveImage_Jpg(stream, image);
             }
             else
             {
-                return ImageFormat.Png;
+                image.Save(stream, DesiredImageFormat);
             }
         }
 
-        private void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
+
+        private void SaveImage_Jpg(Stream stream, System.Drawing.Image image)
         {
-            CaptureOptionsForm frmCaptureOptions = new CaptureOptionsForm(settings, tfs);
-            if (frmCaptureOptions.ShowDialog() == DialogResult.OK)
+            var myEncoder = System.Drawing.Imaging.Encoder.Quality;
+            var cInfo = GetEncoderInfo("image/jpeg");
+            using (var p1 = new EncoderParameters(1))
+            {
+                using (var p2 = new EncoderParameter(myEncoder, PluginSettings.JpgImageQuality))
+                {
+                    p1.Param[0] = p2;
+                    image.Save(stream, cInfo, p1);
+                }
+            }
+        }
+
+
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+            for (int j = 0; j < encoders.Length; j++)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+
+
+
+        private void AttachImageToWorkItem()
+        {
+            if (!VerifyBasicSettings()) return;
+
+            var dlg = new AttachDialog(_settings, _tfs);
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    string fileName = Path.Combine(Path.GetTempPath(), frmCaptureOptions.ImageName + "." + Extension);
-                    string attachmentComment = frmCaptureOptions.AttachmentComment;
-                    bool openImageInEditor = frmCaptureOptions.OpenImageInEditor;
-                    string imageEditor = frmCaptureOptions.ImageEditor;
-                    WorkItem workItem = frmCaptureOptions.SelectedWorkItem;
-                    e.FullSizeImage.Save(fileName, GetImageFormat(Extension));
+                    string fileName = Path.Combine(Path.GetTempPath(), dlg.ImageName + "." + Extension);
+                    string attachmentComment = dlg.AttachmentComment;
+                    bool openImageInEditor = dlg.OpenImageInEditor;
+                    string imageEditor = dlg.ImageEditor;
+                    WorkItem workItem = dlg.SelectedWorkItem;
                     if (openImageInEditor)
                     {
-                        ProcessStartInfo processStartInfo = new ProcessStartInfo(settings.ImageEditor, "\"" + fileName + "\"");
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo(_settings.ImageEditor, "\"" + fileName + "\"");
                         Process process = new Process();
                         process.StartInfo = processStartInfo;
                         process.Start();
                         process.WaitForExit();
                     }
                     workItem.Attachments.Add(new Attachment(fileName, attachmentComment));
-                    WorkItemEditorForm frmWorkItemEditor = new WorkItemEditorForm(selectedWorkItemType, workItem);
+                    WorkItemEditorForm frmWorkItemEditor = new WorkItemEditorForm(SelectedWorkItemType, workItem);
                     frmWorkItemEditor.Show();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, this.Description, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Action canceled.", Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Action canceled.", this.Description, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
         }
 
-        public string Description
+
+
+        public override string Description
         {
-            get 
+            get
             {
-                return Constants.PluginDescription;    
+                return TFS.PluginDescription;
             }
         }
 
-        public void Disconnect()
+        public override string Extension
         {
-            _output.ImageCaptured -= new ImageCapturedEventHandler(persistableOutput_ImageCaptured);
-        }
-
-        public string Extension
-        {
-            get 
+            get
             {
-                if (!String.IsNullOrEmpty(settings.DefaultOutputExtension))
+                if (!String.IsNullOrEmpty(_settings.DefaultImageFormat))
                 {
-                    return settings.DefaultOutputExtension;
+                    return _settings.DefaultImageFormat;
                 }
                 else
                 {
@@ -119,68 +215,130 @@ namespace Cropper.TFSWorkItem
             }
         }
 
-        public IPersistableImageFormat Format
+        public WorkItemType SelectedWorkItemType
         {
-            get 
-            { 
-                return this; 
-            }
+            get ;
+            set ;
         }
 
         private void SetWorkItemType()
         {
-            tfs = new TeamFoundationServer(settings.TeamServer);
-            tfs.EnsureAuthenticated();
-            wis = tfs.GetService(typeof(WorkItemStore)) as WorkItemStore;
-            selectedWorkItemType = wis.Projects[settings.TeamProject].WorkItemTypes[settings.WorkItemType];
+            _tfs = new TeamFoundationServer(_settings.TeamServer);
+            _tfs.EnsureAuthenticated();
+            _wis = _tfs.GetService(typeof(WorkItemStore)) as WorkItemStore;
+            SelectedWorkItemType = _wis.Projects[_settings.TeamProject].WorkItemTypes[_settings.WorkItemType];
         }
 
-        private void LoadSettings()
+
+        private bool VerifyBasicSettings()
         {
-            if ((!settings.DoNotShowOptionsDialogAgain) ||
-                (Control.ModifierKeys == Keys.Shift) ||
-                (String.IsNullOrEmpty(settings.TeamServer)) ||
-                (String.IsNullOrEmpty(settings.TeamProject)) ||
-                (String.IsNullOrEmpty(settings.WorkItemType)))
+            Tracing.Trace("TFSWI::VerifyBasicSettings");
+
+            if (!PluginSettings.Completed)
             {
-                OptionsForm frmOptions = new OptionsForm(settings);
-                if (frmOptions.ShowDialog() != DialogResult.OK)
+                var dlg = new OptionsForm(_settings);
+                dlg.MakeButtonsVisible();
+                if (dlg.ShowDialog() != DialogResult.OK)
                 {
-                    Disconnect();
-                    return;
+                    MessageBox.Show("You must configure TFS settings before " +
+                                    "saving an image to a workitem.\n\n" +
+                                    "Missing TFS Settings");
+                    return false;
                 }
+                return true;
             }
             try
             {
                 SetWorkItemType();
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, Constants.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Disconnect();
+                return false;
             }
         }
 
-        private void menuItem_Click(object sender, EventArgs e)
-        {
-            ImageFormatEventArgs args1 = new ImageFormatEventArgs();
-            args1.ClickedMenuItem = (MenuItem)sender;
-            args1.ImageOutputFormat = this;
-            this.ImageFormatClick.Invoke(sender, args1);
-        }
 
-        public event ImageFormatClickEventHandler ImageFormatClick;
+        #region IConfigurablePlugin Implementation
 
-        public MenuItem Menu
+        /// <summary>
+        /// Gets the plug-ins impementation of the <see cref="BaseConfigurationForm"/> used
+        /// for setting plug-in specific options.
+        /// </summary>
+        BaseConfigurationForm IConfigurablePlugin.ConfigurationForm
         {
-            get 
+            get
             {
-                MenuItem menuItem = new MenuItem();
-                menuItem.RadioCheck = true;
-                menuItem.Text = Constants.PluginDescription;
-                menuItem.Click += new EventHandler(menuItem_Click);
-                return menuItem;
+                if (_configForm == null)
+                {
+                    _configForm = new OptionsForm(PluginSettings);
+                    _configForm.OptionsSaved += OptionsSaved;
+                }
+                return _configForm;
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating if the <see cref="ConfigurationForm"/> should
+        /// be hosted in the options dialog or shown in its own dialog window.
+        /// </summary>
+        bool IConfigurablePlugin.HostInOptions
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// The settings for this plugin. Required by IConfigurablePlugin.
+        /// </summary>
+        ///
+        /// <remarks>
+        /// <para>
+        ///   This property is set during startup with the settings contained in the
+        ///   applications configuration file.
+        /// </para>
+        /// <para>
+        ///   The object returned by this property is serialized into the applications
+        ///   configuration file on shutdown.
+        /// </para>
+        /// </remarks>
+        public object Settings
+        {
+            get {
+                //System.Diagnostics.Debugger.Break();
+                return PluginSettings;
+            }
+            set {
+                //System.Diagnostics.Debugger.Break();
+                PluginSettings = value as Cropper.TFSWorkItem.TfsSettings;
+            }
+        }
+
+        #endregion
+
+        // Helper property for IConfigurablePlugin Implementation
+        private Cropper.TFSWorkItem.TfsSettings PluginSettings
+        {
+            get
+            {
+                if (_settings == null)
+                    _settings = new Cropper.TFSWorkItem.TfsSettings();
+                return _settings;
+            }
+            set { _settings = value; }
+        }
+
+        /// <summary>
+        ///   Invoked when the options form is hosted in the tabbed UI,
+        ///   and the user clicks OK.
+        /// </summary>
+        private void OptionsSaved(object sender, EventArgs e)
+        {
+            OptionsForm form = sender as OptionsForm;
+            if (form == null) return;
+            form.ApplySettings();
+        }
+
     }
 }
