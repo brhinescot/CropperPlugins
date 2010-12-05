@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneNote", "OneNote\OneNote.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flickr", "Flickr\Flickr.csproj", "{75E4EF73-D1B0-486E-982B-B3B492E5642B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPic", "TinyPic\TinyPic.csproj", "{380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S3", "S3\S3.csproj", "{341A7D6E-783B-48D3-9FA3-39A0581A40ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFSWorkItem", "TFSWorkItem\TFSWorkItem.csproj", "{3D524BF5-8CF8-4586-A6A3-49F767A44794}"
@@ -27,6 +25,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imgur", "Imgur\Imgur.csproj", "{0C9F6C4A-0D51-4A74-91F0-363B55FA47C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaintDotNet", "Paint.NET\PaintDotNet.csproj", "{B60EEA44-A7D4-4527-B9DC-DB4072B9A527}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageShack", "ImageShack\ImageShack.csproj", "{1c7c2cf8-a342-42df-9caf-13f06346ecda}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPic", "TwitPic\TwitPic.csproj", "{e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}"
 EndProject
 Global
         GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -52,21 +54,24 @@ Global
                 SccProjectUniqueName6 = Flickr\\Flickr.csproj
                 SccProjectName6 = Flickr
                 SccLocalPath6 = Flickr
-                SccProjectUniqueName7 = TinyPic\\TinyPic.csproj
-                SccProjectName7 = TinyPic
-                SccLocalPath7 = TinyPic
-                SccProjectUniqueName8 = S3\\S3.csproj
-                SccProjectName8 = S3
-                SccLocalPath8 = S3
-                SccProjectUniqueName9 = TFSWorkItem\\TFSWorkItem.csproj
-                SccProjectName9 = TFSWorkItem
-                SccLocalPath9 = TFSWorkItem
-                SccProjectUniqueName10 = Imgur\\Imgur.csproj
-                SccProjectName10 = Imgur
-                SccLocalPath10 = Imgur
-                SccProjectUniqueName11 = Paint.NET\\PaintDotNet.csproj
-                SccProjectName11 = Paint.NET
-                SccLocalPath11 = Paint.NET
+                SccProjectUniqueName7 = S3\\S3.csproj
+                SccProjectName7 = S3
+                SccLocalPath7 = S3
+                SccProjectUniqueName8 = TFSWorkItem\\TFSWorkItem.csproj
+                SccProjectName8 = TFSWorkItem
+                SccLocalPath8 = TFSWorkItem
+                SccProjectUniqueName9 = Imgur\\Imgur.csproj
+                SccProjectName9 = Imgur
+                SccLocalPath9 = Imgur
+                SccProjectUniqueName10 = Paint.NET\\PaintDotNet.csproj
+                SccProjectName10 = Paint.NET
+                SccLocalPath10 = Paint.NET
+                SccProjectUniqueName11 = ImageShack\\ImageShack.csproj
+                SccProjectName11 = ImageShack
+                SccLocalPath11 = ImageShack
+                SccProjectUniqueName12 = TwitPic\\TwitPic.csproj
+                SccProjectName12 = TwitPic
+                SccLocalPath12 = TwitPic
         EndGlobalSection
         GlobalSection(SolutionConfigurationPlatforms) = preSolution
                 AutomatedDebug|Any CPU = AutomatedDebug|Any CPU
@@ -149,18 +154,6 @@ Global
                 {75E4EF73-D1B0-486E-982B-B3B492E5642B}.Debug|x86.Build.0 = Debug|x86
                 {75E4EF73-D1B0-486E-982B-B3B492E5642B}.Release|x86.ActiveCfg = Release|x86
                 {75E4EF73-D1B0-486E-982B-B3B492E5642B}.Release|x86.Build.0 = Release|x86
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|Any CPU.Build.0 = Debug|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.ActiveCfg = Release|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|Any CPU.Build.0 = Release|Any CPU
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|x86.ActiveCfg = Debug|x86
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Debug|x86.Build.0 = Debug|x86
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|x86.ActiveCfg = Release|x86
-                {380BE6B1-6D3F-48C9-89A8-DE0F32CC3252}.Release|x86.Build.0 = Release|x86
                 {341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
                 {341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
                 {341A7D6E-783B-48D3-9FA3-39A0581A40ED}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -209,6 +202,30 @@ Global
                 {B60EEA44-A7D4-4527-B9DC-DB4072B9A527}.Debug|x86.Build.0 = Debug|x86
                 {B60EEA44-A7D4-4527-B9DC-DB4072B9A527}.Release|x86.ActiveCfg = Release|x86
                 {B60EEA44-A7D4-4527-B9DC-DB4072B9A527}.Release|x86.Build.0 = Release|x86
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Release|Any CPU.Build.0 = Release|Any CPU
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Debug|x86.ActiveCfg = Debug|x86
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Debug|x86.Build.0 = Debug|x86
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Release|x86.ActiveCfg = Release|x86
+                {1c7c2cf8-a342-42df-9caf-13f06346ecda}.Release|x86.Build.0 = Release|x86
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|Any CPU.Build.0 = Release|Any CPU
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Debug|x86.ActiveCfg = Debug|x86
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Debug|x86.Build.0 = Debug|x86
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|x86.ActiveCfg = Release|x86
+                {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|x86.Build.0 = Release|x86
         EndGlobalSection
         GlobalSection(SolutionProperties) = preSolution
                 HideSolutionNode = FALSE
