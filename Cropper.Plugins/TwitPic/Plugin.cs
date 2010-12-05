@@ -1,14 +1,14 @@
-// Imgur/Plugin.cs
+// TwitPic/Plugin.cs
 //
 // Code for a cropper plugin that sends a screen snap to
-// Imgur.com
+// TwitPic.com
 //
 // To enable tracing for this DLL, build like so:
 //    msbuild /p:Platform=x86 /p:DefineConstants=Trace
 //
 //
 // Dino Chiesa
-// 2010 Nov 9
+// Sat, 04 Dec 2010  20:58
 //
 
 // #define Trace
@@ -24,7 +24,7 @@ using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Utils;       // for Tracing
 using Microsoft.Http;             // HttpClient
 
-namespace Cropper.SendToImgur
+namespace Cropper.SendToTwitPic
 {
     public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
     {
@@ -32,7 +32,7 @@ namespace Cropper.SendToImgur
         {
             get
             {
-                return "Send to Imgur";
+                return "Send to TwitPic";
             }
         }
 
@@ -46,7 +46,7 @@ namespace Cropper.SendToImgur
 
         public override string ToString()
         {
-            return "Send to Imgur.com [Dino Chiesa]";
+            return "Send to TwitPic [Dino Chiesa]";
         }
 
 
@@ -54,7 +54,6 @@ namespace Cropper.SendToImgur
         {
             if (!VerifyBasicSettings()) return;
 
-            this._logger = new ImgurLogWriter(new FileInfo(e.ImageNames.FullSize).DirectoryName);
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
@@ -64,16 +63,16 @@ namespace Cropper.SendToImgur
         {
             if (!PluginSettings.Completed)
             {
-                var dlg = new ImgurOptionsForm(PluginSettings);
+                var dlg = new TwitPicOptionsForm(PluginSettings);
                 dlg.MakeButtonsVisible();
                 dlg.ShowDialog();
             }
 
             if (!PluginSettings.Completed)
             {
-                MessageBox.Show("You must configure Imgur settings before " +
-                                "uploading an image to the service.\n\n",
-                                "Missing Settings for Imgur plugin");
+                MessageBox.Show("You must configure a Twitter username and password " +
+                                "before uploading an image to TwitPic.\n\n",
+                                "Missing Settings for TwitPic plugin");
                 return false;
             }
             return true;
@@ -95,7 +94,7 @@ namespace Cropper.SendToImgur
             try
             {
                 Tracing.Trace("+--------------------------------");
-                Tracing.Trace("Imgur::SaveImage ({0})", _fileName);
+                Tracing.Trace("TwitPic::SaveImage ({0})", _fileName);
 
                 SaveImageInDesiredFormat(stream, image);
 
@@ -122,7 +121,10 @@ namespace Cropper.SendToImgur
 
 
 
-
+        /// <summary>
+        ///   TwitPic supports only PNG and JPG and GIF. This plugin does
+        ///   only PNG and JPG.
+        /// </summary>
         private ImageFormat DesiredImageFormat
         {
             get
@@ -130,10 +132,6 @@ namespace Cropper.SendToImgur
                 if (String.Compare(Extension, "jpg", true) == 0)
                 {
                     return ImageFormat.Jpeg;
-                }
-                else if (String.Compare(Extension, "bmp", true) == 0)
-                {
-                    return ImageFormat.Bmp;
                 }
                 else
                 {
@@ -146,7 +144,7 @@ namespace Cropper.SendToImgur
 
         private void SaveImageInDesiredFormat(Stream stream, System.Drawing.Image image)
         {
-            Tracing.Trace("Imgur::SaveImageInDesiredFormat");
+            Tracing.Trace("TwitPic::SaveImageInDesiredFormat");
             if (String.Compare(Extension, "jpg", true) == 0)
             {
                 SaveImage_Jpg(stream, image);
@@ -195,32 +193,93 @@ namespace Cropper.SendToImgur
         /// </remarks>
         private void UploadImage()
         {
-            Tracing.Trace("UploadImage");
+            Tracing.Trace("TwitPic::UploadImage");
 
             try
             {
+                string relativeUrl = PluginSettings.Tweet ? "uploadAndPost" : "upload";
                 var http = new HttpClient(_baseUri);
                 var form = new HttpMultipartMimeForm();
                 using (var fs = File.Open(this._fileName, FileMode.Open, FileAccess.Read))
                 {
-                    form.Add("key", PluginSettings.Key);
-                    form.Add("image",
+                    form.Add("media",
                              this._fileName,
                              HttpContent.Create(fs, "application/octet-stream", fs.Length));
-                    form.Add("type", "file");
-                    form.Add("title", "uploaded by Cropper SendToImgur plugin"); // optional
-                    form.Add("caption", "http://cropper.codeplex.com"); // optional
-                    var response = http.Post("upload.xml", form.CreateHttpContent());
+                    form.Add("username", PluginSettings.Username);
+                    form.Add("password", PluginSettings.Password);
+                    if (PluginSettings.Tweet)
+                    {
+                        // prompt for the tweet here
+                        var f = new System.Windows.Forms.Form();
+                        var btnOK = new System.Windows.Forms.Button();
+                        var btnCancel = new System.Windows.Forms.Button();
+                        var label = new System.Windows.Forms.Label();
+                        var txt = new System.Windows.Forms.TextBox();
+                        label.Text = "Tweet?";
+                        label.AutoSize = true;
+                        label.Location = new System.Drawing.Point(4, 6);
+                        txt.Text = "";
+                        txt.TabIndex = 11;
+                        txt.Multiline = true;
+                        txt.Location = new System.Drawing.Point(54, 8);
+                        txt.Size = new System.Drawing.Size(268, 82);
+            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btnCancel.Location = new System.Drawing.Point(250, 94);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new System.Drawing.Size(68, 23);
+            btnCancel.TabIndex = 71;
+            btnCancel.Text = "&Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            btnOK.Location = new System.Drawing.Point(174, 94);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new System.Drawing.Size(68, 23);
+            btnOK.TabIndex = 61;
+            btnOK.Text = "&OK";
+            btnOK.UseVisualStyleBackColor = true;
+                        f.Controls.Add(label);
+                        f.Controls.Add(txt);
+                        f.Controls.Add(btnOK);
+                        f.Controls.Add(btnCancel);
+                        f.Name = "Tweet";
+                        f.Text = "What's going on?";
+                        //f.ClientSize = new System.Drawing.Size(324, 118);
+                        f.MinimumSize = new System.Drawing.Size(342, 158);
+                        f.MaximumSize = new System.Drawing.Size(342, 158);
+                        var result = f.ShowDialog();
+
+                        if (result == DialogResult.OK)
+                        {
+                            if (!String.IsNullOrEmpty(txt.Text))
+                                form.Add("message", txt.Text);
+                        }
+                        else
+                        {
+                            Tracing.Trace("cancelled.");
+                            Tracing.Trace("---------------------------------");
+                            return;
+                        }
+                    }
+                    var response = http.Post(relativeUrl, form.CreateHttpContent());
                     response.EnsureStatusIsSuccessful();
                     var foo = response.Content.ReadAsXmlSerializable<UploadResponse>();
-                    if (foo.links == null)
-                        throw new InvalidOperationException("Successful response, but link is empty.");
+                    if (foo == null)
+                        throw new InvalidOperationException("Successful response, but cannot deserialize xml.");
+                    if ((foo.status != "ok") || (foo.error != null) ||
+                        (foo.stat != null && foo.stat != "ok"))
+                    {
+                        if (foo.error != null)
+                            throw new InvalidOperationException(String.Format("Error, code = {0}}, message = {1}.", foo.error.code, foo.error.message));
 
-                    string rawImageUri = foo.links.original;
+
+                        throw new InvalidOperationException(String.Format("Successful response, but status = {0}.", foo.status));
+
+                    }
+
+                    string rawImageUri = foo.mediaurl;
                     System.Diagnostics.Process.Start(rawImageUri);
 
                     Clipboard.SetDataObject(rawImageUri, true);
-                    this._logger.Log(rawImageUri);
 
                     Tracing.Trace("all done.");
                     Tracing.Trace("---------------------------------");
@@ -247,19 +306,19 @@ namespace Cropper.SendToImgur
         // these methods are needed only for diagnostic purposes.
         public override void Connect(IPersistableOutput persistableOutput)
         {
-            Tracing.Trace("Imgur::Connect");
+            Tracing.Trace("TwitPic::Connect");
             base.Connect(persistableOutput);
         }
 
         public override void Disconnect()
         {
-            Tracing.Trace("Imgur::Disconnect");
+            Tracing.Trace("TwitPic::Disconnect");
             base.Disconnect();
         }
 
         protected override void OnImageFormatClick(object sender, ImageFormatEventArgs e)
         {
-            Tracing.Trace("Imgur::MenuClick");
+            Tracing.Trace("TwitPic::MenuClick");
             base.OnImageFormatClick(sender, e);
         }
 #endif
@@ -277,7 +336,7 @@ namespace Cropper.SendToImgur
             {
                 if (_configForm == null)
                 {
-                    _configForm = new ImgurOptionsForm(PluginSettings);
+                    _configForm = new TwitPicOptionsForm(PluginSettings);
                     _configForm.OptionsSaved += OptionsSaved;
                 }
                 return _configForm;
@@ -286,7 +345,7 @@ namespace Cropper.SendToImgur
 
         private void OptionsSaved(object sender, EventArgs e)
         {
-            ImgurOptionsForm form = sender as ImgurOptionsForm;
+            TwitPicOptionsForm form = sender as TwitPicOptionsForm;
             if (form == null) return;
             form.ApplySettings();
         }
@@ -317,16 +376,16 @@ namespace Cropper.SendToImgur
         public object Settings
         {
             get { return PluginSettings; }
-            set { PluginSettings = value as ImgurSettings; }
+            set { PluginSettings = value as TwitPicSettings; }
         }
 
         // Helper property for IConfigurablePlugin Implementation
-        private ImgurSettings PluginSettings
+        private TwitPicSettings PluginSettings
         {
             get
             {
                 if (_settings == null)
-                    _settings = new ImgurSettings();
+                    _settings = new TwitPicSettings();
                 return _settings;
             }
             set { _settings = value; }
@@ -335,76 +394,81 @@ namespace Cropper.SendToImgur
         #endregion
 
 
-        private ImgurSettings _settings;
-        private ImgurOptionsForm _configForm;
-        private static readonly string _baseUri= "http://api.imgur.com/2/";
-
-        // TODO: allow someone to use their Imgur account (requires a different key)
-        //private static readonly string _ImgurDevKey = "e2d95a325f87bdc89fae26ad69cb3c49";
-
+        private TwitPicSettings _settings;
+        private TwitPicOptionsForm _configForm;
+        private static readonly string _baseUri= "http://twitpic.com/api/";
         private string _fileName;
-
-        private ImgurLogWriter _logger;
     }
 
 
+    // see http://twitpic.com/api.do#upload
+    //
+    // Example responses:
+    //
+    //   <rsp status="ok">
+    //     <statusid>1111</statusid>
+    //     <userid>11111</userid>
+    //     <mediaid>abc123</mediaid>
+    //     <mediaurl>http://twitpic.com/abc123</mediaurl>
+    //   </rsp>
+    //
+    //
+    //   <rsp stat="fail">
+    //     <err code="2" msg="Image type not supported. GIF, JPG, & PNG only" />
+    //   </rsp>
+    //
+    // Yes, the status attribute is "stat" in the failure case and "status" in
+    // the success case. Really.
+    //
 
-    [XmlType("upload", Namespace="")]
-    [XmlRoot("upload", Namespace="")]
-    public partial class UploadResponse {
-        public UploadResponseImage image;
-        public UploadResponseLinks links;
-    }
-
-    [XmlType("image")]
-    public class UploadResponseImage
+    [XmlType("rsp", Namespace="")]
+    [XmlRoot("rsp", Namespace="")]
+    public partial class UploadResponse
     {
-        public string name       { get;set; }
-        public string title      { get;set; }
-        public string caption    { get;set; }
-        public string hash       { get;set; }
-        public string deletehash { get;set; }
-        public string datetime   { get;set; }
-        public string type       { get;set; }
-        public string animated   { get;set; }
-        public string width      { get;set; }
-        public string height     { get;set; }
-        public string size       { get;set; }
-        public string views      { get;set; }
-        public string bandwidth  { get;set; }
+        [XmlAttribute("stat")]
+        public string stat       { get;set; }
+        [XmlAttribute("status")]
+        public string status     { get;set; }
+        public string statusid   { get;set; }
+        public string userid     { get;set; }
+        public string mediaid    { get;set; }
+        public string mediaurl   { get;set; }
+        [XmlElement("err")]
+        public ResponseError error  { get;set; }
     }
 
-    [XmlType("links")]
-    public class UploadResponseLinks
+    public class ResponseError
     {
-        public string original        { get;set; }
-        public string imgur_page      { get;set; }
-        public string delete_page     { get;set; }
-        public string small_square    { get;set; }
-        public string large_thumbnail { get;set; }
+        [XmlAttribute("code")]
+        public int code     { get;set; }
+        [XmlAttribute("msg")]
+        public string message     { get;set; }
     }
 
-
-
-    public class ImgurSettings
+    public class TwitPicSettings
     {
         string _format;
-        public ImgurSettings()
+        public TwitPicSettings()
         {
             JpgImageQuality= 80; // default
-            ImageFormat = "png"; // default
+            ImageFormat = "jpg"; // default
         }
 
         /// <summary>
-        ///   The key to use for anonymous uploads to Imgur.com.
+        ///   The username known to Twitter.
         /// </summary>
-        /// <remarks>
-        ///   <para>
-        ///     For an explanation, see http://imgur.com/register/api_anon .
-        ///   </para>
-        /// </remarks>
-        public string Key { get; set; }
+        public string Username { get; set; }
 
+        /// <summary>
+        ///   The password for authenticating to Twitter.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        ///   True: send a text tweet along with the message (the user
+        ///   will  be prompted. False: just up-load the image.
+        /// </summary>
+        public bool Tweet { get; set; }
 
         /// <summary>
         ///   Quality level to use when saving an image in JPG format.
@@ -416,7 +480,7 @@ namespace Cropper.SendToImgur
         }
 
         /// <summary>
-        ///   The Image format; one of Jpeg, Png, Bmp.
+        ///   The Image format; one of Jpeg, Png.
         /// </summary>
         public string ImageFormat
         {
@@ -425,7 +489,7 @@ namespace Cropper.SendToImgur
             set
             {
                 var v = value.ToLower();
-                if (v == "bmp" || v == "png" || v == "jpg")
+                if (v == "png" || v == "jpg")
                     _format = v;
             }
         }
@@ -435,11 +499,10 @@ namespace Cropper.SendToImgur
         {
             get
             {
-                return !System.String.IsNullOrEmpty(Key);
+                return !(System.String.IsNullOrEmpty(Username) ||
+                         System.String.IsNullOrEmpty(Password));
             }
         }
     }
 }
-
-
 
