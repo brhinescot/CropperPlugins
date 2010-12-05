@@ -85,15 +85,16 @@ namespace Cropper.Email
         /// </summary>
         private void InitializeComponent()
         {
-            this.radioBitmap = new System.Windows.Forms.RadioButton();
-            this.radioJpg = new System.Windows.Forms.RadioButton();
-            this.radioPng = new System.Windows.Forms.RadioButton();
+            this.cmbImageFormat = new System.Windows.Forms.ComboBox();
+            this.lblFormat = new System.Windows.Forms.Label();
             this.qualitySlider = new System.Windows.Forms.TrackBar();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.lblSubjectLine = new System.Windows.Forms.Label();
             this.txtSubjectLine = new System.Windows.Forms.TextBox();
             this.txtMessage = new System.Windows.Forms.TextBox();
             this.lblMessage = new System.Windows.Forms.Label();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.tooltip = new System.Windows.Forms.ToolTip();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.qualitySlider)).BeginInit();
@@ -105,95 +106,23 @@ namespace Cropper.Email
             //
             // tabPage1
             //
+            this.tabPage1.Controls.Add(this.qualitySlider);
+            this.tabPage1.Controls.Add(this.lblFormat);
+            this.tabPage1.Controls.Add(this.cmbImageFormat);
             this.tabPage1.Controls.Add(this.txtMessage);
             this.tabPage1.Controls.Add(this.lblMessage);
             this.tabPage1.Controls.Add(this.txtSubjectLine);
             this.tabPage1.Controls.Add(this.lblSubjectLine);
-            this.tabPage1.Controls.Add(this.qualitySlider);
-            this.tabPage1.Controls.Add(this.radioBitmap);
-            this.tabPage1.Controls.Add(this.radioJpg);
-            this.tabPage1.Controls.Add(this.radioPng);
+            this.tabPage1.Controls.Add(this.btnCancel);
+            this.tabPage1.Controls.Add(this.btnOK);
             this.tabPage1.Size = new System.Drawing.Size(316, 365);
             this.tabPage1.Text = "Format";
             //
-            // cmbImageFormat
+            // tooltip
             //
-            this.cmbDefaultImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDefaultImageFormat.FormattingEnabled = false;
-            this.cmbDefaultImageFormat.Items.AddRange(new object[] {
-            "png",
-            "jpg",
-            "bmp"});
-            this.cmbDefaultImageFormat.Location = new System.Drawing.Point(94, 112);
-            this.cmbDefaultImageFormat.Name = "cmbDefaultOutputExtension";
-            this.cmbDefaultImageFormat.Size = new System.Drawing.Size(72, 21);
-            this.cmbDefaultImageFormat.TabIndex = 3;
-
-            //
-            // radioBitmap
-            //
-            this.radioBitmap.AutoSize = true;
-            this.radioBitmap.Checked = true;
-            this.radioBitmap.Location = new System.Drawing.Point(21, 217);
-            this.radioBitmap.Name = "radioBitmap";
-            this.radioBitmap.Size = new System.Drawing.Size(57, 17);
-            this.radioBitmap.TabIndex = 0;
-            this.radioBitmap.TabStop = true;
-            this.radioBitmap.Text = "&Bmp";
-            this.radioBitmap.UseVisualStyleBackColor = true;
-            //
-            // radioJpg
-            //
-            this.radioJpg.AutoSize = true;
-            this.radioJpg.Location = new System.Drawing.Point(21, 263);
-            this.radioJpg.Name = "radioJpg";
-            this.radioJpg.Size = new System.Drawing.Size(48, 17);
-            this.radioJpg.TabIndex = 4;
-            this.radioJpg.Text = "&Jpeg";
-            this.radioJpg.UseVisualStyleBackColor = true;
-            this.radioJpg.CheckedChanged += new System.EventHandler(this.JpgButtonCheckedChanged);
-            //
-            // radioPng
-            //
-            this.radioPng.AutoSize = true;
-            this.radioPng.Location = new System.Drawing.Point(21, 240);
-            this.radioPng.Name = "radioPng";
-            this.radioPng.Size = new System.Drawing.Size(44, 17);
-            this.radioPng.TabIndex = 2;
-            this.radioPng.Text = "&Png";
-            this.radioPng.UseVisualStyleBackColor = true;
-            //
-            // qualitySlider
-            //
-            this.qualitySlider.LargeChange = 10;
-            this.qualitySlider.Location = new System.Drawing.Point(35, 286);
-            this.qualitySlider.Maximum = 100;
-            this.qualitySlider.Minimum = 10;
-            this.qualitySlider.Name = "qualitySlider";
-            this.qualitySlider.Size = new System.Drawing.Size(259, 45);
-            this.qualitySlider.TabIndex = 7;
-            this.qualitySlider.TickFrequency = 10;
-            this.qualitySlider.Value = 80;
-            this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
-            //
-            // tabPage2
-            //
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(341, 315);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            //
-            // lblSubjectLine
-            //
-            this.lblSubjectLine.AutoSize = true;
-            this.lblSubjectLine.Location = new System.Drawing.Point(21, 7);
-            this.lblSubjectLine.Name = "lblSubjectLine";
-            this.lblSubjectLine.Size = new System.Drawing.Size(66, 13);
-            this.lblSubjectLine.TabIndex = 8;
-            this.lblSubjectLine.Text = "Subject Line";
+            this.tooltip.AutoPopDelay = 2400;
+            this.tooltip.InitialDelay = 500;
+            this.tooltip.ReshowDelay = 500;
             //
             // txtSubjectLine
             //
@@ -203,11 +132,21 @@ namespace Cropper.Email
             "$OPERATINGSYSTEM$",
             "$COMPUTERNAME$"});
             this.txtSubjectLine.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.txtSubjectLine.Location = new System.Drawing.Point(35, 23);
+            this.txtSubjectLine.Location = new System.Drawing.Point(8, 28);
             this.txtSubjectLine.Name = "txtSubjectLine";
-            this.txtSubjectLine.Size = new System.Drawing.Size(259, 20);
-            this.txtSubjectLine.TabIndex = 9;
+            this.txtSubjectLine.Size = new System.Drawing.Size(305, 20);
+            this.txtSubjectLine.TabIndex = 11;
             this.txtSubjectLine.Text = "Screen shot: $NAME$";
+            this.tooltip.SetToolTip(this.txtSubjectLine, "The subject that will be used in the email.");
+            //
+            // lblSubjectLine
+            //
+            this.lblSubjectLine.AutoSize = true;
+            this.lblSubjectLine.Location = new System.Drawing.Point(4, 8);
+            this.lblSubjectLine.Name = "lblSubjectLine";
+            this.lblSubjectLine.Size = new System.Drawing.Size(98, 13);
+            this.lblSubjectLine.TabIndex = 8;
+            this.lblSubjectLine.Text = "Subject Line:";
             //
             // txtMessage
             //
@@ -218,24 +157,92 @@ namespace Cropper.Email
             "$OPERATINGSYSTEM$",
             "$COMPUTERNAME$"});
             this.txtMessage.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.txtMessage.Location = new System.Drawing.Point(35, 63);
+            this.txtMessage.Location = new System.Drawing.Point(8, 78);
             this.txtMessage.Multiline = true;
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtMessage.Size = new System.Drawing.Size(259, 148);
-            this.txtMessage.TabIndex = 11;
-            this.txtMessage.Text = "Here's a screenshot for you.\r\nName: $NAME$\r\nSize: $SIZE$\r\n" +
-                "Taken with Cropper - http://cropper.codeplex.com\r\n";
-
+            this.txtMessage.Size = new System.Drawing.Size(305, 88);
+            this.txtMessage.TabIndex = 21;
+            this.txtMessage.Lines = new System.String[] {
+                "Here's a screenshot for yoinz.",
+                "Name: $NAME$",
+                "Size: $SIZE$",
+                "Taken with Cropper - http://cropper.codeplex.com",
+                " "
+            };
+            this.tooltip.SetToolTip(this.txtMessage, "The body of the email message, that carries the attached image.");
             //
             // lblMessage
             //
             this.lblMessage.AutoSize = true;
-            this.lblMessage.Location = new System.Drawing.Point(21, 47);
+            this.lblMessage.Location = new System.Drawing.Point(4, 56);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(50, 13);
+            this.lblMessage.Size = new System.Drawing.Size(66, 13);
             this.lblMessage.TabIndex = 10;
-            this.lblMessage.Text = "Message";
+            this.lblMessage.Text = "Message:";
+            //
+            // cmbImageFormat
+            //
+            this.cmbImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbImageFormat.FormattingEnabled = false;
+            this.cmbImageFormat.Items.AddRange(new object[] {
+            "png",
+            "jpg",
+            "bmp"});
+            this.cmbImageFormat.Location = new System.Drawing.Point(94, 178);
+            this.cmbImageFormat.Name = "cmbImageFormat";
+            this.cmbImageFormat.Size = new System.Drawing.Size(72, 21);
+            this.cmbImageFormat.TabIndex = 31;
+            this.cmbImageFormat.SelectionChangeCommitted += new System.EventHandler(this.SelectedImageFormatChanged);
+            this.tooltip.SetToolTip(this.cmbImageFormat, "The format of the image to save.");
+            //
+            // lblFormat
+            //
+            this.lblFormat.AutoSize = true;
+            this.lblFormat.Location = new System.Drawing.Point(4, 180);
+            this.lblFormat.Name = "lblFormat";
+            this.lblFormat.Size = new System.Drawing.Size(66, 13);
+            this.lblFormat.TabIndex = 8;
+            this.lblFormat.Text = "Image Format:";
+            //
+            // qualitySlider
+            //
+            this.qualitySlider.LargeChange = 10;
+            this.qualitySlider.Location = new System.Drawing.Point(35, 208);
+            this.qualitySlider.Maximum = 100;
+            this.qualitySlider.Minimum = 10;
+            this.qualitySlider.Name = "qualitySlider";
+            this.qualitySlider.Size = new System.Drawing.Size(259, 45);
+            this.qualitySlider.TabIndex = 41;
+            this.qualitySlider.TickFrequency = 10;
+            this.qualitySlider.Value = 80;
+            this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
+            //
+            // btnCancel
+            //
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(212, 204);
+            this.btnCancel.Visible = false;
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(76, 23);
+            this.btnCancel.TabIndex = 61;
+            this.btnCancel.Text = "&Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            //
+            // btnOK
+            //
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Visible = false;
+            this.btnOK.Location = new System.Drawing.Point(132, 204);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(76, 23);
+            this.btnOK.TabIndex = 51;
+            this.btnOK.Text = "&OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.tooltip.SetToolTip(this.btnOK, "Save these settings...");
             //
             // Options
             //
@@ -249,20 +256,19 @@ namespace Cropper.Email
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.qualitySlider)).EndInit();
             this.ResumeLayout(false);
-
         }
 
         #endregion
 
-        private System.Windows.Forms.RadioButton radioBitmap;
-        private System.Windows.Forms.RadioButton radioJpg;
-        private System.Windows.Forms.RadioButton radioPng;
+        private System.Windows.Forms.ComboBox cmbImageFormat;
+        private System.Windows.Forms.Label lblFormat;
         private System.Windows.Forms.TrackBar qualitySlider;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox txtMessage;
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.TextBox txtSubjectLine;
         private System.Windows.Forms.Label lblSubjectLine;
-
+        private System.Windows.Forms.ToolTip tooltip;
     }
 }

@@ -4,93 +4,66 @@ namespace Cropper.Email
 {
     public partial class EmailOptionsForm : BaseConfigurationForm
     {
-        private OutputImageFormat format = OutputImageFormat.Bmp; // default
 
-
+        private EmailSettings _settings;
         public EmailOptionsForm(EmailSettings settings)
         {
             InitializeComponent();
+
             _settings = settings;
-            this.Format = _settings.Format;
-            this.JpgImageQuality = _settings.JpgImageQuality;
-
-            JpgButtonCheckedChanged(null, null);
-        }
-
-        public OutputImageFormat Format
-        {
-            get
-            {
-                if (radioPng.Checked)
-                    format = OutputImageFormat.Png;
-                else if (radioJpg.Checked)
-                    format = OutputImageFormat.Jpeg;
-                else
-                    format = OutputImageFormat.Bmp;
-
-                return format;
-            }
-            set
-            {
-                format = value;
-                if (format == OutputImageFormat.Png)
-                    radioPng.Checked = true;
-                else if (format == OutputImageFormat.Jpeg)
-                    radioJpg.Checked = true;
-                else
-                    radioBitmap.Checked = true;
-            }
-        }
-
-        public int JpgImageQuality
-        {
-            get { return qualitySlider.Value; }
-            set { qualitySlider.Value = value; }
-        }
-
-        public string Subject
-        {
-            get { return txtSubjectLine.Text; }
-            set { txtSubjectLine.Text = value; }
-        }
-
-        public string Message
-        {
-            get { return txtMessage.Text; }
-            set { txtMessage.Text = value; }
+            this.txtSubjectLine.Text         = _settings.Subject;
+            this.txtMessage.Lines            = _settings.Message.Split("\r\n".ToCharArray());
+            this.qualitySlider.Value         = _settings.JpgImageQuality;
+            this.cmbImageFormat.SelectedItem = settings.ImageFormat;
+            HandleQualitySliderValueChanged(null,null);
+            SelectedImageFormatChanged(null,null);
         }
 
 
-        private void btnOK_Click(object sender, EventArgs e)
+        /// <summary>
+        ///   Show the OK and Cancel buttons.
+        /// </summary>
+        ///
+        /// <remarks>
+        ///   This form can be shown in two ways: as a standalone
+        ///   dialog, and hosted within the tabbed "Options" UI provided
+        ///   by the Cropper Core.  By default, the OK and Cancel
+        ///   buttons are not visible.  When used as a standalone dialog
+        ///   the caller should invoke this method before calling
+        ///   ShowDialog().
+        /// </remarks>
+        public void MakeButtonsVisible()
         {
-            this.ApplySettings();
+            this.btnOK.Visible = true;
+            this.btnCancel.Visible = true;
+            this.btnOK.Enabled = true;
+            this.btnCancel.Enabled = true;
+            this.MinimumSize = new System.Drawing.Size(340, 326);
+            this.MaximumSize = new System.Drawing.Size(340, 326);
         }
 
         public void ApplySettings()
         {
-            //System.Diagnostics.Debugger.Break();
-            if (this.TFS != null)
-            {
-                settings.TeamServer           = this.TFS.Uri.AbsoluteUri;
-                settings.TeamProject          = this.lblTeamProject.Text;
-            }
-            settings.WorkItemType             = this.cmbWorkItemType.Text;
-            settings.DefaultImageName         = this.txtDefaultImageName.Text;
-            settings.DefaultImageFormat       = this.cmbDefaultImageFormat.Text;
-            settings.DefaultAttachmentComment = this.txtDefaultAttachmentComment.Text;
-            settings.ImageEditor              = this.txtImageEditor.Text;
-            settings.OpenImageInEditor        = this.cbOpenImageInEditor.Checked;
-            settings.JpgImageQuality          = this.JpgImageQuality;
-
+            _settings.Subject = this.txtSubjectLine.Text.Trim();
+            _settings.Message = this.txtMessage.Text.Trim();
+            _settings.JpgImageQuality =  this.qualitySlider.Value;
+            _settings.ImageFormat = this.cmbImageFormat.Text;
         }
 
-        private void JpgButtonCheckedChanged(object sender, System.EventArgs e)
+        private void btnOK_Click(object sender, System.EventArgs e)
         {
-            qualitySlider.Enabled = radioJpg.Checked;
+            this.ApplySettings();
+        }
+
+        private void SelectedImageFormatChanged(object sender, System.EventArgs e)
+        {
+            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)
         {
+            this.tooltip.SetToolTip(qualitySlider,
+                                    "quality=" + qualitySlider.Value.ToString());
         }
     }
 }

@@ -3,7 +3,6 @@
 #endregion
 
 
-using Fusion8.Cropper.Extensibility;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -14,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 using CropperPlugins.Utils;       // for Tracing
+using Fusion8.Cropper.Extensibility;
 
 
 namespace Cropper.Email
@@ -48,7 +48,7 @@ namespace Cropper.Email
         private void SaveImage(Stream stream, Image image)
         {
             Tracing.Trace("Email::Save");
-            if (PluginSettings.Format == OutputImageFormat.Jpeg)
+            if (PluginSettings.ImageFormat == "jpg")
             {
                 SaveImage_Jpg(stream, image);
             }
@@ -99,29 +99,26 @@ namespace Cropper.Email
         {
             get
             {
-                var format = PluginSettings.Format;
-                if (format == OutputImageFormat.Png)
-                    return "png";
-
-                if (format == OutputImageFormat.Jpeg)
-                    return "jpg";
-
-                return "bmp";
+                return PluginSettings.ImageFormat;
             }
         }
 
-        private System.Drawing.Imaging.ImageFormat DesiredImageFormat
+        private ImageFormat DesiredImageFormat
         {
             get
             {
-                var format = PluginSettings.Format;
-                if (format == OutputImageFormat.Png)
-                    return ImageFormat.Png;
-
-                if (format == OutputImageFormat.Jpeg)
+                if (String.Compare(Extension, "jpg", true) == 0)
+                {
                     return ImageFormat.Jpeg;
-
-                return ImageFormat.Bmp;
+                }
+                else if (String.Compare(Extension, "bmp", true) == 0)
+                {
+                    return ImageFormat.Bmp;
+                }
+                else
+                {
+                    return ImageFormat.Png;
+                }
             }
         }
 
@@ -196,16 +193,9 @@ namespace Cropper.Email
         private void OptionsSaved(object sender, EventArgs e)
         {
             EmailOptionsForm form = sender as EmailOptionsForm;
-
-            PluginSettings.Format = _configForm.Format;
-            PluginSettings.JpgImageQuality = _configForm.JpgImageQuality;
-            PluginSettings.Subject = _configForm.Subject;
-            PluginSettings.Message = _configForm.Message;
-
             if (form == null) return;
             form.ApplySettings();
         }
-
 
     }
 

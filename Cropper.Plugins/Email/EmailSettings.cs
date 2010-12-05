@@ -3,10 +3,14 @@ namespace Cropper.Email
     public class EmailSettings
     {
         string _format;
+
+        /// <summary>
+        ///   User-accessible settings for the SendtoEmail plugin.
+        /// </summary>
         public EmailSettings()
         {
             JpgImageQuality= 80; // default
-            Format = "bmp";
+            _format = "bmp";
         }
 
         /// <summary>
@@ -21,7 +25,7 @@ namespace Cropper.Email
         /// <summary>
         ///   The Image format; one of Jpeg, Png, Bmp.
         /// </summary>
-        public string Format
+        public string ImageFormat
         {
             get { return _format; }
 
@@ -33,12 +37,18 @@ namespace Cropper.Email
             }
         }
 
+        /// <summary>
+        ///   The subject to use in the generated email.
+        /// </summary>
         public string Subject
         {
             get;
             set;
         }
 
+        /// <summary>
+        ///   The text message to append to the attached image.
+        /// </summary>
         public string Message
         {
             get;
