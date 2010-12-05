@@ -95,7 +95,7 @@ namespace Cropper.SendToImgur
             try
             {
                 Tracing.Trace("+--------------------------------");
-                Tracing.Trace("SaveImage ({0})", _fileName);
+                Tracing.Trace("Imgur::SaveImage ({0})", _fileName);
 
                 SaveImageInDesiredFormat(stream, image);
 
@@ -146,7 +146,7 @@ namespace Cropper.SendToImgur
 
         private void SaveImageInDesiredFormat(Stream stream, System.Drawing.Image image)
         {
-            Tracing.Trace("TFS::SaveImageInDesiredFormat");
+            Tracing.Trace("Imgur::SaveImageInDesiredFormat");
             if (String.Compare(Extension, "jpg", true) == 0)
             {
                 SaveImage_Jpg(stream, image);
@@ -384,13 +384,14 @@ namespace Cropper.SendToImgur
     }
 
 
+
     public class ImgurSettings
     {
         string _format;
         public ImgurSettings()
         {
             JpgImageQuality= 80; // default
-            ImageFormat = "bmp";
+            ImageFormat = "png"; // default
         }
 
         /// <summary>
@@ -423,7 +424,7 @@ namespace Cropper.SendToImgur
             set
             {
                 var v = value.ToLower();
-                if (v == "bmp" || value == "png" || value == "jpg")
+                if (v == "bmp" || v == "png" || v == "jpg")
                     _format = v;
             }
         }

@@ -142,9 +142,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="AttachDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AttachDialog.cs</DependentUpon>
