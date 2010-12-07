@@ -1,0 +1,231 @@
+<html>
+  <!-- Last Saved: <2010-December-07 07:59:50> -->
+  <head>
+
+    <title>Cropper Plugins v1.3</title>
+    <style type="text/css">
+      * { padding: 0; margin: 0; }
+      html, body { height: 100%; }
+      body, textarea {
+      font-family: "lucida sans", verdana, arial, helvetica, sans-serif;
+      font-size: 80%;
+      }
+
+      h1 { font-size: 20pt }
+      h2 { font-size: 18pt; font-weight:bold; color: navy;
+      margin-top:20px; margin-bottom:10px;}
+      h3 { font-size: 16pt; font-weight:bold; color: #483d8b }
+      h4 { font-size: 14pt; font-weight:bold; color:#C71585; margin-bottom:2px; }
+      h5 { font-size: 12pt; font-weight:bold; color:#6495ED; margin-bottom:2px; }
+      h6 { font-size: 10pt; font-weight:bold; color:navy }
+
+      body {
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      background-color: #E6E6FA;
+      }
+
+      ul {
+      list-style-type: disc;
+      list-style-position: outside;
+      margin-left: 32px;
+      text-indent: -2px;
+      padding-left:12px;
+      }
+
+      ol {
+      list-style-type: decimal;
+      list-style-position: outside;
+      margin-left: 32px;
+      text-indent: -2px;
+      padding-left:12px;
+      }
+
+      textarea { font-size: 100%;}
+      p { margin-top: 6px; padding: 0 10px 1em; }
+
+      #main {
+      left: 1%;
+      right: 33%;
+      overflow: auto;
+      }
+
+      #msgs {
+      left: 68%;
+      right: 1%;
+      overflow: auto;
+      font-size:10pt;font-weight:normal;color:red;
+      }
+
+
+      div.column {
+      border: 1px dotted #666;
+      background-color: #E6E6FA;
+      position: absolute;
+      top: 20px;    /* margin from top */
+      bottom: 20px; /* margin from bottom */
+      padding: 8px;
+      }
+      * html  {
+      height: 100%;
+      }
+
+
+      #out {
+      border: 1px solid #666;
+      margin: 2px 0 0 0;
+      /* height: 100%; */
+      padding: 4px;
+      overflow: auto;
+      }
+      #out h2 {
+      color: Navy;
+      margin: 0px;
+      padding: 0px;
+      }
+      #out h3 {
+      color: #4682B4;
+      margin: 0px;
+      padding: 0px;
+      }
+      #out p {
+      margin: 0px;
+      padding: 0px;
+      }
+    </style>
+
+  </head>
+
+  <!-- ======================================================= -->
+
+  <body>
+    <h1>Cropper Plugins v1.3</h1>
+
+    <p>
+      This is the Cropper Plugins v1.3 release. These plugins are
+      extensions to the <a href='http://cropper.codeplex.com'>Cropper
+        utility</a>, that allow it to send screen shots to various places
+      or online services.  Cropper itself, and all these plugins, are
+      free to use. </p>
+
+    <h2>The Plugins</h2>
+    <p>The plugins included here:</p>
+    <ul>
+      <li>AnimatedGif - last updated c. 2007</li>
+      <li>AviFormat - last update c. 2007</li>
+      <li>CountdownPng - allows you to specify a countdown delay before
+        capturing. This gives you time to set up the shot, as is necessary,
+        for example, when the screen shot is a popup menu.</li>
+      <li>SendToEmail - attaches the screen shot to a new message in  your default
+        email client</li>
+      <li>SendToFlickr - posts the screenshot on the Flickr web-based photo
+        sharing service</li>
+      <li>SendToImageShack - posts the screenshot on the free <a href='http://ImageShack.us'>ImageShack</a> web-based photo
+        sharing service</li>
+      <li>SendToImgur - posts the screenshot on the free <a href='http://Imgur.com'>Imgur</a> web-based photo
+        sharing service</li>
+      <li>SendToOneNote - attaches the screenshot to a note in Microsoft
+        OneNote</li>
+      <li>SendToPaintDotNet - opens the screenshot in Paint.NET for editing. (Requires
+        installation of <a href='http://getpaint.net'>Paint.NET</a>, a free image
+        editing program.</li>
+      <li>SendToS3 - sends the screen shot to Amazon&#39;s hosted storage
+        service, S3. </li>
+      <li>SendToTFSWorkItem - posts the screen shot to a new workitem opened in
+        Microsoft&#39;s TFS. This works only with TFS 2008. </li>
+      <li>SendToTwitPic - posts the screenshot on the
+        free <a href='http://twitpic.com'>TwitPic</a> twitter-oriented photo
+        sharing service</li>
+    </ul>
+
+    <h2>To use the plugins</h2>
+    <p>Copy the appropriate DLLs to the cropper plugins directory,
+      typically something like <strong>\Program
+        Files\Fusion8Design\Cropper\Plugins</strong>. You can copy only
+      the DLLs that you want to use.  You should be able to figure out
+      which DLLs provide which function, pretty easily, by their names.
+    </p>
+
+
+    <h2>Changes since v1.2 of the Plugins release</h2>
+    <ol>
+
+      <li>The Send-to-TinyPic plugin has been removed.  TinyPic is an online
+        image-sharing service, similar to ImageShack or Imgur, except that the
+        terms and conditions for the TinyPic service prohibit using scripts or
+        tools (or anything other than a web browser, I suppose) for uploading
+        images to the service. To discourage the use of tools, TinyPic has
+        changed their transaction flow repeatedly, and recently introduced a
+        Captcha page, which means the old TinyPic
+        plugin no longer works with the current transaction flow required by
+        the TinyPic website.  While these are not outright barriers to
+        updating the TinyPic plugin for Cropper to make it work again,
+        they do represent obstacles, both legal and technical. For that
+        reason, I&#39;ve dropped the TinyPic plugin.
+      </li>
+      <li>The Send-to-TwitPic plugin is new.  It uploads an image to TwitPic,
+        and then posts the image on your twitter feed. Optionally you can
+        provide a Tweet message.  </li>
+
+      <li>The ImageShack plugin is new.</li>
+
+      <li>The Imgur plugin has been updated to use the Imgur API.  The v1.2
+        version of the plugin used HTML screen-scraping, and it broke when
+        Imgur changed their transaction flow. This version should be more reliable.</li>
+
+      <li>The ImageShack, Imgur and TwitPic plugins depend on the Microsoft.Http.dll
+        assembly, which is shipped as part of the WCF REST Starter Kit beta
+        2. The Microsoft.Http.dll assembly must be placed in the Plugins
+        directory of Cropper in order to be able to use either of these
+        plugins. </li>
+
+      <li> The S3 plugin has been changed to store its settings in the
+        cropper.config file, in the standard way, via the IConfigurablePlugin
+        interface. </li>
+
+      <li> The TFS plugin has been changed to store its settings in the
+        cropper.config file, in the standard way, via the IConfigurablePlugin
+        interface. </li>
+
+      <li> The Email plugin now allows you to choose the image format to
+        use. Choices include BMP, JPG, and PNG. Previously you could only use
+        JPG.  Or was it PNG?  I can&#39;t remember. </li>
+
+      <li>The source code for all plugins has been fixed up and tweaked. Some
+        of the plugins depended on old, outdated interfaces.  I&#39;m
+        surprised they even worked. Now they should all work correctly.
+      </li>
+    </ol>
+
+
+    <h2>CropperPlugins and Cropper are Separate</h2>
+    <p>Cropper is a screen shot tool.  It is produced in the <a href='http://Cropper.codeplex.com'>Cropper</a>
+      project hosted on <a href='http://codeplex.com'>Codeplex.com</a>.  The
+      <a href='http://CropperPlugins.codeplex.com'>CropperPlugins</a>
+      project is a separately-managed project, also hosted on
+      Codeplex, and it produces these plugins.
+    </p>
+
+    <p>The versions and release schedules between these projects are
+      totally independent. The contributors to these projects are
+      different. They are distinct projects.</p>
+
+    <p>If you have a problem with cropper, you need to go to the cropper
+      project page for help or support.  If you have a problem with one of
+      these plugins, go to the cropperplugins project for support.
+    </p>
+
+
+    <h2>More Information</h2>
+
+<p>For more information, see
+  the <a href='http://cropperplugins.codeplex.com'>cropperplugins.codeplex.com</a>
+  website.
+</p>
+
+  </body>
+
+</html>
+
