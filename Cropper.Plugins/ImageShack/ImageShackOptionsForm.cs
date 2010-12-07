@@ -26,6 +26,7 @@ namespace Cropper.SendToImageShack
             HandleQualitySliderValueChanged(null,null);
             SelectedImageFormatChanged(null,null);
             CustomTagsCheckedChanged(null,null);
+            UseCookieCheckedChanged(null,null);
         }
 
 
@@ -81,6 +82,11 @@ namespace Cropper.SendToImageShack
         {
             this.lblFixedTags.Enabled = !this.chkCustomTags.Checked;
             this.txtFixedTags.Enabled = !this.chkCustomTags.Checked;
+        }
+
+        private void UseCookieCheckedChanged(object sender, System.EventArgs e)
+        {
+            this.lblNotImplemented.Visible = this.chkCookie.Checked ;
         }
     }
 }
