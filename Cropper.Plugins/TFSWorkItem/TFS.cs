@@ -1,3 +1,40 @@
+// TFSWorkItem/TFS.cs
+//
+// Code for a cropper plugin that sends a screen snap to
+// a workitem in TFS.
+//
+// To enable tracing for this DLL, build like so:
+//    msbuild /p:Platform=x86 /p:DefineConstants=Trace
+//
+//
+// The TFS plugin implements IConfigurablePlugin, which is the interface
+// Cropper (core) uses to give settings to a plugin (for instance on
+// cropper startup), or ask a plugin to pop a form to the user to
+// specify those settings.
+//
+// The configurable settings include: image format (jpg, png, bmp); jpg
+// quality, tags, and then some things specific to TFS, including server
+// name, and project name.
+//
+// If these settings aren't available at the time the screen is snapped,
+// the plugin prompts the user to provide those settings via the
+// OptionsForm.  If the server and the project aren't available after closing
+// that form, obviously the plugin cannot do its work, so it quits.
+//
+// If however, the server + project are available, the plugin connects
+// to TFS via the TFS client assemblies available through Team Explorer.
+//
+// The settings can also be modified out of band, by selecting the
+// "Options..." menu cjhoice in the Cropper popup menu, clicking the
+// plugins tab, then selecting the TFS plugin panel.
+//
+// Dino Chiesa Sat,
+// 04 Dec 2010 20:58
+//
+
+
+
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +48,6 @@ using Microsoft.TeamFoundation.Client;
 using System.Diagnostics;
 
 using CropperPlugins.Utils;       // for Tracing
-
 
 
 namespace Cropper.TFSWorkItem
@@ -154,7 +190,7 @@ namespace Cropper.TFSWorkItem
 
         private void AttachImageToWorkItem()
         {
-            if (!VerifyBasicSettings()) return;
+            if (!VerifyMinimumSettings()) return;
 
             var dlg = new AttachDialog(_settings, _tfs);
             if (dlg.ShowDialog() == DialogResult.OK)
@@ -230,13 +266,13 @@ namespace Cropper.TFSWorkItem
         }
 
 
-        private bool VerifyBasicSettings()
+        private bool VerifyMinimumSettings()
         {
-            Tracing.Trace("TFSWI::VerifyBasicSettings");
+            Tracing.Trace("TFSWI::VerifyMinimumSettings");
 
             if (!PluginSettings.Completed)
             {
-                var dlg = new OptionsForm(_settings);
+                var dlg = new OptionsForm(PluginSettings);
                 dlg.MakeButtonsVisible();
                 if (dlg.ShowDialog() != DialogResult.OK)
                 {
