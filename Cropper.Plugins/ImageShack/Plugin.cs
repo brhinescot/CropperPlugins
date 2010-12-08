@@ -7,11 +7,22 @@
 //    msbuild /p:Platform=x86 /p:DefineConstants=Trace
 //
 //
+// The ImageShack plugin is pretty basic. It stores the screenshot to a
+// file, then uploads the file to the Imageshack photo sharing service.
+//
+// It implements IConfigurablePlugin, which is the interface Cropper
+// (core) uses to give settings to a plugin (for instance on cropper
+// startup), or ask a plugin to pop a form to the user to specify those
+// settings.
+//
+// The configurable settings include: image format (jpg, png, bmp); jpg
+// quality, tags, and some other stuff.
+//
+//
 // Dino Chiesa
 // Sat, 04 Dec 2010  20:58
 //
 
-// #define Trace
 
 using System;
 using System.Collections.Generic;

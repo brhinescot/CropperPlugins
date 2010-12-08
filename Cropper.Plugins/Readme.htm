@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-07 07:59:50> -->
+  <!-- Last Saved: <2010-December-07 23:05:21> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -58,7 +58,6 @@
       overflow: auto;
       font-size:10pt;font-weight:normal;color:red;
       }
-
 
       div.column {
       border: 1px dotted #666;
@@ -136,21 +135,67 @@
       <li>SendToTFSWorkItem - posts the screen shot to a new workitem opened in
         Microsoft&#39;s TFS. This works only with TFS 2008. </li>
       <li>SendToTwitPic - posts the screenshot on the
-        free <a href='http://twitpic.com'>TwitPic</a> twitter-oriented photo
+        free <a href='http://twitpic.com'>TwitPic</a> Twitter-oriented photo
         sharing service</li>
     </ul>
 
-    <h2>To use the plugins</h2>
-    <p>Copy the appropriate DLLs to the cropper plugins directory,
-      typically something like <strong>\Program
-        Files\Fusion8Design\Cropper\Plugins</strong>. You can copy only
+    <h2>Installing the plugins</h2>
+
+    <p>To install plugins, you must first have installed Cropper.  After
+      insuring that Cropper has been installed, copy the appropriate
+      plugin DLLs to the cropper plugins directory, typically something
+      like <strong>\Program
+      Files\Fusion8Design\Cropper\Plugins</strong>. You can copy only
       the DLLs that you want to use.  You should be able to figure out
       which DLLs provide which function, pretty easily, by their names.
     </p>
 
+    <h3>Dependencies</h3>
+      <p>The ImageShack, Imgur and TwitPic plugins all depend on the
+        Microsoft.Http.dll assembly, which is shipped as part of
+        the <a href='http://aspnet.codeplex.com/releases/view/24644'>WCF
+        REST Starter Kit beta 2</a>, which is produced by Microsoft. You
+        must copy the
+        Microsoft.Http.dll and Microsoft.Http.Extensions.dll assemblies
+        to the Plugins directory of Cropper in order to
+        be able to use any of these three plugins. </p>
+
+    <p>The Send-to-Flickr plugin depends on the Flickrnet library, which is
+      produced under the <a href='http://Flickrnet.codeplex.com'>Flickrnet
+        project on Codeplex</a>.  You must copy the FlickrNet.dll assembly
+      to the Plugins directory of Cropper in order to use the Send-to-Flickr
+      plugin.
+   </p>
+
+
 
     <h2>Changes since v1.2 of the Plugins release</h2>
     <ol>
+
+      <li>The Send-to-TwitPic plugin is new.  It uploads an image to
+        TwitPic, and then posts the image on
+        your <a href='http://twitter.com'>Twitter feed</a>. Optionally
+        you can provide a Tweet message.  </li>
+
+      <li>The Send-to-ImageShack plugin is new.</li>
+
+      <li>The Send-to-Imgur plugin has been updated to use the Imgur API.  The v1.2
+        version of the plugin used HTML screen-scraping, and it broke when
+        Imgur changed their transaction flow. This version should be more reliable.</li>
+
+
+      <li> The Send-to-S3 plugin has been changed to store its settings in the
+        cropper.config file, in the standard way, via the IConfigurablePlugin
+        interface. </li>
+
+      <li> The Send-to-TFS-workitem plugin has been changed to store its settings in the
+        cropper.config file, in the standard way, via the IConfigurablePlugin
+        interface. </li>
+
+      <li> The Send-to-Email plugin now allows you to choose the image format to
+        use. Choices include BMP, JPG, and PNG. Previously you could only use
+        JPG.  Or was it PNG?  I can&#39;t remember. </li>
+
 
       <li>The Send-to-TinyPic plugin has been removed.  TinyPic is an online
         image-sharing service, similar to ImageShack or Imgur, except that the
@@ -165,33 +210,12 @@
         they do represent obstacles, both legal and technical. For that
         reason, I&#39;ve dropped the TinyPic plugin.
       </li>
-      <li>The Send-to-TwitPic plugin is new.  It uploads an image to TwitPic,
-        and then posts the image on your twitter feed. Optionally you can
-        provide a Tweet message.  </li>
 
-      <li>The ImageShack plugin is new.</li>
-
-      <li>The Imgur plugin has been updated to use the Imgur API.  The v1.2
-        version of the plugin used HTML screen-scraping, and it broke when
-        Imgur changed their transaction flow. This version should be more reliable.</li>
-
-      <li>The ImageShack, Imgur and TwitPic plugins depend on the Microsoft.Http.dll
-        assembly, which is shipped as part of the WCF REST Starter Kit beta
-        2. The Microsoft.Http.dll assembly must be placed in the Plugins
-        directory of Cropper in order to be able to use either of these
-        plugins. </li>
-
-      <li> The S3 plugin has been changed to store its settings in the
-        cropper.config file, in the standard way, via the IConfigurablePlugin
-        interface. </li>
-
-      <li> The TFS plugin has been changed to store its settings in the
-        cropper.config file, in the standard way, via the IConfigurablePlugin
-        interface. </li>
-
-      <li> The Email plugin now allows you to choose the image format to
-        use. Choices include BMP, JPG, and PNG. Previously you could only use
-        JPG.  Or was it PNG?  I can&#39;t remember. </li>
+      <li>The Send-to-Flickr plugin has been updated. It now uses the standard
+        cropper.config settings file, via IConfigurablePlugin. The image
+        format is selectable in the configuration menu.  Also,
+        it&#39;s been updated to use the current version (v3.1) of the
+        Flickrnet library.  </li>
 
       <li>The source code for all plugins has been fixed up and tweaked. Some
         of the plugins depended on old, outdated interfaces.  I&#39;m
@@ -212,9 +236,10 @@
       totally independent. The contributors to these projects are
       different. They are distinct projects.</p>
 
-    <p>If you have a problem with cropper, you need to go to the cropper
-      project page for help or support.  If you have a problem with one of
-      these plugins, go to the cropperplugins project for support.
+    <p>If you have a problem or question related to  Cropper, you need
+      to go to the <A href='http://cropper.codeplex.com'>cropper
+      project page</a> for help or support.  If you have a problem with one of
+      these plugins, go to the <a href='http://cropperplugins.codeplex.com'>cropperplugins project</a> for support.
     </p>
 
 
