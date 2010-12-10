@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-07 23:05:21> -->
+  <!-- Last Saved: <2010-December-09 21:07:02> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -100,7 +100,7 @@
   <!-- ======================================================= -->
 
   <body>
-    <h1>Cropper Plugins v1.3</h1>
+    <h1>Cropper Plugins v1.3.1</h1>
 
     <p>
       This is the Cropper Plugins v1.3 release. These plugins are
@@ -112,8 +112,11 @@
     <h2>The Plugins</h2>
     <p>The plugins included here:</p>
     <ul>
-      <li>AnimatedGif - last updated c. 2007</li>
-      <li>AviFormat - last update c. 2007</li>
+
+      <li>AnimatedGif - generate an animated GIF from your
+        screen. Really helpful for blog posts, illustrations. </li>
+
+      <li>AviFormat - last update c. 2007.  Not sure of the status of this.</li>
       <li>CountdownPng - allows you to specify a countdown delay before
         capturing. This gives you time to set up the shot, as is necessary,
         for example, when the screen shot is a popup menu.</li>
@@ -183,7 +186,6 @@
         version of the plugin used HTML screen-scraping, and it broke when
         Imgur changed their transaction flow. This version should be more reliable.</li>
 
-
       <li> The Send-to-S3 plugin has been changed to store its settings in the
         cropper.config file, in the standard way, via the IConfigurablePlugin
         interface. </li>
@@ -191,6 +193,14 @@
       <li> The Send-to-TFS-workitem plugin has been changed to store its settings in the
         cropper.config file, in the standard way, via the IConfigurablePlugin
         interface. </li>
+
+      <li> The AnimatedGif plugin now supports configuration.  With one
+        option, you can elect to automatically pop the generated GIF in
+        the default viewer on your computer.  There are other options
+        regarding generation of the animated GIF.  All of this is done
+        in IConfigurablePlugin - which means the dialog is hosted in the
+        tabbed UI presented by Cropper (core) under the "Options..."
+        menu choice.  </li>
 
       <li> The Send-to-Email plugin now allows you to choose the image format to
         use. Choices include BMP, JPG, and PNG. Previously you could only use
