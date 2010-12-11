@@ -30,9 +30,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageShack", "ImageShack\Im
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitPic", "TwitPic\TwitPic.csproj", "{e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Picasa", "Picasa\Picasa.csproj", "{2dabaa16-8b10-473b-bf99-8e9fba7e7315}"
+EndProject
 Global
         GlobalSection(TeamFoundationVersionControl) = preSolution
-                SccNumberOfProjects = 12
+                SccNumberOfProjects = 13
                 SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
                 SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs02
                 SccLocalPath0 = .
@@ -72,6 +74,9 @@ Global
                 SccProjectUniqueName12 = TwitPic\\TwitPic.csproj
                 SccProjectName12 = TwitPic
                 SccLocalPath12 = TwitPic
+                SccProjectUniqueName13 = Picasa\\Picasa.csproj
+                SccProjectName13 = Picasa
+                SccLocalPath13 = Picasa
         EndGlobalSection
         GlobalSection(SolutionConfigurationPlatforms) = preSolution
                 AutomatedDebug|Any CPU = AutomatedDebug|Any CPU
@@ -226,6 +231,18 @@ Global
                 {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Debug|x86.Build.0 = Debug|x86
                 {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|x86.ActiveCfg = Release|x86
                 {e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}.Release|x86.Build.0 = Release|x86
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.AutomatedRelease|Any CPU.ActiveCfg = Release|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.AutomatedRelease|Any CPU.Build.0 = Release|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Release|Any CPU.Build.0 = Release|Any CPU
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Debug|x86.ActiveCfg = Debug|x86
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Debug|x86.Build.0 = Debug|x86
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Release|x86.ActiveCfg = Release|x86
+                {2dabaa16-8b10-473b-bf99-8e9fba7e7315}.Release|x86.Build.0 = Release|x86
         EndGlobalSection
         GlobalSection(SolutionProperties) = preSolution
                 HideSolutionNode = FALSE
