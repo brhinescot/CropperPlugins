@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-09 21:07:02> -->
+  <!-- Last Saved: <2010-December-11 16:46:12> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -100,7 +100,7 @@
   <!-- ======================================================= -->
 
   <body>
-    <h1>Cropper Plugins v1.3.1</h1>
+    <h1>Cropper Plugins v1.3.2</h1>
 
     <p>
       This is the Cropper Plugins v1.3 release. These plugins are
@@ -139,7 +139,9 @@
         Microsoft&#39;s TFS. This works only with TFS 2008. </li>
       <li>SendToTwitPic - posts the screenshot on the
         free <a href='http://twitpic.com'>TwitPic</a> Twitter-oriented photo
-        sharing service</li>
+        sharing service. (new for v1.3.1)</li>
+      <li>SendToPicasa - posts the screenshot on Google&#39;s <a href='http://picasaweb.google.com/'>Picasa
+          photo sharing service</a>. (new for v1.3.2)</li>
     </ul>
 
     <h2>Installing the plugins</h2>
@@ -154,14 +156,15 @@
     </p>
 
     <h3>Dependencies</h3>
-      <p>The ImageShack, Imgur and TwitPic plugins all depend on the
-        Microsoft.Http.dll assembly, which is shipped as part of
-        the <a href='http://aspnet.codeplex.com/releases/view/24644'>WCF
+
+    <p>The ImageShack, Imgur, TwitPic, and Picasa plugins all depend on the
+      Microsoft.Http.dll assembly, which is shipped as part of
+      the <a href='http://aspnet.codeplex.com/releases/view/24644'>WCF
         REST Starter Kit beta 2</a>, which is produced by Microsoft. You
-        must copy the
-        Microsoft.Http.dll and Microsoft.Http.Extensions.dll assemblies
-        to the Plugins directory of Cropper in order to
-        be able to use any of these three plugins. </p>
+      must copy the
+      Microsoft.Http.dll and Microsoft.Http.Extensions.dll assemblies
+      to the Plugins directory of Cropper in order to
+      be able to use any of these four plugins. </p>
 
     <p>The Send-to-Flickr plugin depends on the Flickrnet library, which is
       produced under the <a href='http://Flickrnet.codeplex.com'>Flickrnet
@@ -175,7 +178,11 @@
     <h2>Changes since v1.2 of the Plugins release</h2>
     <ol>
 
-      <li>The Send-to-TwitPic plugin is new.  It uploads an image to
+      <li>The Send-to-Picasa plugin is new (for v1.3.2 of
+        CropperPlugins).  It uploads an image to the Picasa photo
+        sharing service. </li>
+
+      <li>The Send-to-TwitPic plugin is new (for v1.3.1).  It uploads an image to
         TwitPic, and then posts the image on
         your <a href='http://twitter.com'>Twitter feed</a>. Optionally
         you can provide a Tweet message.  </li>
@@ -205,7 +212,6 @@
       <li> The Send-to-Email plugin now allows you to choose the image format to
         use. Choices include BMP, JPG, and PNG. Previously you could only use
         JPG.  Or was it PNG?  I can&#39;t remember. </li>
-
 
       <li>The Send-to-TinyPic plugin has been removed.  TinyPic is an online
         image-sharing service, similar to ImageShack or Imgur, except that the
