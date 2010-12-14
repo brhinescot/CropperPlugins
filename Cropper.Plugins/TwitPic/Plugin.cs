@@ -1,7 +1,7 @@
 // TwitPic/Plugin.cs
 //
 // Code for a cropper plugin that sends a screen snap to
-// TwitPic.com
+// TwitPic.com, and optionally tweets a message. (updates Twitter status).
 //
 // To enable tracing for this DLL, build like so:
 //    msbuild /p:Platform=x86 /p:DefineConstants=Trace
@@ -10,7 +10,6 @@
 // Dino Chiesa
 // Sat, 04 Dec 2010  20:58
 //
-
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Utils;       // for Tracing
-using Microsoft.Http;             // HttpClient
+
 
 namespace Cropper.SendToTwitPic
 {
@@ -51,27 +50,30 @@ namespace Cropper.SendToTwitPic
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyBasicSettings()) return;
+            if (!VerifyAuthentication()) return;
 
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
 
 
-        private bool VerifyBasicSettings()
+        private bool VerifyAuthentication()
         {
             if (!PluginSettings.Completed)
             {
-                var dlg = new TwitPicOptionsForm(PluginSettings);
-                dlg.MakeButtonsVisible();
+                var dlg = new TwitPicOauthForm(this.oauth);
                 dlg.ShowDialog();
+                if (dlg.DialogResult == DialogResult.OK)
+                {
+                    dlg.StoreTokens(PluginSettings);
+                }
             }
 
             if (!PluginSettings.Completed)
             {
-                MessageBox.Show("You must configure a Twitter username and password " +
+                MessageBox.Show("You must connect to Twitter to approve this plugin\n" +
                                 "before uploading an image to TwitPic.\n\n",
-                                "Missing Settings for TwitPic plugin");
+                                "No Authorizaiton for TwitPic plugin");
                 return false;
             }
             return true;
@@ -181,33 +183,12 @@ namespace Cropper.SendToTwitPic
         }
 
 
-
-        /// <summary>
-        ///  This does the real work of the plugin - uploading to imgur.com.
-        /// </summary>
-        ///
-        /// <remarks>
-        ///   First upload the main image, and then place the raw
-        ///   image URL onto the clipboard for easy reference/paste.
-        /// </remarks>
-        private void UploadImage()
+        private string GetTweet()
         {
-            Tracing.Trace("TwitPic::UploadImage");
 
-            try
+            if (PluginSettings.Tweet)
             {
-                string relativeUrl = PluginSettings.Tweet ? "uploadAndPost" : "upload";
-                var http = new HttpClient(_baseUri);
-                var form = new HttpMultipartMimeForm();
-                using (var fs = File.Open(this._fileName, FileMode.Open, FileAccess.Read))
-                {
-                    form.Add("media",
-                             this._fileName,
-                             HttpContent.Create(fs, "application/octet-stream", fs.Length));
-                    form.Add("username", PluginSettings.Username);
-                    form.Add("password", PluginSettings.Password);
-                    if (PluginSettings.Tweet)
-                    {
+
                         // prompt for the tweet here
                         var f = new System.Windows.Forms.Form();
                         var btnOK = new System.Windows.Forms.Button();
@@ -250,40 +231,121 @@ namespace Cropper.SendToTwitPic
                         if (result == DialogResult.OK)
                         {
                             if (!String.IsNullOrEmpty(txt.Text))
-                                form.Add("message", txt.Text);
+                                return txt.Text;
                         }
-                        else
-                        {
-                            Tracing.Trace("cancelled.");
-                            Tracing.Trace("---------------------------------");
-                            return;
-                        }
-                    }
+            }
 
-                    var response = http.Post(relativeUrl, form.CreateHttpContent());
-                    response.EnsureStatusIsSuccessful();
-                    var foo = response.Content.ReadAsXmlSerializable<UploadResponse>();
-                    if (foo == null)
-                        throw new InvalidOperationException("Successful response, but cannot deserialize xml.");
-                    if ((foo.status != "ok") || (foo.error != null) ||
-                        (foo.stat != null && foo.stat != "ok"))
+            return  "uploaded from Cropper.";
+        }
+
+
+        /// <summary>
+        ///  This does the real work of the plugin - uploading to TwitPic.com.
+        /// </summary>
+        ///
+        /// <remarks>
+        ///   First upload the image, and then place the raw
+        ///   image URL onto the clipboard for easy reference/paste.
+        //    Optionally, post a Tweet to Twitter.
+        /// </remarks>
+        private void UploadImage()
+        {
+            Tracing.Trace("TwitPic::UploadImage");
+
+            try
+            {
+                oauth["token"] = PluginSettings.AccessToken;
+                oauth["token_secret"] = PluginSettings.AccessSecret;
+                var authzHeader = oauth.GenerateCredsHeader(TwitPicSettings.URL_VERIFY_CREDS,
+                                                            "GET",
+                                                            TwitPicSettings.AUTHENTICATION_REALM);
+                string tweet = GetTweet();
+
+                // prepare the upload POST request
+                var request = (HttpWebRequest)WebRequest.Create(TwitPicSettings.URL_UPLOAD);
+                request.Method = "POST";
+                request.PreAuthenticate = true;
+                request.AllowWriteStreamBuffering = true;
+                var boundary = "xxx"+Guid.NewGuid().ToString().Substring(12).Replace("-","");
+                request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+                request.Headers.Add("X-Auth-Service-Provider", TwitPicSettings.URL_VERIFY_CREDS);
+                request.Headers.Add("X-Verify-Credentials-Authorization",
+                                    authzHeader);
+
+                // prepare the payload
+                var separator = "--" + boundary;
+                var footer = separator + "--";
+
+                var contents = new System.Text.StringBuilder();
+                contents.AppendLine(separator);
+
+                contents.AppendLine("Content-Disposition: form-data; name=\"key\"");
+                contents.AppendLine();
+                contents.AppendLine(TwitPicSettings.TWITPIC_API_KEY);
+                contents.AppendLine(separator);
+
+                // THE TWITPIC DOC SAYS that the message parameter is required;
+                // it is not. We'll send it anyway.  Keep in mind that posting
+                // this message to TwitPic does not "tweet" the message.
+                // Apparently the OAuth implementation is not developed enough
+                // to do that, yet.
+                //
+                contents.AppendLine("Content-Disposition: form-data; name=\"message\"");
+                contents.AppendLine();
+                contents.AppendLine(String.Format("{0} at {1}",
+                                                  tweet,
+                                                  DateTime.Now.ToString("G")));
+                contents.AppendLine(separator);
+
+                string shortFileName = Path.GetFileName(this._fileName);
+                string fileContentType = GetMimeType(shortFileName);
+                string fileHeader = string.Format("Content-Disposition: file; " +
+                                                  "name=\"media\"; filename=\"{0}\"",
+                                                  shortFileName);
+                // TODO:  make this so I don't have to store
+                // all the image data in a single buffer. One option is
+                // to do it chunked transfer. need to do the proper encoding in
+                // any case.
+                var encoding = System.Text.Encoding.GetEncoding("iso-8859-1");
+                string fileData = encoding
+                    .GetString(File.ReadAllBytes(this._fileName));
+
+                contents.AppendLine(fileHeader);
+                contents.AppendLine(string.Format("Content-Type: {0}", fileContentType));
+                contents.AppendLine();
+                contents.AppendLine(fileData);
+
+                contents.AppendLine(footer);
+
+                byte[] bytes = encoding.GetBytes(contents.ToString());
+                request.ContentLength = bytes.Length;
+
+                // actually send the request
+                using (var s = request.GetRequestStream())
+                {
+                    s.Write(bytes, 0, bytes.Length);
+
+                    using (var r = (HttpWebResponse)request.GetResponse())
                     {
-                        if (foo.error != null)
-                            throw new InvalidOperationException(String.Format("Error, code = {0}}, message = {1}.", foo.error.code, foo.error.message));
+                        using (var reader = new StreamReader(r.GetResponseStream()))
+                        {
+                            var responseText = reader.ReadToEnd();
+                            var s1 = new XmlSerializer(typeof(TwitPicUploadResponse));
+                            var sr = new System.IO.StringReader(responseText);
+                            var tpur= (TwitPicUploadResponse) s1.Deserialize(new System.Xml.XmlTextReader(sr));
 
+                            if (PluginSettings.PopBrowser)
+                                System.Diagnostics.Process.Start(tpur.url);
 
-                        throw new InvalidOperationException(String.Format("Successful response, but status = {0}.", foo.status));
+                            Clipboard.SetDataObject(tpur.url, true);
 
+                            if (PluginSettings.Tweet)
+                                Tweet(tweet, tpur.url);
+                        }
                     }
-
-                    string rawImageUri = foo.mediaurl;
-                    System.Diagnostics.Process.Start(rawImageUri);
-
-                    Clipboard.SetDataObject(rawImageUri, true);
-
-                    Tracing.Trace("all done.");
-                    Tracing.Trace("---------------------------------");
                 }
+                Tracing.Trace("all done.");
+                Tracing.Trace("---------------------------------");
             }
             catch (Exception exception2)
             {
@@ -301,6 +363,45 @@ namespace Cropper.SendToTwitPic
             return ;
         }
 
+        private void Tweet(string message, string imageUri)
+        {
+            var twitterUpdateUrlBase = "http://api.twitter.com/1/statuses/update.xml?status=";
+            var msg = String.Format("{0} {1}", message, imageUri);
+            var url = twitterUpdateUrlBase + OAuth.Manager.UrlEncode(msg);
+
+            var authzHeader = oauth.GenerateAuthzHeader(url, "POST");
+
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "POST";
+            request.PreAuthenticate = true;
+            request.AllowWriteStreamBuffering = true;
+            request.Headers.Add("Authorization", authzHeader);
+
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                MessageBox.Show("There's been a problem trying to tweet:" +
+                                Environment.NewLine +
+                                response.StatusDescription +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "You will have to tweet manually." +
+                                Environment.NewLine);
+            }
+        }
+
+
+        private static string GetMimeType(String filename)
+        {
+            var extension = System.IO.Path.GetExtension(filename).ToLower();
+            var regKey =  Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension);
+
+            string result =
+                ((regKey != null) && (regKey.GetValue("Content Type") != null))
+                ? regKey.GetValue("Content Type").ToString()
+                : "image/unknown" ;
+            return result;
+        }
 
 #if Trace
         // these methods are needed only for diagnostic purposes.
@@ -394,115 +495,54 @@ namespace Cropper.SendToTwitPic
         #endregion
 
 
+        private OAuth.Manager _oauth;
+        private OAuth.Manager oauth
+        {
+            get
+            {
+                if (_oauth == null)
+                {
+                    _oauth = new OAuth.Manager();
+                    _oauth["consumer_key"] = TwitPicSettings.TWITTER_CONSUMER_KEY;
+                    _oauth["consumer_secret"] = TwitPicSettings.TWITTER_CONSUMER_SECRET;
+                }
+                return _oauth;
+            }
+        }
+
         private TwitPicSettings _settings;
         private TwitPicOptionsForm _configForm;
-        private static readonly string _baseUri= "http://twitpic.com/api/";
         private string _fileName;
     }
 
 
-    // see http://twitpic.com/api.do#upload
-    //
-    // Example responses:
-    //
-    //   <rsp status="ok">
-    //     <statusid>1111</statusid>
-    //     <userid>11111</userid>
-    //     <mediaid>abc123</mediaid>
-    //     <mediaurl>http://twitpic.com/abc123</mediaurl>
-    //   </rsp>
-    //
-    //
-    //   <rsp stat="fail">
-    //     <err code="2" msg="Image type not supported. GIF, JPG, & PNG only" />
-    //   </rsp>
-    //
-    // Yes, the status attribute is "stat" in the failure case and "status" in
-    // the success case. Really.
-    //
 
-    [XmlType("rsp", Namespace="")]
-    [XmlRoot("rsp", Namespace="")]
-    public partial class UploadResponse
+    // Example of response from http://api.twitpic.com/2/upload.xml :
+    //
+    // <image>
+    //     <id>3fq924</id>
+    //     <text />
+    //     <url>http://twitpic.com/3fq924</url>
+    //     <width>747</width>
+    //     <height>158</height>
+    //     <size>14318</size>
+    //     <type>jpg</type>
+    //     <timestamp>Tue, 14 Dec 2010 01:50:38 +0000</timestamp>
+    //     <user>
+    //         <id>59152613</id>
+    //         <screen_name>dpchiesa</screen_name>
+    //     </user>
+    // </image>
+
+
+    /// <summary>
+    ///   Class to de-serialize the upload response from TwitPic.
+    /// </summary>
+    [XmlRoot("image")]
+    [XmlType("image")]
+    public class TwitPicUploadResponse
     {
-        [XmlAttribute("stat")]
-        public string stat       { get;set; }
-        [XmlAttribute("status")]
-        public string status     { get;set; }
-        public string statusid   { get;set; }
-        public string userid     { get;set; }
-        public string mediaid    { get;set; }
-        public string mediaurl   { get;set; }
-        [XmlElement("err")]
-        public ResponseError error  { get;set; }
-    }
-
-    public class ResponseError
-    {
-        [XmlAttribute("code")]
-        public int code     { get;set; }
-        [XmlAttribute("msg")]
-        public string message     { get;set; }
-    }
-
-    public class TwitPicSettings
-    {
-        string _format;
-        public TwitPicSettings()
-        {
-            JpgImageQuality= 80; // default
-            ImageFormat = "jpg"; // default
-        }
-
-        /// <summary>
-        ///   The username known to Twitter.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        ///   The password for authenticating to Twitter.
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        ///   True: send a text tweet along with the message (the user
-        ///   will  be prompted. False: just up-load the image.
-        /// </summary>
-        public bool Tweet { get; set; }
-
-        /// <summary>
-        ///   Quality level to use when saving an image in JPG format.
-        /// </summary>
-        public int JpgImageQuality
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///   The Image format; one of Jpeg, Png.
-        /// </summary>
-        public string ImageFormat
-        {
-            get { return _format; }
-
-            set
-            {
-                var v = value.ToLower();
-                if (v == "png" || v == "jpg")
-                    _format = v;
-            }
-        }
-
-        [System.Xml.Serialization.XmlIgnore]
-        public bool Completed
-        {
-            get
-            {
-                return !(System.String.IsNullOrEmpty(Username) ||
-                         System.String.IsNullOrEmpty(Password));
-            }
-        }
+        public string url { get;set; }
     }
 }
 
