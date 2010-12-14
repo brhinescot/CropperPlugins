@@ -11,7 +11,6 @@
 // Sat, 04 Dec 2010  20:58
 //
 
-// #define Trace
 
 using System;
 using System.Collections.Generic;
@@ -223,20 +222,20 @@ namespace Cropper.SendToTwitPic
                         txt.Multiline = true;
                         txt.Location = new System.Drawing.Point(54, 8);
                         txt.Size = new System.Drawing.Size(268, 82);
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(250, 94);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(68, 23);
-            btnCancel.TabIndex = 71;
-            btnCancel.Text = "&Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(174, 94);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(68, 23);
-            btnOK.TabIndex = 61;
-            btnOK.Text = "&OK";
-            btnOK.UseVisualStyleBackColor = true;
+                        btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                        btnCancel.Location = new System.Drawing.Point(250, 94);
+                        btnCancel.Name = "btnCancel";
+                        btnCancel.Size = new System.Drawing.Size(68, 23);
+                        btnCancel.TabIndex = 71;
+                        btnCancel.Text = "&Cancel";
+                        btnCancel.UseVisualStyleBackColor = true;
+                        btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+                        btnOK.Location = new System.Drawing.Point(174, 94);
+                        btnOK.Name = "btnOK";
+                        btnOK.Size = new System.Drawing.Size(68, 23);
+                        btnOK.TabIndex = 61;
+                        btnOK.Text = "&OK";
+                        btnOK.UseVisualStyleBackColor = true;
                         f.Controls.Add(label);
                         f.Controls.Add(txt);
                         f.Controls.Add(btnOK);
@@ -260,6 +259,7 @@ namespace Cropper.SendToTwitPic
                             return;
                         }
                     }
+
                     var response = http.Post(relativeUrl, form.CreateHttpContent());
                     response.EnsureStatusIsSuccessful();
                     var foo = response.Content.ReadAsXmlSerializable<UploadResponse>();
