@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-11 16:46:12> -->
+  <!-- Last Saved: <2010-December-14 17:42:18> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -157,14 +157,14 @@
 
     <h3>Dependencies</h3>
 
-    <p>The ImageShack, Imgur, TwitPic, and Picasa plugins all depend on the
+    <p>The ImageShack, Imgur, and Picasa plugins all depend on the
       Microsoft.Http.dll assembly, which is shipped as part of
       the <a href='http://aspnet.codeplex.com/releases/view/24644'>WCF
         REST Starter Kit beta 2</a>, which is produced by Microsoft. You
       must copy the
       Microsoft.Http.dll and Microsoft.Http.Extensions.dll assemblies
       to the Plugins directory of Cropper in order to
-      be able to use any of these four plugins. </p>
+      be able to use any of these three plugins. </p>
 
     <p>The Send-to-Flickr plugin depends on the Flickrnet library, which is
       produced under the <a href='http://Flickrnet.codeplex.com'>Flickrnet
@@ -185,7 +185,9 @@
       <li>The Send-to-TwitPic plugin is new (for v1.3.1).  It uploads an image to
         TwitPic, and then posts the image on
         your <a href='http://twitter.com'>Twitter feed</a>. Optionally
-        you can provide a Tweet message.  </li>
+        you can provide a Tweet message.  New for v1.3.3, this plugin uses
+        the OAuth protocol for authentication without a username + password.
+      </li>
 
       <li>The Send-to-ImageShack plugin is new.</li>
 

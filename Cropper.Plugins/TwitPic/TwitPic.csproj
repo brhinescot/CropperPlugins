@@ -86,8 +86,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
-    <Reference Include="Microsoft.Http"/>
-    <Reference Include="Microsoft.Http.Extensions"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
@@ -101,6 +99,15 @@
       <Link>Tracing.cs</Link>
     </Compile>
     <Compile Include="TwitPicOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TwitPicSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OAuth.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OAuthForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TwitPicOptionsForm.Designer.cs">

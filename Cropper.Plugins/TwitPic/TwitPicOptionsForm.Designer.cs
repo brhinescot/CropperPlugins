@@ -29,16 +29,19 @@ namespace Cropper.SendToTwitPic
         private void InitializeComponent()
         {
             this.btnOK = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.qualitySlider = new System.Windows.Forms.TrackBar();
             this.cmbImageFormat = new System.Windows.Forms.ComboBox();
-            this.txtUsername = new System.Windows.Forms.TextBox();
-            this.lblUsername = new System.Windows.Forms.Label();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.lblPassword = new System.Windows.Forms.Label();
+            this.txtAccessToken = new System.Windows.Forms.TextBox();
+            this.lblAccessToken = new System.Windows.Forms.Label();
+            this.txtAccessSecret = new System.Windows.Forms.TextBox();
+            this.lblAccessSecret = new System.Windows.Forms.Label();
             this.lblFormat = new System.Windows.Forms.Label();
             this.lblTweet = new System.Windows.Forms.Label();
             this.chkTweet = new System.Windows.Forms.CheckBox();
+            this.lblPopBrowser = new System.Windows.Forms.Label();
+            this.chkPopBrowser = new System.Windows.Forms.CheckBox();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
@@ -56,51 +59,70 @@ namespace Cropper.SendToTwitPic
             //
             // tabPage1
             //
+            this.tabPage1.Controls.Add(this.lblPopBrowser);
+            this.tabPage1.Controls.Add(this.chkPopBrowser);
             this.tabPage1.Controls.Add(this.lblTweet);
             this.tabPage1.Controls.Add(this.chkTweet);
             this.tabPage1.Controls.Add(this.qualitySlider);
             this.tabPage1.Controls.Add(this.lblFormat);
             this.tabPage1.Controls.Add(this.cmbImageFormat);
-            this.tabPage1.Controls.Add(this.txtPassword);
-            this.tabPage1.Controls.Add(this.lblPassword);
-            this.tabPage1.Controls.Add(this.txtUsername);
-            this.tabPage1.Controls.Add(this.lblUsername);
+            this.tabPage1.Controls.Add(this.txtAccessSecret);
+            this.tabPage1.Controls.Add(this.lblAccessSecret);
+            this.tabPage1.Controls.Add(this.txtAccessToken);
+            this.tabPage1.Controls.Add(this.lblAccessToken);
+            this.tabPage1.Controls.Add(this.btnClear);
             this.tabPage1.Controls.Add(this.btnCancel);
             this.tabPage1.Controls.Add(this.btnOK);
             //
-            // txtUsername
+            // txtAccessToken
             //
-            this.txtUsername.Location = new System.Drawing.Point(94, 6);
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(214, 20);
-            this.txtUsername.TabIndex = 11;
-            this.tooltip.SetToolTip(txtUsername, "Your Twitter username");
+            this.txtAccessToken.Location = new System.Drawing.Point(94, 6);
+            this.txtAccessToken.Name = "txtAccessToken";
+            this.txtAccessToken.Size = new System.Drawing.Size(214, 20);
+            this.txtAccessToken.TabIndex = 11;
+            this.txtAccessToken.Enabled = false;
+            this.tooltip.SetToolTip(txtAccessToken, "Your Twitter OAuth access token");
             //
-            // lblUsername
+            // lblAccessToken
             //
-            this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(4, 8);
-            this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(66, 13);
-            this.lblUsername.TabIndex = 10;
-            this.lblUsername.Text = "Username:";
+            this.lblAccessToken.AutoSize = true;
+            this.lblAccessToken.Location = new System.Drawing.Point(4, 8);
+            this.lblAccessToken.Name = "lblAccessToken";
+            this.lblAccessToken.Size = new System.Drawing.Size(66, 13);
+            this.lblAccessToken.TabIndex = 10;
+            this.lblAccessToken.Text = "Access Token:";
             //
-            // txtPassword
+            // txtAccessSecret
             //
-            this.txtPassword.Location = new System.Drawing.Point(94, 34);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(214, 20);
-            this.txtPassword.TabIndex = 21;
-            this.tooltip.SetToolTip(txtPassword, "The Twitter password.");
+            this.txtAccessSecret.Location = new System.Drawing.Point(94, 34);
+            this.txtAccessSecret.Name = "txtAccessSecret";
+            this.txtAccessSecret.Size = new System.Drawing.Size(214, 20);
+            this.txtAccessSecret.TabIndex = 21;
+            this.txtAccessSecret.Enabled = false;
+            this.tooltip.SetToolTip(txtAccessSecret, "The Twitter access secret.");
             //
-            // lblPassword
+            // lblAccessSecret
             //
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(4, 36);
-            this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(66, 13);
-            this.lblPassword.TabIndex = 10;
-            this.lblPassword.Text = "Password:";
+            this.lblAccessSecret.AutoSize = true;
+            this.lblAccessSecret.Location = new System.Drawing.Point(4, 36);
+            this.lblAccessSecret.Name = "lblAccessSecret";
+            this.lblAccessSecret.Size = new System.Drawing.Size(66, 13);
+            this.lblAccessSecret.TabIndex = 10;
+            this.lblAccessSecret.Text = "Access Secret:";
+            //
+            // btnClear
+            //
+            this.btnClear.Location = new System.Drawing.Point(94, 62);
+            this.btnClear.Visible = true;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(136, 23);
+            this.btnClear.TabIndex = 71;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.tooltip.SetToolTip(btnClear,
+                                    "Erase the Twitter access token and secret.\n" +
+                                    "This will require you to re-authorize the plugin.");
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             //
             // cmbImageFormat
             //
@@ -110,7 +132,7 @@ namespace Cropper.SendToTwitPic
             this.cmbImageFormat.Items.AddRange(new object[] {
             "png",
             "jpg" });
-            this.cmbImageFormat.Location = new System.Drawing.Point(94, 62);
+            this.cmbImageFormat.Location = new System.Drawing.Point(94, 90);
             this.cmbImageFormat.Name = "cmbImageFormat";
             this.cmbImageFormat.Size = new System.Drawing.Size(72, 21);
             this.cmbImageFormat.TabIndex = 31;
@@ -119,7 +141,7 @@ namespace Cropper.SendToTwitPic
             // lblFormat
             //
             this.lblFormat.AutoSize = true;
-            this.lblFormat.Location = new System.Drawing.Point(4, 64);
+            this.lblFormat.Location = new System.Drawing.Point(4, 90);
             this.lblFormat.Name = "lblFormat";
             this.lblFormat.Size = new System.Drawing.Size(50, 13);
             this.lblFormat.TabIndex = 30;
@@ -128,7 +150,7 @@ namespace Cropper.SendToTwitPic
             // qualitySlider
             //
             this.qualitySlider.LargeChange = 10;
-            this.qualitySlider.Location = new System.Drawing.Point(94, 92);
+            this.qualitySlider.Location = new System.Drawing.Point(94, 120);
             this.qualitySlider.Maximum = 100;
             this.qualitySlider.Minimum = 10;
             this.qualitySlider.Name = "qualitySlider";
@@ -140,7 +162,7 @@ namespace Cropper.SendToTwitPic
             //
             // chkTweet
             //
-            this.chkTweet.Location = new System.Drawing.Point(94, 130);
+            this.chkTweet.Location = new System.Drawing.Point(94, 158);
             this.chkTweet.Text = "";
             this.chkTweet.Name = "chkTweet";
             this.chkTweet.TabIndex = 51;
@@ -149,11 +171,28 @@ namespace Cropper.SendToTwitPic
             // lblTweet
             //
             this.lblTweet.AutoSize = true;
-            this.lblTweet.Location = new System.Drawing.Point(4, 132);
+            this.lblTweet.Location = new System.Drawing.Point(4, 158);
             this.lblTweet.Name = "lblTweet";
             this.lblTweet.Size = new System.Drawing.Size(68, 13);
             this.lblTweet.TabIndex = 50;
             this.lblTweet.Text = "Tweet uploads?";
+            //
+            // chkPopBrowser
+            //
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 186);
+            this.chkPopBrowser.Text = "";
+            this.chkPopBrowser.Name = "chkPopBrowser";
+            this.chkPopBrowser.TabIndex = 51;
+            this.tooltip.SetToolTip(chkPopBrowser, "Check to view the just-uploaded image in the browser.");
+            //
+            // lblPopBrowser
+            //
+            this.lblPopBrowser.AutoSize = true;
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 186);
+            this.lblPopBrowser.Name = "lblPopBrowser";
+            this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
+            this.lblPopBrowser.TabIndex = 50;
+            this.lblPopBrowser.Text = "Pop Browser?";
             //
             // btnCancel
             //
@@ -196,15 +235,18 @@ namespace Cropper.SendToTwitPic
 
         #endregion
 
-        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label lblPopBrowser;
+        private System.Windows.Forms.CheckBox chkPopBrowser;
         private System.Windows.Forms.CheckBox chkTweet;
         private System.Windows.Forms.Label lblTweet;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ToolTip tooltip;
-        private System.Windows.Forms.TextBox txtUsername;
-        private System.Windows.Forms.Label lblUsername;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Label lblPassword;
+        private System.Windows.Forms.TextBox txtAccessToken;
+        private System.Windows.Forms.Label lblAccessToken;
+        private System.Windows.Forms.TextBox txtAccessSecret;
+        private System.Windows.Forms.Label lblAccessSecret;
         private System.Windows.Forms.Label lblFormat;
         private System.Windows.Forms.ComboBox cmbImageFormat;
         private System.Windows.Forms.TrackBar qualitySlider;

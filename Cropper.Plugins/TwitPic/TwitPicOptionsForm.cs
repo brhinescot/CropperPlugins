@@ -17,15 +17,19 @@ namespace Cropper.SendToTwitPic
             InitializeComponent();
 
             _settings                        = settings;
-            this.txtUsername.Text            = _settings.Username;
-            this.txtPassword.Text            = _settings.Password;
+            this.txtAccessToken.Text         = _settings.AccessToken;
+            this.txtAccessSecret.Text        = _settings.AccessSecret;
             this.cmbImageFormat.SelectedItem = settings.ImageFormat;
             this.qualitySlider.Value         = _settings.JpgImageQuality;
             this.chkTweet.Checked            = _settings.Tweet;
+            this.chkPopBrowser.Checked       = _settings.PopBrowser;
             HandleQualitySliderValueChanged(null,null);
             SelectedImageFormatChanged(null,null);
-        }
 
+            // only makes sense to clear settings if they are not clear yet.
+            this.btnClear.Enabled = (!String.IsNullOrEmpty(_settings.AccessToken) ||
+                                       !String.IsNullOrEmpty(_settings.AccessSecret));
+        }
 
         /// <summary>
         ///   Show the OK and Cancel buttons.
@@ -51,9 +55,10 @@ namespace Cropper.SendToTwitPic
 
         public void ApplySettings()
         {
-            _settings.Username = this.txtUsername.Text.Trim();
-            _settings.Password = this.txtPassword.Text.Trim();
+            _settings.AccessToken = this.txtAccessToken.Text.Trim();
+            _settings.AccessSecret = this.txtAccessSecret.Text.Trim();
             _settings.Tweet = this.chkTweet.Checked;
+            _settings.PopBrowser = this.chkPopBrowser.Checked;
             _settings.JpgImageQuality =  this.qualitySlider.Value;
             _settings.ImageFormat = this.cmbImageFormat.Text;
         }
@@ -61,6 +66,18 @@ namespace Cropper.SendToTwitPic
         private void btnOK_Click(object sender, EventArgs e)
         {
             ApplySettings();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            // erase whatever settings there are
+            CachedSettings.Instance.AccessToken =
+            CachedSettings.Instance.AccessSecret =
+                _settings.AccessToken =
+                _settings.AccessSecret = null;
+            this.txtAccessToken.Text = "";
+            this.txtAccessSecret.Text = "";
+            this.btnClear.Enabled = false; // can do only once
         }
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
@@ -73,6 +90,5 @@ namespace Cropper.SendToTwitPic
             this.tooltip.SetToolTip(qualitySlider,
                                     "quality=" + qualitySlider.Value.ToString());
         }
-
     }
 }
