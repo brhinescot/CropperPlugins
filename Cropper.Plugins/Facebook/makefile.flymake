@@ -1,0 +1,17 @@
+
+_CSC=c:\.net3.5\csc.exe
+LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll
+
+CS_SOURCE=Plugin.cs FacebookSettings.cs FacebookOptionsForm.Designer.cs FacebookOptionsForm.cs Properties\AssemblyInfo.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
+
+
+check-syntax:
+        <<flymake-build.cmd  $(CS_SOURCE)
+    SETLOCAL ENABLEDELAYEDEXPANSION
+    set errorlevel=0
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
+       set filesToBuild=!filesToBuild! %%I
+    )
+    $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
+    ENDLOCAL && exit /b %errorlevel%
+<<
