@@ -28,18 +28,12 @@ namespace Cropper.SendToTwitPic
     {
         public override string Description
         {
-            get
-            {
-                return "Send to TwitPic";
-            }
+            get { return "Send to TwitPic"; }
         }
 
         public override string Extension
         {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
+            get { return PluginSettings.ImageFormat; }
         }
 
         public override string ToString()
@@ -47,13 +41,11 @@ namespace Cropper.SendToTwitPic
             return "Send to TwitPic [Dino Chiesa]";
         }
 
-
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
-
 
         private bool VerifyAuthentication()
         {
@@ -63,18 +55,18 @@ namespace Cropper.SendToTwitPic
                 dlg.ShowDialog();
                 if (dlg.DialogResult == DialogResult.OK)
                 {
+                    Tracing.Trace("dlg.OK, Storing tokens...");
                     dlg.StoreTokens(PluginSettings);
                 }
             }
 
             if (!PluginSettings.Completed)
             {
-                MessageBox.Show("You must connect to Twitter to approve this plugin\n" +
+                MessageBox.Show("You must approve this plugin for use with Twitter\n" +
                                 "before uploading an image to TwitPic.\n\n",
                                 "No Authorizaiton for TwitPic plugin",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Exclamation);
-
                 return false;
             }
             return true;
@@ -189,54 +181,60 @@ namespace Cropper.SendToTwitPic
 
         private string GetTweet()
         {
-
             if (PluginSettings.Tweet)
             {
+                // prompt for the tweet here
+                var f = new System.Windows.Forms.Form();
+                var btnOK = new System.Windows.Forms.Button();
+                var btnCancel = new System.Windows.Forms.Button();
+                var label = new System.Windows.Forms.Label();
+                var txt = new System.Windows.Forms.TextBox();
+                //
+                // tooltip
+                //
+                var tooltip = new System.Windows.Forms.ToolTip();
+                tooltip.AutoPopDelay = 2400;
+                tooltip.InitialDelay = 500;
+                tooltip.ReshowDelay = 500;
+                label.Text = "Tweet?";
+                label.AutoSize = true;
+                label.Location = new System.Drawing.Point(4, 6);
+                txt.Text = "";
+                txt.TabIndex = 11;
+                txt.Multiline = true;
+                txt.Location = new System.Drawing.Point(54, 8);
+                txt.Size = new System.Drawing.Size(268, 82);
+                tooltip.SetToolTip(txt, "Your Twitter message");
+                btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+                btnCancel.Location = new System.Drawing.Point(250, 94);
+                btnCancel.Name = "btnCancel";
+                btnCancel.Size = new System.Drawing.Size(68, 23);
+                btnCancel.TabIndex = 71;
+                btnCancel.Text = "&Cancel";
+                btnCancel.UseVisualStyleBackColor = true;
+                btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+                btnOK.Location = new System.Drawing.Point(174, 94);
+                btnOK.Name = "btnOK";
+                btnOK.Size = new System.Drawing.Size(68, 23);
+                btnOK.TabIndex = 61;
+                btnOK.Text = "&OK";
+                btnOK.UseVisualStyleBackColor = true;
+                f.Controls.Add(label);
+                f.Controls.Add(txt);
+                f.Controls.Add(btnOK);
+                f.Controls.Add(btnCancel);
+                f.Name = "Tweet";
+                f.Text = "What's going on?";
+                //f.ClientSize = new System.Drawing.Size(324, 118);
+                f.MinimumSize = new System.Drawing.Size(342, 158);
+                f.MaximumSize = new System.Drawing.Size(342, 158);
+                var result = f.ShowDialog();
 
-                        // prompt for the tweet here
-                        var f = new System.Windows.Forms.Form();
-                        var btnOK = new System.Windows.Forms.Button();
-                        var btnCancel = new System.Windows.Forms.Button();
-                        var label = new System.Windows.Forms.Label();
-                        var txt = new System.Windows.Forms.TextBox();
-                        label.Text = "Tweet?";
-                        label.AutoSize = true;
-                        label.Location = new System.Drawing.Point(4, 6);
-                        txt.Text = "";
-                        txt.TabIndex = 11;
-                        txt.Multiline = true;
-                        txt.Location = new System.Drawing.Point(54, 8);
-                        txt.Size = new System.Drawing.Size(268, 82);
-                        btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-                        btnCancel.Location = new System.Drawing.Point(250, 94);
-                        btnCancel.Name = "btnCancel";
-                        btnCancel.Size = new System.Drawing.Size(68, 23);
-                        btnCancel.TabIndex = 71;
-                        btnCancel.Text = "&Cancel";
-                        btnCancel.UseVisualStyleBackColor = true;
-                        btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-                        btnOK.Location = new System.Drawing.Point(174, 94);
-                        btnOK.Name = "btnOK";
-                        btnOK.Size = new System.Drawing.Size(68, 23);
-                        btnOK.TabIndex = 61;
-                        btnOK.Text = "&OK";
-                        btnOK.UseVisualStyleBackColor = true;
-                        f.Controls.Add(label);
-                        f.Controls.Add(txt);
-                        f.Controls.Add(btnOK);
-                        f.Controls.Add(btnCancel);
-                        f.Name = "Tweet";
-                        f.Text = "What's going on?";
-                        //f.ClientSize = new System.Drawing.Size(324, 118);
-                        f.MinimumSize = new System.Drawing.Size(342, 158);
-                        f.MaximumSize = new System.Drawing.Size(342, 158);
-                        var result = f.ShowDialog();
-
-                        if (result == DialogResult.OK)
-                        {
-                            if (!String.IsNullOrEmpty(txt.Text))
-                                return txt.Text;
-                        }
+                if (result == DialogResult.OK)
+                {
+                    if (!String.IsNullOrEmpty(txt.Text))
+                        return txt.Text;
+                }
             }
 
             return  "uploaded from Cropper.";

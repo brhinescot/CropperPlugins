@@ -56,7 +56,7 @@ namespace Cropper.SendToTwitPic
             TWITTER_CONSUMER_SECRET = "N7MIzrpdKZHs6789xa4Hz10RQPL2JvS4M3nHWj0do",
             TWITPIC_API_KEY         = "490795eada0ecab994a9ee8aa9d7821e",
             URL_REQUEST_TOKEN       = "https://api.twitter.com/oauth/request_token",
-            URL_AUTHORIZE           = "http://api.twitter.com/oauth/authorize?oauth_token=",
+            URL_AUTHORIZE           = "https://api.twitter.com/oauth/authorize?oauth_token=",
             URL_ACCESS_TOKEN        = "https://api.twitter.com/oauth/access_token",
             URL_UPLOAD              = "http://api.twitpic.com/2/upload.xml",
             URL_VERIFY_CREDS        = "https://api.twitter.com/1/account/verify_credentials.json",
@@ -157,8 +157,11 @@ namespace Cropper.SendToTwitPic
         {
             get
             {
-                return !(System.String.IsNullOrEmpty(AccessToken) ||
-                         System.String.IsNullOrEmpty(AccessSecret));
+                bool r = (!System.String.IsNullOrEmpty(AccessToken) &&
+                          !System.String.IsNullOrEmpty(AccessSecret));
+                Tracing.Trace("Settings.Completed? token({0}) secret({1}): {2}",
+                              AccessToken, AccessSecret, r);
+                return r;
             }
         }
     }
