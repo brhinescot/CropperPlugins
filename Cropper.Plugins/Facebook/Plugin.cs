@@ -17,7 +17,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
-//using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Utils;        // for Tracing
 using System.Text;                 // Encoding, StringBuilder
@@ -32,18 +31,12 @@ namespace Cropper.SendToFacebook
     {
         public override string Description
         {
-            get
-            {
-                return "Send to Facebook";
-            }
+            get { return "Send to Facebook"; }
         }
 
         public override string Extension
         {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
+            get { return PluginSettings.ImageFormat; }
         }
 
         public override string ToString()
@@ -54,8 +47,6 @@ namespace Cropper.SendToFacebook
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyAuthentication()) return;
-
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
@@ -71,7 +62,9 @@ namespace Cropper.SendToFacebook
                 {
                     MessageBox.Show("You must approve Cropper for use with Facebook\n" +
                                     "before uploading an image.\n\n",
-                                    "No Authorizaiton for Facebook plugin");
+                                    "No Authorizaiton for Facebook plugin",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Exclamation);
                     return false;
                 }
             }
@@ -191,7 +184,10 @@ namespace Cropper.SendToFacebook
                 string msg = "There's been an exception while saving the image: " +
                              exception1.Message + "\n" + exception1.StackTrace;
                 msg+= "\n\nYou will have to Upload this file manually: " + this._fileName ;
-                MessageBox.Show(msg);
+                MessageBox.Show(msg,
+                                "Upload to Facebook failed",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                 return;
             }
             finally
@@ -335,6 +331,8 @@ namespace Cropper.SendToFacebook
         {
             Tracing.Trace("Facebook::UploadImage");
 
+            if (!VerifyAuthentication()) return;
+
             try
             {
             // Can publish a photo to a specific, existing photo album with
@@ -429,12 +427,15 @@ namespace Cropper.SendToFacebook
                                 Environment.NewLine +
                                 "You will have to upload this file manually: " +
                                 Environment.NewLine +
-                                this._fileName);
+                                this._fileName,
+                                "Cropper failed to upload to Facebook",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
             return ;
         }
 
-        private string FbFetch(string url)
+        internal static string FbFetch(string url)
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
