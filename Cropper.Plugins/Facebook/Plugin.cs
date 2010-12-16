@@ -153,7 +153,7 @@ namespace Cropper.SendToFacebook
             f.ResumeLayout(false);
             web1.Url = new Uri(url);
 
-            f.ShowDialog(); // will this wait for form exit?
+            f.ShowDialog(); // this will wait for form exit
         }
 
 
@@ -268,7 +268,7 @@ namespace Cropper.SendToFacebook
         {
             if (PluginSettings.Caption)
             {
-                // prompt for the tweet here
+                // prompt for the caption here
                 var f = new System.Windows.Forms.Form();
                 var btnOK = new System.Windows.Forms.Button();
                 var btnCancel = new System.Windows.Forms.Button();
