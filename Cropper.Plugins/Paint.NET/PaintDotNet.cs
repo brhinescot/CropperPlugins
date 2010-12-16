@@ -179,7 +179,7 @@ namespace Cropper.SendToPaintDotNet
         /// </summary>
         private Process WaitForPdn()
         {
-            System.Threading.Thread.Sleep(750);
+            System.Threading.Thread.Sleep(PluginSettings.DelayStart.Milliseconds);
             for (int i=0; i < 5; i++)
             {
                 System.Threading.Thread.Sleep(250*(i*i+1));
@@ -237,7 +237,7 @@ namespace Cropper.SendToPaintDotNet
                     name = window.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
                     if (!name.StartsWith(shortFileName)) break;
                     cycles++;
-                } while (cycles < ((180 * 1000) / 800)); // abt 3 mins
+                } while (cycles < (PluginSettings.DelayEdit.Milliseconds / 800));
 
                 if (!name.StartsWith(shortFileName))
                 {
@@ -509,6 +509,12 @@ namespace Cropper.SendToPaintDotNet
         public PluginInfo Self { get { return this;}}
     }
 
+    public class TimeDelay
+    {
+        public String FriendlyName { get; set; }
+        public int Milliseconds { get; set; }
+    }
+
     public class PdnSettings
     {
         public PdnSettings()
@@ -519,6 +525,16 @@ namespace Cropper.SendToPaintDotNet
         ///   The plugin to use for post-edit upload, if any.
         /// </summary>
         public PluginInfo PostEditUpload { get; set; }
+
+        /// <summary>
+        ///   The time for the plugin to wait for PDN to start.
+        /// </summary>
+        public TimeDelay DelayStart { get; set; }
+
+        /// <summary>
+        ///   The time allowed for user edits before the plugin gives up.
+        /// </summary>
+        public TimeDelay DelayEdit { get; set; }
     }
 
 }
