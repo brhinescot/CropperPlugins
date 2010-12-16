@@ -6,19 +6,19 @@ using CropperPlugins.Utils;       // for Tracing
 
 namespace Cropper.SendToPaintDotNet
 {
-
-
     public partial class PdnOptionsForm : BaseConfigurationForm
     {
         private PdnSettings _settings;
+
         public PdnOptionsForm(PdnSettings settings)
         {
-            Tracing.Trace("PicasaOptionsForm: ctor");
+            Tracing.Trace("PdnOptionsForm: ctor");
 
             InitializeComponent();
 
             _settings = settings;
             PopulatePluginComboBox();
+
             if (settings.PostEditUpload == null)
             {
                 this.chkPostEditUpload.Checked = false;
@@ -26,75 +26,52 @@ namespace Cropper.SendToPaintDotNet
             else
             {
                 this.chkPostEditUpload.Checked = true;
-                foreach (var item in this.cmbPlugins.Items)
-                {
-                    var pi = item as PluginInfo;
-                    if (pi.DllName == settings.PostEditUpload.DllName)
-                    {
-                        Tracing.Trace("Selecting combo item {0}",
-                                      pi.DllName);
-                        this.cmbPlugins.SelectedItem = item;
-                        break;
-                    }
-                }
-                if (this.cmbPlugins.SelectedIndex < 0)
-                {
-                    // just select the first one
-                    this.cmbPlugins.SelectedIndex = 0;
-                    Tracing.Trace("just select the firsm item {0}",
-                                  (this.cmbPlugins.Items[0] as PluginInfo).DllName);
-                }
+                SelectIntelligently(this.cmbPlugins,
+                                    (x)=> ((x as PluginInfo).DllName ==
+                                           settings.PostEditUpload.DllName),
+                                    0);
             }
-
 
             PopulateDelayComboBoxes();
+
             if (settings.DelayStart == null)
-            {
-                // just select the first one
                 this.cmbDelayStart.SelectedIndex = 0;
-            }
             else
-            {
-                foreach (var item in this.cmbDelayStart.Items)
-                {
-                    var td = item as TimeDelay;
+                SelectIntelligently(this.cmbDelayStart,
+                                    (x)=> ((x as TimeDelay).Milliseconds ==
+                                           settings.DelayStart.Milliseconds),
+                                    0);
 
-                    if (td.Milliseconds == settings.DelayStart.Milliseconds)
-                    {
-                        this.cmbDelayStart.SelectedItem = item;
-                        break;
-                    }
-                }
-                if (this.cmbPlugins.SelectedIndex < 0)
-                    // just select the first one
-                    this.cmbDelayStart.SelectedIndex = 0;
-
-            }
 
             if (settings.DelayEdit == null)
+                this.cmbDelayEdit.SelectedIndex = 0;
+            else
+                SelectIntelligently(this.cmbDelayEdit,
+                                    (x)=> ((x as TimeDelay).Milliseconds ==
+                                           settings.DelayEdit.Milliseconds),
+                                    1);
+            UploadCheckedChanged(null,null);
+        }
+
+
+
+        private void SelectIntelligently(System.Windows.Forms.ComboBox cmb,
+                                         Func<object,bool> test,
+                                         int defaultIndex)
+        {
+            foreach (var item in this.cmbPlugins.Items)
+            {
+                if (test(item))
+                {
+                    cmb.SelectedItem = item;
+                    break;
+                }
+            }
+            if (cmb.SelectedIndex < 0)
             {
                 // just select the first one
-                this.cmbDelayEdit.SelectedIndex = 0;
+                cmb.SelectedIndex = defaultIndex;
             }
-            else
-            {
-                foreach (var item in this.cmbDelayEdit.Items)
-                {
-                    var td = item as TimeDelay;
-
-                    if (td.Milliseconds == settings.DelayEdit.Milliseconds)
-                    {
-                        this.cmbDelayEdit.SelectedItem = item;
-                        break;
-                    }
-                }
-                if (this.cmbPlugins.SelectedIndex < 0)
-                    // just select the second one
-                    this.cmbDelayEdit.SelectedIndex = 1;
-
-            }
-
-            UploadCheckedChanged(null,null);
         }
 
 
@@ -220,11 +197,14 @@ namespace Cropper.SendToPaintDotNet
         }
 
 
-
         private void UploadCheckedChanged(object sender, System.EventArgs e)
         {
             this.lblPlugins.Enabled =
                 this.cmbPlugins.Enabled =
+                this.lblDelayStart.Enabled =
+                this.cmbDelayStart.Enabled =
+                this.lblDelayEdit.Enabled =
+                this.cmbDelayEdit.Enabled =
                 this.chkPostEditUpload.Checked;
         }
 
@@ -338,7 +318,7 @@ namespace Cropper.SendToPaintDotNet
             this.cmbDelayStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbDelayStart.Location = new System.Drawing.Point(108, 62);
             this.cmbDelayStart.Name = "cmbDelayStart";
-            this.cmbDelayStart.Size = new System.Drawing.Size(202, 21);
+            this.cmbDelayStart.Size = new System.Drawing.Size(100, 21);
             this.cmbDelayStart.DisplayMember = "FriendlyName";
             this.cmbDelayStart.ValueMember = "Milliseconds";
             this.cmbDelayStart.Enabled = false;
@@ -352,7 +332,6 @@ namespace Cropper.SendToPaintDotNet
             this.lblDelayStart.Name = "lblDelayStart";
             this.lblDelayStart.Size = new System.Drawing.Size(50, 13);
             this.lblDelayStart.TabIndex = 30;
-            this.lblDelayStart.Enabled = false;
             this.lblDelayStart.Text = "Start Delay:";
             //
             // cmbDelayEdit
@@ -360,9 +339,9 @@ namespace Cropper.SendToPaintDotNet
             this.cmbDelayEdit.FormattingEnabled = false;
             this.cmbDelayEdit.AllowDrop = false;
             this.cmbDelayEdit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDelayEdit.Location = new System.Drawing.Point(108, 62);
+            this.cmbDelayEdit.Location = new System.Drawing.Point(108, 90);
             this.cmbDelayEdit.Name = "cmbDelayEdit";
-            this.cmbDelayEdit.Size = new System.Drawing.Size(202, 21);
+            this.cmbDelayEdit.Size = new System.Drawing.Size(100, 21);
             this.cmbDelayEdit.DisplayMember = "FriendlyName";
             this.cmbDelayEdit.ValueMember = "Milliseconds";
             this.cmbDelayEdit.Enabled = false;
@@ -372,11 +351,10 @@ namespace Cropper.SendToPaintDotNet
             // lblDelayEdit
             //
             this.lblDelayEdit.AutoSize = true;
-            this.lblDelayEdit.Location = new System.Drawing.Point(4, 64);
+            this.lblDelayEdit.Location = new System.Drawing.Point(4, 92);
             this.lblDelayEdit.Name = "lblDelayEdit";
             this.lblDelayEdit.Size = new System.Drawing.Size(50, 13);
             this.lblDelayEdit.TabIndex = 40;
-            this.lblDelayEdit.Enabled = false;
             this.lblDelayEdit.Text = "Edit Period:";
             //
             // Options
