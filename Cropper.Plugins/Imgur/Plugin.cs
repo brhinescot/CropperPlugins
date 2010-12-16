@@ -52,8 +52,6 @@ namespace Cropper.SendToImgur
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyBasicSettings()) return;
-
             this._logger = new ImgurLogWriter(new FileInfo(e.ImageNames.FullSize).DirectoryName);
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
@@ -73,7 +71,9 @@ namespace Cropper.SendToImgur
             {
                 MessageBox.Show("You must configure Imgur settings before " +
                                 "uploading an image to the service.\n\n",
-                                "Missing Settings for Imgur plugin");
+                                "Missing Settings for Imgur plugin",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Exclamation);
                 return false;
             }
             return true;
@@ -107,7 +107,10 @@ namespace Cropper.SendToImgur
                 string msg = "There's been an exception while saving the image: " +
                              exception1.Message + "\n" + exception1.StackTrace;
                 msg+= "\n\nYou will have to Upload this file manually: " + this._fileName ;
-                MessageBox.Show(msg);
+                MessageBox.Show(msg,
+                                "Upload to Imgur did not happen",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                 return;
             }
             finally
@@ -195,7 +198,9 @@ namespace Cropper.SendToImgur
         /// </remarks>
         private void UploadImage()
         {
-            Tracing.Trace("UploadImage");
+            Tracing.Trace("Imgur::UploadImage");
+
+            if (!VerifyBasicSettings()) return;
 
             try
             {
@@ -217,10 +222,13 @@ namespace Cropper.SendToImgur
                         throw new InvalidOperationException("Successful response, but link is empty.");
 
                     string rawImageUri = foo.links.original;
-                    System.Diagnostics.Process.Start(rawImageUri);
+
+                    if (PluginSettings.PopBrowser)
+                        System.Diagnostics.Process.Start(rawImageUri);
 
                     Clipboard.SetDataObject(rawImageUri, true);
-                    this._logger.Log(rawImageUri);
+                    if (this._logger != null)
+                        this._logger.Log(rawImageUri);
 
                     Tracing.Trace("all done.");
                     Tracing.Trace("---------------------------------");
@@ -228,7 +236,7 @@ namespace Cropper.SendToImgur
             }
             catch (Exception exception2)
             {
-                Tracing.Trace("Exception.");
+                Tracing.Trace("Exception: {0}", exception2.StackTrace);
                 Tracing.Trace("---------------------------------");
                 MessageBox.Show("There's been an exception uploading your image:" +
                                 Environment.NewLine +
@@ -237,7 +245,10 @@ namespace Cropper.SendToImgur
                                 Environment.NewLine +
                                 "You will have to upload this file manually: " +
                                 Environment.NewLine +
-                                this._fileName);
+                                this._fileName,
+                                "Upload to Imgur failed",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
             return ;
         }
@@ -393,6 +404,7 @@ namespace Cropper.SendToImgur
         {
             JpgImageQuality= 80; // default
             ImageFormat = "png"; // default
+            PopBrowser = true;
         }
 
         /// <summary>
@@ -409,11 +421,12 @@ namespace Cropper.SendToImgur
         /// <summary>
         ///   Quality level to use when saving an image in JPG format.
         /// </summary>
-        public int JpgImageQuality
-        {
-            get;
-            set;
-        }
+        public int JpgImageQuality { get; set; }
+
+        /// <summary>
+        ///   True: pop a browser after upload. False: Don't.
+        /// </summary>
+        public bool PopBrowser { get; set; }
 
         /// <summary>
         ///   The Image format; one of Jpeg, Png, Bmp.

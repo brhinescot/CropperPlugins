@@ -139,7 +139,22 @@ namespace Cropper.SendToFacebook
         {
             get
             {
-                return !System.String.IsNullOrEmpty(AccessToken);
+                if (System.String.IsNullOrEmpty(AccessToken))
+                    return false;
+
+                // tokens can expire. Need to renew someitmes?
+                try
+                {
+                    // try fetching something
+                    var src = "https://graph.facebook.com/me?access_token=" +
+                              AccessToken;
+                    var json = Cropper.SendToFacebook.Plugin.FbFetch(src);
+                }
+                catch (System.Exception)
+                {
+                    return false;
+                }
+                return true;
             }
         }
     }

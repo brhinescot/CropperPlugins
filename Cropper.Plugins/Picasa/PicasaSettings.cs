@@ -5,7 +5,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:51:10 2010
-// Last Saved : <2010-December-11 15:41:09>
+// Last Saved : <2010-December-15 20:11:20>
 //
 // ------------------------------------------------------------------
 //
@@ -47,20 +47,20 @@ namespace Cropper.SendToPicasa
     ///     the only one that needs to be cached in this way.
     ///   </para>
     /// </remarks>
-    internal sealed class CachedEmailAddress
+    internal sealed class CachedSettings
     {
-        static readonly CachedEmailAddress instance= new CachedEmailAddress();
+        static readonly CachedSettings instance= new CachedSettings();
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
-        static CachedEmailAddress() { }
+        static CachedSettings() { }
 
         public string EmailAddress;
 
         // explicit nonpublic default constructor
-        CachedEmailAddress() { EmailAddress= ""; }
+        CachedSettings() { EmailAddress= ""; }
 
-        public static CachedEmailAddress Instance
+        public static CachedSettings Instance
         {
             get { return instance; }
         }
@@ -78,7 +78,7 @@ namespace Cropper.SendToPicasa
             ImageFormat = "jpg"; // default
             AllPhotosComment = "Uploaded by Cropper";
             PopBrowser = true;
-            EmailAddress = CachedEmailAddress.Instance.EmailAddress;
+            EmailAddress = CachedSettings.Instance.EmailAddress;
             UseFixedComment = false;
             Album = new AlbumItem { Name= "Drop Box", Id = "default" };
         }
@@ -91,9 +91,9 @@ namespace Cropper.SendToPicasa
         {
             get
             {
-                if (!String.IsNullOrEmpty(CachedEmailAddress.Instance.EmailAddress)
+                if (!String.IsNullOrEmpty(CachedSettings.Instance.EmailAddress)
                     && String.IsNullOrEmpty(_EmailAddress))
-                    _EmailAddress= CachedEmailAddress.Instance.EmailAddress;
+                    _EmailAddress= CachedSettings.Instance.EmailAddress;
 
                 return _EmailAddress;
             }
@@ -101,7 +101,7 @@ namespace Cropper.SendToPicasa
             {
                 _EmailAddress = value;
                 if (!String.IsNullOrEmpty(value))
-                    CachedEmailAddress.Instance.EmailAddress = value;
+                    CachedSettings.Instance.EmailAddress = value;
             }
         }
 

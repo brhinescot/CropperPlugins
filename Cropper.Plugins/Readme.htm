@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-15 14:41:32> -->
+  <!-- Last Saved: <2010-December-16 00:59:16> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -100,7 +100,7 @@
   <!-- ======================================================= -->
 
   <body>
-    <h1>Cropper Plugins v1.3.4</h1>
+    <h1>Cropper Plugins v1.3.5</h1>
 
     <p>
       This is the Cropper Plugins v1.3 release. These plugins are
@@ -132,7 +132,9 @@
         OneNote</li>
       <li>SendToPaintDotNet - opens the screenshot in Paint.NET for editing. (Requires
         installation of <a href='http://getpaint.net'>Paint.NET</a>, a free image
-        editing program.</li>
+        editing program. Optionally, you can automatically upload the image to
+        a photo-sharing service
+        when you're finished editing.</li>
       <li>SendToS3 - sends the screen shot to Amazon&#39;s hosted storage
         service, S3. </li>
       <li>SendToTFSWorkItem - posts the screen shot to a new workitem opened in
@@ -218,7 +220,14 @@
 
       <li> The Send-to-Email plugin now allows you to choose the image format to
         use. Choices include BMP, JPG, and PNG. Previously you could only use
-        JPG.  Or was it PNG?  I can&#39;t remember. </li>
+        JPG.  Or was it PNG?  I can&#39;t remember. Anyway, it's fixed now. </li>
+
+      <li> The Send-to-PaintDotNet plugin now allows you to optionally
+        upload the image <em>after editing it</em>.  In the options
+        panel for Send-to-PaintDotNet, you can choose an upload plugin
+        to chain to.  You can upload to ImageShack, Imgur, TwitPic, Flickr,
+        Picasa, or Facebook. It happens as soon as you close Paint.NET,
+        or close the file within Paint.NET. This feature is new for v1.3.5. </li>
 
       <li>The Send-to-TinyPic plugin has been removed.  TinyPic is an online
         image-sharing service, similar to ImageShack or Imgur, except that the

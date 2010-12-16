@@ -18,6 +18,7 @@ namespace Cropper.SendToImgur
 
             _settings                        = settings;
             this.txtKey.Text                 = _settings.Key;
+            this.chkPopBrowser.Checked       = _settings.PopBrowser;
             this.qualitySlider.Value         = _settings.JpgImageQuality;
             this.cmbImageFormat.SelectedItem = settings.ImageFormat;
             HandleQualitySliderValueChanged(null,null);
@@ -52,6 +53,7 @@ namespace Cropper.SendToImgur
             _settings.Key = this.txtKey.Text.Trim();
             _settings.JpgImageQuality =  this.qualitySlider.Value;
             _settings.ImageFormat = this.cmbImageFormat.Text;
+            _settings.PopBrowser = this.chkPopBrowser.Checked;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

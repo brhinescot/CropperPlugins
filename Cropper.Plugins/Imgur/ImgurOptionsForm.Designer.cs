@@ -35,6 +35,8 @@ namespace Cropper.SendToImgur
             this.txtKey = new System.Windows.Forms.TextBox();
             this.lblKey = new System.Windows.Forms.Label();
             this.lblFormat = new System.Windows.Forms.Label();
+            this.lblPopBrowser = new System.Windows.Forms.Label();
+            this.chkPopBrowser = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -59,6 +61,8 @@ namespace Cropper.SendToImgur
             this.tabPage1.Controls.Add(this.txtKey);
             this.tabPage1.Controls.Add(this.lblKey);
             this.tabPage1.Controls.Add(this.linkLabel1);
+            this.tabPage1.Controls.Add(this.lblPopBrowser);
+            this.tabPage1.Controls.Add(this.chkPopBrowser);
             this.tabPage1.Controls.Add(this.btnCancel);
             this.tabPage1.Controls.Add(this.btnOK);
             //
@@ -125,6 +129,23 @@ namespace Cropper.SendToImgur
             this.qualitySlider.Value = 80;
             this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
             //
+            // chkPopBrowser
+            //
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 124);
+            this.chkPopBrowser.Text = "";
+            this.chkPopBrowser.Name = "chkPopBrowser";
+            this.chkPopBrowser.TabIndex = 71;
+            this.tooltip.SetToolTip(chkPopBrowser, "check to pop the browser with each\nnewly uploaded image.");
+            //
+            // lblPopBrowser
+            //
+            this.lblPopBrowser.AutoSize = true;
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 120);
+            this.lblPopBrowser.Name = "lblPopBrowser";
+            this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
+            this.lblPopBrowser.TabIndex = 70;
+            this.lblPopBrowser.Text = "Pop Browser?";
+            //
             // btnCancel
             //
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -170,6 +191,8 @@ namespace Cropper.SendToImgur
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.ToolTip tooltip;
+        private System.Windows.Forms.CheckBox chkPopBrowser;
+        private System.Windows.Forms.Label lblPopBrowser;
         private System.Windows.Forms.TextBox txtKey;
         private System.Windows.Forms.Label lblKey;
         private System.Windows.Forms.Label lblFormat;

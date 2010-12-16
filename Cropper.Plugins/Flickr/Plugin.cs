@@ -68,18 +68,12 @@ namespace Cropper.SendToFlickr
 
         public override string Description
         {
-            get
-            {
-                return "Send to Flickr";
-            }
+            get { return "Send to Flickr"; }
         }
 
         public override string Extension
         {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
+            get { return PluginSettings.ImageFormat; }
         }
 
         public override string ToString()
@@ -90,7 +84,6 @@ namespace Cropper.SendToFlickr
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyMinimumSettings()) return;
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage),
                                      this._fileName,
@@ -142,7 +135,8 @@ namespace Cropper.SendToFlickr
                 string msg = "There's been an exception while saving the image: " +
                              exception1.Message + "\n" + exception1.StackTrace;
                 msg+= "\n\nYou will have to Upload this file manually: " + this._fileName ;
-                MessageBox.Show(msg);
+                MessageBox.Show(msg,
+                                "Cropper Plugin for Flickr: bad save");
                 return;
             }
             finally
@@ -217,6 +211,7 @@ namespace Cropper.SendToFlickr
             return null;
         }
 
+
         private static string GetMimeType(String filename)
         {
             var extension = System.IO.Path.GetExtension(filename).ToLower();
@@ -230,10 +225,10 @@ namespace Cropper.SendToFlickr
         }
 
 
-
         private void UploadImage()
         {
             Tracing.Trace("Flickr::UploadImage");
+            if (!VerifyMinimumSettings()) return;
             var details1 = new PhotoDetails(flickr, PluginSettings);
             if (details1.ShowDialog() == DialogResult.OK)
             {

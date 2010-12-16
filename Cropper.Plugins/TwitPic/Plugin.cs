@@ -50,8 +50,6 @@ namespace Cropper.SendToTwitPic
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyAuthentication()) return;
-
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
@@ -73,7 +71,10 @@ namespace Cropper.SendToTwitPic
             {
                 MessageBox.Show("You must connect to Twitter to approve this plugin\n" +
                                 "before uploading an image to TwitPic.\n\n",
-                                "No Authorizaiton for TwitPic plugin");
+                                "No Authorizaiton for TwitPic plugin",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Exclamation);
+
                 return false;
             }
             return true;
@@ -107,7 +108,10 @@ namespace Cropper.SendToTwitPic
                 string msg = "There's been an exception while saving the image: " +
                              exception1.Message + "\n" + exception1.StackTrace;
                 msg+= "\n\nYou will have to Upload this file manually: " + this._fileName ;
-                MessageBox.Show(msg);
+                MessageBox.Show(msg,
+                                "Upload to TwitPic failed",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                 return;
             }
             finally
@@ -252,6 +256,8 @@ namespace Cropper.SendToTwitPic
         {
             Tracing.Trace("TwitPic::UploadImage");
 
+            if (!VerifyAuthentication()) return;
+
             try
             {
                 oauth["token"] = PluginSettings.AccessToken;
@@ -358,7 +364,10 @@ namespace Cropper.SendToTwitPic
                                 Environment.NewLine +
                                 "You will have to upload this file manually: " +
                                 Environment.NewLine +
-                                this._fileName);
+                                this._fileName,
+                                "Failed to upload to TwitPic",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
             return ;
         }
