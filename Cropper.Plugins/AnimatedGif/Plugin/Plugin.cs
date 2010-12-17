@@ -127,11 +127,12 @@ namespace Cropper.AnimatedGif
             if(_previousImage != null)
                 AddImageToAnimation(DateTime.Now);
             if(_AnimatedGifEncoder != null)
+            {
                 this._AnimatedGifEncoder.Finish();
-            Beep(4000,30);
-
-            if (PluginSettings.PopViewer)
-                System.Diagnostics.Process.Start(this._fileName);
+                Beep(4000,30);
+                if (PluginSettings.PopViewer && (this._fileName != null))
+                    System.Diagnostics.Process.Start(this._fileName);
+            }
         }
 
         // http://www.codeproject.com/dotnet/comparingimages.asp
