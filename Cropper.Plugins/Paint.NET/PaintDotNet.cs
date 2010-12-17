@@ -217,8 +217,13 @@ namespace Cropper.SendToPaintDotNet
         private bool WaitForPdnExit(Process process)
         {
             var shortFileName = Path.GetFileName(this._fileName);
+            System.Threading.Thread.Sleep(5750);
             var window = AutomationElement.RootElement.FindChildByProcessId(process.Id);
-            System.Threading.Thread.Sleep(1250);
+            if (window == null)
+            {
+                Tracing.Trace("Can't get the PDN window.");
+                return false;
+            }
             string name =
                 window.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
 
