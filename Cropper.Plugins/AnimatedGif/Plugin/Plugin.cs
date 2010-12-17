@@ -59,6 +59,7 @@ namespace Cropper.AnimatedGif
         private DateTime _previousTimestamp = DateTime.MinValue;
         private string _previousHash = string.Empty;
         private Image _previousImage;
+        private string _fileName;
         private bool _isDisposed;
         private bool _record;
 
@@ -128,6 +129,9 @@ namespace Cropper.AnimatedGif
             if(_AnimatedGifEncoder != null)
                 this._AnimatedGifEncoder.Finish();
             Beep(4000,30);
+
+            if (PluginSettings.PopViewer)
+                System.Diagnostics.Process.Start(this._fileName);
         }
 
         // http://www.codeproject.com/dotnet/comparingimages.asp
@@ -196,6 +200,7 @@ namespace Cropper.AnimatedGif
                 //Initialize values;
                 _previousHash = string.Empty;
                 _previousTimestamp = DateTime.MinValue;
+                _fileName = e.ImageNames.FullSize;
 
                 this._AnimatedGifEncoder = new AnimatedGifEncoder();
                 this._AnimatedGifEncoder.Start(e.ImageNames.FullSize);
