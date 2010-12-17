@@ -171,7 +171,7 @@ namespace Cropper.SendToTwitPic
             // lblTweet
             //
             this.lblTweet.AutoSize = true;
-            this.lblTweet.Location = new System.Drawing.Point(4, 158);
+            this.lblTweet.Location = new System.Drawing.Point(4, 162);
             this.lblTweet.Name = "lblTweet";
             this.lblTweet.Size = new System.Drawing.Size(68, 13);
             this.lblTweet.TabIndex = 50;
@@ -179,7 +179,7 @@ namespace Cropper.SendToTwitPic
             //
             // chkPopBrowser
             //
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 186);
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 180);
             this.chkPopBrowser.Text = "";
             this.chkPopBrowser.Name = "chkPopBrowser";
             this.chkPopBrowser.TabIndex = 51;
@@ -188,7 +188,7 @@ namespace Cropper.SendToTwitPic
             // lblPopBrowser
             //
             this.lblPopBrowser.AutoSize = true;
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 186);
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 184);
             this.lblPopBrowser.Name = "lblPopBrowser";
             this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
             this.lblPopBrowser.TabIndex = 50;

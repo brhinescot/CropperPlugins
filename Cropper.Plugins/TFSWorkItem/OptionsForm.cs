@@ -42,7 +42,7 @@ namespace Cropper.TFSWorkItem
                 }
             }
             txtDefaultImageName.Text           = settings.DefaultImageName;
-            cmbDefaultImageFormat.SelectedItem = settings.DefaultImageFormat;
+            cmbImageFormat.SelectedItem = settings.DefaultImageFormat;
             txtDefaultAttachmentComment.Text   = settings.DefaultAttachmentComment;
             txtImageEditor.Text                = settings.ImageEditor;
             cbOpenImageInEditor.Checked        = settings.OpenImageInEditor;
@@ -150,7 +150,7 @@ namespace Cropper.TFSWorkItem
             }
             settings.WorkItemType             = this.cmbWorkItemType.Text;
             settings.DefaultImageName         = this.txtDefaultImageName.Text;
-            settings.DefaultImageFormat       = this.cmbDefaultImageFormat.Text;
+            settings.DefaultImageFormat       = this.cmbImageFormat.Text;
             settings.DefaultAttachmentComment = this.txtDefaultAttachmentComment.Text;
             settings.ImageEditor              = this.txtImageEditor.Text;
             settings.OpenImageInEditor        = this.cbOpenImageInEditor.Checked;
@@ -172,7 +172,28 @@ namespace Cropper.TFSWorkItem
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbDefaultImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.txtDefaultAttachmentComment.Location = new System.Drawing.Point(94, 180);
+                this.label5.Location = new System.Drawing.Point(4, 182);
+                this.btnBrowseImageEditor.Location = new System.Drawing.Point(202, 210);
+                this.cbOpenImageInEditor.Location = new System.Drawing.Point(6, 210);
+                this.txtImageEditor.Location = new System.Drawing.Point(94, 232);
+                this.label7.Location = new System.Drawing.Point(4, 234);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.txtDefaultAttachmentComment.Location = new System.Drawing.Point(94, 144);
+                this.label5.Location = new System.Drawing.Point(4, 146);
+                this.btnBrowseImageEditor.Location = new System.Drawing.Point(202, 174);
+                this.cbOpenImageInEditor.Location = new System.Drawing.Point(6, 174);
+                this.txtImageEditor.Location = new System.Drawing.Point(94, 196);
+                this.label7.Location = new System.Drawing.Point(4, 198);
+            }
         }
 
         private void btnBrowseImageEditor_Click(object sender, EventArgs e)

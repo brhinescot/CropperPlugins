@@ -63,7 +63,20 @@ namespace Cropper.SendToFlickr
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 102);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 106);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 62);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 66);
+            }
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)

@@ -34,10 +34,10 @@ namespace Cropper.SendToImageShack
             this.cmbImageFormat = new System.Windows.Forms.ComboBox();
             this.txtFixedTags = new System.Windows.Forms.TextBox();
             this.lblFixedTags = new System.Windows.Forms.Label();
-            this.lblNotImplemented = new System.Windows.Forms.Label();
             this.lblFormat = new System.Windows.Forms.Label();
-            this.lblCookie = new System.Windows.Forms.Label();
-            this.chkCookie = new System.Windows.Forms.CheckBox();
+            //this.lblNotImplemented = new System.Windows.Forms.Label();
+            //this.lblCookie = new System.Windows.Forms.Label();
+            //this.chkCookie = new System.Windows.Forms.CheckBox();
             this.chkPopBrowser = new System.Windows.Forms.CheckBox();
             this.lblPopBrowser = new System.Windows.Forms.Label();
             this.chkCustomTags = new System.Windows.Forms.CheckBox();
@@ -59,8 +59,9 @@ namespace Cropper.SendToImageShack
             //
             // tabPage1
             //
-            this.tabPage1.Controls.Add(this.lblCookie);
-            this.tabPage1.Controls.Add(this.chkCookie);
+            // this.tabPage1.Controls.Add(this.lblCookie);
+            // this.tabPage1.Controls.Add(this.chkCookie);
+            // this.tabPage1.Controls.Add(this.lblNotImplemented);
             this.tabPage1.Controls.Add(this.lblPopBrowser);
             this.tabPage1.Controls.Add(this.chkPopBrowser);
             this.tabPage1.Controls.Add(this.lblCustomTags);
@@ -70,7 +71,6 @@ namespace Cropper.SendToImageShack
             this.tabPage1.Controls.Add(this.cmbImageFormat);
             this.tabPage1.Controls.Add(this.txtFixedTags);
             this.tabPage1.Controls.Add(this.lblFixedTags);
-            this.tabPage1.Controls.Add(this.lblNotImplemented);
             this.tabPage1.Controls.Add(this.btnCancel);
             this.tabPage1.Controls.Add(this.btnOK);
             //
@@ -145,40 +145,40 @@ namespace Cropper.SendToImageShack
             this.qualitySlider.TickFrequency = 10;
             this.qualitySlider.Value = 80;
             this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
-            //
-            // chkCookie
-            //
-            this.chkCookie.Location = new System.Drawing.Point(94, 129);
-            this.chkCookie.Size = new System.Drawing.Size(32, 32);
-            this.chkCookie.Text = "";
-            this.chkCookie.Name = "chkCookie";
-            this.chkCookie.TabIndex = 51;
-            this.chkCookie.CheckedChanged += UseCookieCheckedChanged;
-            this.tooltip.SetToolTip(chkCookie, "check to use the ImageShack.us cookie, if one exists.");
-            //
-            // lblCookie
-            //
-            this.lblCookie.AutoSize = true;
-            this.lblCookie.Location = new System.Drawing.Point(4, 137);
-            this.lblCookie.Name = "lblCookie";
-            this.lblCookie.Size = new System.Drawing.Size(68, 13);
-            this.lblCookie.TabIndex = 50;
-            this.lblCookie.Text = "Use Cookie?";
-            //
-            // lblNotImplemented
-            //
-            this.lblNotImplemented.AutoSize = true;
-            this.lblNotImplemented.Location = new System.Drawing.Point(124, 137);
-            this.lblNotImplemented.Name = "lblNotImplemented";
-            this.lblNotImplemented.Size = new System.Drawing.Size(68, 13);
-            this.lblNotImplemented.ForeColor = System.Drawing.Color.Red;
-            this.lblNotImplemented.TabIndex = 53;
-            //this.lblNotImplemented.Visible = false;
-            this.lblNotImplemented.Text = "(not implemented)";
+            // //
+            // // chkCookie
+            // //
+            // this.chkCookie.Location = new System.Drawing.Point(94, 129);
+            // this.chkCookie.Size = new System.Drawing.Size(32, 32);
+            // this.chkCookie.Text = "";
+            // this.chkCookie.Name = "chkCookie";
+            // this.chkCookie.TabIndex = 51;
+            // this.chkCookie.CheckedChanged += UseCookieCheckedChanged;
+            // this.tooltip.SetToolTip(chkCookie, "check to use the ImageShack.us cookie, if one exists.");
+            // //
+            // // lblCookie
+            // //
+            // this.lblCookie.AutoSize = true;
+            // this.lblCookie.Location = new System.Drawing.Point(4, 137);
+            // this.lblCookie.Name = "lblCookie";
+            // this.lblCookie.Size = new System.Drawing.Size(68, 13);
+            // this.lblCookie.TabIndex = 50;
+            // this.lblCookie.Text = "Use Cookie?";
+            // //
+            // // lblNotImplemented
+            // //
+            // this.lblNotImplemented.AutoSize = true;
+            // this.lblNotImplemented.Location = new System.Drawing.Point(124, 137);
+            // this.lblNotImplemented.Name = "lblNotImplemented";
+            // this.lblNotImplemented.Size = new System.Drawing.Size(68, 13);
+            // this.lblNotImplemented.ForeColor = System.Drawing.Color.Red;
+            // this.lblNotImplemented.TabIndex = 53;
+            // //this.lblNotImplemented.Visible = false;
+            // this.lblNotImplemented.Text = "(not implemented)";
             //
             // chkPopBrowser
             //
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 157);
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 130);
             this.chkPopBrowser.Text = "";
             this.chkPopBrowser.Name = "chkPopBrowser";
             this.chkPopBrowser.TabIndex = 61;
@@ -187,7 +187,7 @@ namespace Cropper.SendToImageShack
             // lblPopBrowser
             //
             this.lblPopBrowser.AutoSize = true;
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 163);
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 134);
             this.lblPopBrowser.Name = "lblPopBrowser";
             this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
             this.lblPopBrowser.TabIndex = 60;
@@ -235,11 +235,11 @@ namespace Cropper.SendToImageShack
         #endregion
 
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.CheckBox chkCookie;
-        private System.Windows.Forms.Label lblCookie;
+        // private System.Windows.Forms.CheckBox chkCookie;
+        // private System.Windows.Forms.Label lblCookie;
+        // private System.Windows.Forms.Label lblNotImplemented;
         private System.Windows.Forms.CheckBox chkPopBrowser;
         private System.Windows.Forms.Label lblPopBrowser;
-        private System.Windows.Forms.Label lblNotImplemented;
         private System.Windows.Forms.CheckBox chkCustomTags;
         private System.Windows.Forms.Label lblCustomTags;
         private System.Windows.Forms.Button btnCancel;

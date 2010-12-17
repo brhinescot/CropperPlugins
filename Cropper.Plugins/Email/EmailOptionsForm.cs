@@ -57,7 +57,8 @@ namespace Cropper.Email
 
         private void SelectedImageFormatChanged(object sender, System.EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            qualitySlider.Enabled =
+            qualitySlider.Visible = (this.cmbImageFormat.Text == "jpg");
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)

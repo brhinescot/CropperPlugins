@@ -89,52 +89,15 @@ namespace Cropper.SendToPicasa
             // lblEmailAddress
             //
             this.lblEmailAddress.AutoSize = true;
-            this.lblEmailAddress.Location = new System.Drawing.Point(4, 8);
+            this.lblEmailAddress.Location = new System.Drawing.Point(4, 10);
             this.lblEmailAddress.Name = "lblEmailAddress";
             this.lblEmailAddress.Size = new System.Drawing.Size(66, 13);
             this.lblEmailAddress.TabIndex = 10;
             this.lblEmailAddress.Text = "email address:";
             //
-            // cmbImageFormat
-            //
-            this.cmbImageFormat.FormattingEnabled = false;
-            this.cmbImageFormat.AllowDrop = false;
-            this.cmbImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbImageFormat.Items.AddRange(new object[] {
-            "png",
-            "bmp",
-            "jpg" });
-            this.cmbImageFormat.Location = new System.Drawing.Point(114, 34);
-            this.cmbImageFormat.Name = "cmbImageFormat";
-            this.cmbImageFormat.Size = new System.Drawing.Size(72, 21);
-            this.cmbImageFormat.TabIndex = 21;
-            this.cmbImageFormat.SelectionChangeCommitted += new System.EventHandler(this.SelectedImageFormatChanged);
-            //
-            // lblFormat
-            //
-            this.lblFormat.AutoSize = true;
-            this.lblFormat.Location = new System.Drawing.Point(4, 36);
-            this.lblFormat.Name = "lblFormat";
-            this.lblFormat.Size = new System.Drawing.Size(50, 13);
-            this.lblFormat.TabIndex = 20;
-            this.lblFormat.Text = "Output Format:";
-            //
-            // qualitySlider
-            //
-            this.qualitySlider.LargeChange = 10;
-            this.qualitySlider.Location = new System.Drawing.Point(114, 64);
-            this.qualitySlider.Maximum = 100;
-            this.qualitySlider.Minimum = 10;
-            this.qualitySlider.Name = "qualitySlider";
-            this.qualitySlider.Size = new System.Drawing.Size(204, 34);
-            this.qualitySlider.TabIndex = 31;
-            this.qualitySlider.TickFrequency = 10;
-            this.qualitySlider.Value = 80;
-            this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
-            //
             // chkUseFixedComment
             //
-            this.chkUseFixedComment.Location = new System.Drawing.Point(114, 102);
+            this.chkUseFixedComment.Location = new System.Drawing.Point(114, 34);
             this.chkUseFixedComment.Text = "";
             this.chkUseFixedComment.Name = "chkUseFixedComment";
             this.chkUseFixedComment.TabIndex = 41;
@@ -144,7 +107,7 @@ namespace Cropper.SendToPicasa
             // lblFixedComment
             //
             this.lblFixedComment.AutoSize = true;
-            this.lblFixedComment.Location = new System.Drawing.Point(4, 104);
+            this.lblFixedComment.Location = new System.Drawing.Point(4, 38);
             this.lblFixedComment.Name = "lblFixedComment";
             this.lblFixedComment.Size = new System.Drawing.Size(68, 13);
             this.lblFixedComment.TabIndex = 40;
@@ -152,7 +115,7 @@ namespace Cropper.SendToPicasa
             //
             // txtAllPhotosComment
             //
-            this.txtAllPhotosComment.Location = new System.Drawing.Point(114, 130);
+            this.txtAllPhotosComment.Location = new System.Drawing.Point(114, 62);
             this.txtAllPhotosComment.Name = "txtAllPhotosComment";
             this.txtAllPhotosComment.Size = new System.Drawing.Size(204, 48);
             this.txtAllPhotosComment.Multiline = true;
@@ -162,7 +125,7 @@ namespace Cropper.SendToPicasa
             // lblAllPhotosComment
             //
             this.lblAllPhotosComment.AutoSize = true;
-            this.lblAllPhotosComment.Location = new System.Drawing.Point(38, 132);
+            this.lblAllPhotosComment.Location = new System.Drawing.Point(38, 66);
             this.lblAllPhotosComment.Name = "lblAllPhotosComment";
             this.lblAllPhotosComment.Size = new System.Drawing.Size(60, 13);
             this.lblAllPhotosComment.TabIndex = 50;
@@ -173,7 +136,7 @@ namespace Cropper.SendToPicasa
             this.cmbAlbum.FormattingEnabled = false;
             this.cmbAlbum.AllowDrop = false;
             this.cmbAlbum.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAlbum.Location = new System.Drawing.Point(114, 186);
+            this.cmbAlbum.Location = new System.Drawing.Point(114, 118);
             this.cmbAlbum.Name = "cmbAlbum";
             this.cmbAlbum.Size = new System.Drawing.Size(122, 21);
             this.cmbAlbum.DisplayMember = "Name";
@@ -183,7 +146,7 @@ namespace Cropper.SendToPicasa
             // lblAlbum
             //
             this.lblAlbum.AutoSize = true;
-            this.lblAlbum.Location = new System.Drawing.Point(4, 188);
+            this.lblAlbum.Location = new System.Drawing.Point(4, 122);
             this.lblAlbum.Name = "lblAlbum";
             this.lblAlbum.Size = new System.Drawing.Size(50, 13);
             this.lblAlbum.TabIndex = 60;
@@ -192,7 +155,7 @@ namespace Cropper.SendToPicasa
             // btnRefreshAlbumList
             //
             this.btnRefreshAlbumList.Image = global::Cropper.SendToPicasa.Properties.Resources.refresh;
-            this.btnRefreshAlbumList.Location = new System.Drawing.Point(58, 188);
+            this.btnRefreshAlbumList.Location = new System.Drawing.Point(58, 120);
             this.btnRefreshAlbumList.Name = "btnRefreshAlbumList";
             this.btnRefreshAlbumList.Size = new System.Drawing.Size(20, 20);
             this.btnRefreshAlbumList.TabIndex = 64;
@@ -200,9 +163,46 @@ namespace Cropper.SendToPicasa
             this.btnRefreshAlbumList.Click += new System.EventHandler(this.btnRefreshAlbumList_Click);
             this.tooltip.SetToolTip(btnRefreshAlbumList, "Refresh");
             //
+            // cmbImageFormat
+            //
+            this.cmbImageFormat.FormattingEnabled = false;
+            this.cmbImageFormat.AllowDrop = false;
+            this.cmbImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbImageFormat.Items.AddRange(new object[] {
+            "png",
+            "bmp",
+            "jpg" });
+            this.cmbImageFormat.Location = new System.Drawing.Point(114, 150);
+            this.cmbImageFormat.Name = "cmbImageFormat";
+            this.cmbImageFormat.Size = new System.Drawing.Size(72, 21);
+            this.cmbImageFormat.TabIndex = 21;
+            this.cmbImageFormat.SelectionChangeCommitted += new System.EventHandler(this.SelectedImageFormatChanged);
+            //
+            // lblFormat
+            //
+            this.lblFormat.AutoSize = true;
+            this.lblFormat.Location = new System.Drawing.Point(4, 154);
+            this.lblFormat.Name = "lblFormat";
+            this.lblFormat.Size = new System.Drawing.Size(50, 13);
+            this.lblFormat.TabIndex = 20;
+            this.lblFormat.Text = "Output Format:";
+            //
+            // qualitySlider
+            //
+            this.qualitySlider.LargeChange = 10;
+            this.qualitySlider.Location = new System.Drawing.Point(114, 180);
+            this.qualitySlider.Maximum = 100;
+            this.qualitySlider.Minimum = 10;
+            this.qualitySlider.Name = "qualitySlider";
+            this.qualitySlider.Size = new System.Drawing.Size(204, 34);
+            this.qualitySlider.TabIndex = 31;
+            this.qualitySlider.TickFrequency = 10;
+            this.qualitySlider.Value = 80;
+            this.qualitySlider.ValueChanged += new System.EventHandler(this.HandleQualitySliderValueChanged);
+            //
             // chkPopBrowser
             //
-            this.chkPopBrowser.Location = new System.Drawing.Point(114, 214);
+            this.chkPopBrowser.Location = new System.Drawing.Point(114, 216);
             this.chkPopBrowser.Text = "";
             this.chkPopBrowser.Name = "chkPopBrowser";
             this.chkPopBrowser.TabIndex = 71;
@@ -211,7 +211,7 @@ namespace Cropper.SendToPicasa
             // lblPopBrowser
             //
             this.lblPopBrowser.AutoSize = true;
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 219);
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 220);
             this.lblPopBrowser.Name = "lblPopBrowser";
             this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
             this.lblPopBrowser.TabIndex = 70;

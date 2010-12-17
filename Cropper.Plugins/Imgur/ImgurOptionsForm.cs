@@ -63,7 +63,20 @@ namespace Cropper.SendToImgur
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 130);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 134);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 92);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 96);
+            }
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)
