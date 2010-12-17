@@ -86,19 +86,19 @@ namespace Cropper.SendToTwitPic
             {
                 qualitySlider.Visible = true;
                 qualitySlider.Enabled = true;
-            this.chkTweet.Location = new System.Drawing.Point(94, 158);
-            this.lblTweet.Location = new System.Drawing.Point(4, 158);
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 186);
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 186);
+                this.chkTweet.Location = new System.Drawing.Point(94, 158);
+                this.lblTweet.Location = new System.Drawing.Point(4, 162);
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 180);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 184);
             }
             else
             {
                 qualitySlider.Visible = false;
                 qualitySlider.Enabled = false;
-            this.chkTweet.Location = new System.Drawing.Point(94, 120);
-            this.lblTweet.Location = new System.Drawing.Point(4, 120);
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 148);
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 148);
+                this.chkTweet.Location = new System.Drawing.Point(94, 118);
+                this.lblTweet.Location = new System.Drawing.Point(4, 122);
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 140);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 144);
             }
         }
 

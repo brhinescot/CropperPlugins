@@ -90,7 +90,7 @@ namespace Cropper.SendToFacebook
             //
             // btnClear
             //
-            this.btnClear.Location = new System.Drawing.Point(94, 34);
+            this.btnClear.Location = new System.Drawing.Point(94, 32);
             this.btnClear.Visible = true;
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(136, 23);
@@ -158,7 +158,7 @@ namespace Cropper.SendToFacebook
             //
             // chkPopBrowser
             //
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 158);
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 152);
             this.chkPopBrowser.Text = "";
             this.chkPopBrowser.Name = "chkPopBrowser";
             this.chkPopBrowser.TabIndex = 51;
@@ -167,7 +167,7 @@ namespace Cropper.SendToFacebook
             // lblPopBrowser
             //
             this.lblPopBrowser.AutoSize = true;
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 162);
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 156);
             this.lblPopBrowser.Name = "lblPopBrowser";
             this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
             this.lblPopBrowser.TabIndex = 50;

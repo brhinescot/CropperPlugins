@@ -21,7 +21,7 @@ namespace Cropper.SendToImageShack
             this.txtFixedTags.Text           = _settings.FixedTags;
             this.cmbImageFormat.SelectedItem = _settings.ImageFormat;
             this.qualitySlider.Value         = _settings.JpgImageQuality;
-            this.chkCookie.Checked           = _settings.UseCookie;
+            //this.chkCookie.Checked           = _settings.UseCookie;
             this.chkPopBrowser.Checked       = _settings.PopBrowser;
             HandleQualitySliderValueChanged(null,null);
             SelectedImageFormatChanged(null,null);
@@ -56,7 +56,7 @@ namespace Cropper.SendToImageShack
         {
             _settings.UseCustomTags = this.chkCustomTags.Checked;
             _settings.FixedTags = this.txtFixedTags.Text.Trim();
-            _settings.UseCookie = this.chkCookie.Checked;
+            //_settings.UseCookie = this.chkCookie.Checked;
             _settings.PopBrowser = this.chkPopBrowser.Checked;
             _settings.JpgImageQuality =  this.qualitySlider.Value;
             _settings.ImageFormat = this.cmbImageFormat.Text;
@@ -69,7 +69,20 @@ namespace Cropper.SendToImageShack
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 130);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 134);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 90);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 94);
+            }
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)
@@ -86,7 +99,7 @@ namespace Cropper.SendToImageShack
 
         private void UseCookieCheckedChanged(object sender, System.EventArgs e)
         {
-            this.lblNotImplemented.Visible = this.chkCookie.Checked ;
+            //this.lblNotImplemented.Visible = this.chkCookie.Checked ;
         }
     }
 }

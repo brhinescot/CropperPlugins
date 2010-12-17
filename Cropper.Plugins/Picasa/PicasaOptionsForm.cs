@@ -62,7 +62,20 @@ namespace Cropper.SendToPicasa
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.chkPopBrowser.Location = new System.Drawing.Point(114, 216);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 220);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.chkPopBrowser.Location = new System.Drawing.Point(114, 178);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 182);
+            }
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)

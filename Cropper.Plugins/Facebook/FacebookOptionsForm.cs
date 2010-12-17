@@ -76,7 +76,24 @@ namespace Cropper.SendToFacebook
 
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
-            qualitySlider.Enabled = (this.cmbImageFormat.Text == "jpg");
+            if (this.cmbImageFormat.Text == "jpg")
+            {
+                qualitySlider.Visible = true;
+                qualitySlider.Enabled = true;
+                this.chkCaption.Location = new System.Drawing.Point(94, 130);
+                this.lblCaption.Location = new System.Drawing.Point(4, 134);
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 152);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 156);
+            }
+            else
+            {
+                qualitySlider.Visible = false;
+                qualitySlider.Enabled = false;
+                this.chkCaption.Location = new System.Drawing.Point(94, 88);
+                this.lblCaption.Location = new System.Drawing.Point(4, 92);
+                this.chkPopBrowser.Location = new System.Drawing.Point(94, 110);
+                this.lblPopBrowser.Location = new System.Drawing.Point(4, 114);
+            }
         }
 
         private void HandleQualitySliderValueChanged(object sender, System.EventArgs e)

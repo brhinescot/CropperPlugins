@@ -40,7 +40,7 @@ namespace Cropper.TFSWorkItem
             this.btnSelectTeamProject = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.txtDefaultImageName = new System.Windows.Forms.TextBox();
-            this.cmbDefaultImageFormat = new System.Windows.Forms.ComboBox();
+            this.cmbImageFormat = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtDefaultAttachmentComment = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -71,7 +71,7 @@ namespace Cropper.TFSWorkItem
             this.tabPage1.Controls.Add(this.cbOpenImageInEditor);
             this.tabPage1.Controls.Add(this.txtDefaultAttachmentComment);
             this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.cmbDefaultImageFormat);
+            this.tabPage1.Controls.Add(this.cmbImageFormat);
             this.tabPage1.Controls.Add(this.qualitySlider);
             this.tabPage1.Controls.Add(this.label6);
             this.tabPage1.Controls.Add(this.txtDefaultImageName);
@@ -175,20 +175,20 @@ namespace Cropper.TFSWorkItem
             this.txtDefaultImageName.Size = new System.Drawing.Size(214, 21);
             this.txtDefaultImageName.TabIndex = 2;
             //
-            // cmbDefaultImageFormat
+            // cmbImageFormat
             //
-            this.cmbDefaultImageFormat.FormattingEnabled = false;
-            this.cmbDefaultImageFormat.AllowDrop = false;
-            this.cmbDefaultImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDefaultImageFormat.Items.AddRange(new object[] {
+            this.cmbImageFormat.FormattingEnabled = false;
+            this.cmbImageFormat.AllowDrop = false;
+            this.cmbImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbImageFormat.Items.AddRange(new object[] {
             "png",
             "jpg",
             "bmp"});
-            this.cmbDefaultImageFormat.Location = new System.Drawing.Point(94, 112);
-            this.cmbDefaultImageFormat.Name = "cmbDefaultImageFormat";
-            this.cmbDefaultImageFormat.Size = new System.Drawing.Size(72, 21);
-            this.cmbDefaultImageFormat.TabIndex = 3;
-            this.cmbDefaultImageFormat.SelectionChangeCommitted += new System.EventHandler(this.SelectedImageFormatChanged);
+            this.cmbImageFormat.Location = new System.Drawing.Point(94, 112);
+            this.cmbImageFormat.Name = "cmbImageFormat";
+            this.cmbImageFormat.Size = new System.Drawing.Size(72, 21);
+            this.cmbImageFormat.TabIndex = 3;
+            this.cmbImageFormat.SelectionChangeCommitted += new System.EventHandler(this.SelectedImageFormatChanged);
             //
             // label6
             //
@@ -318,7 +318,7 @@ namespace Cropper.TFSWorkItem
         private System.Windows.Forms.Label lblTeamProject;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtDefaultImageName;
-        private System.Windows.Forms.ComboBox cmbDefaultImageFormat;
+        private System.Windows.Forms.ComboBox cmbImageFormat;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtDefaultAttachmentComment;
         private System.Windows.Forms.Label label5;

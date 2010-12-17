@@ -131,7 +131,7 @@ namespace Cropper.SendToImgur
             //
             // chkPopBrowser
             //
-            this.chkPopBrowser.Location = new System.Drawing.Point(94, 124);
+            this.chkPopBrowser.Location = new System.Drawing.Point(94, 130);
             this.chkPopBrowser.Text = "";
             this.chkPopBrowser.Name = "chkPopBrowser";
             this.chkPopBrowser.TabIndex = 71;
@@ -140,7 +140,7 @@ namespace Cropper.SendToImgur
             // lblPopBrowser
             //
             this.lblPopBrowser.AutoSize = true;
-            this.lblPopBrowser.Location = new System.Drawing.Point(4, 120);
+            this.lblPopBrowser.Location = new System.Drawing.Point(4, 134);
             this.lblPopBrowser.Name = "lblPopBrowser";
             this.lblPopBrowser.Size = new System.Drawing.Size(68, 13);
             this.lblPopBrowser.TabIndex = 70;
