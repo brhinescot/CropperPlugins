@@ -59,7 +59,7 @@ namespace Cropper.SendToPaintDotNet
                                          Func<object,bool> test,
                                          int defaultIndex)
         {
-            foreach (var item in this.cmbPlugins.Items)
+            foreach (var item in cmb.Items)
             {
                 if (test(item))
                 {
