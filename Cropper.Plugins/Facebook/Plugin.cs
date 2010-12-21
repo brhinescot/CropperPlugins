@@ -94,7 +94,8 @@ namespace Cropper.SendToFacebook
                 // We want to respond only to the "login_success" page.  Don't
                 // be confused by the name: login_success does not mean "access
                 // granted."
-                if (url2.StartsWith("http://www.facebook.com/connect/login_success.html#"))
+                if (url2.StartsWith("http://www.facebook.com/connect/login_success.html#") ||
+                    url2.StartsWith("http://www.facebook.com/connect/login_success.html?"))
                 {
                     web1.Visible = false;
 
@@ -146,6 +147,7 @@ namespace Cropper.SendToFacebook
             web1.Dock = DockStyle.Fill;
             f.Name = "embeddedBrowserForm";
             f.Text = "Please approve the Cropper Plugin for Facebook";
+            f.Icon = global::Cropper.SendToFacebook.Properties.Resources.icon;
             f.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             f.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             f.ClientSize = new System.Drawing.Size(460, 320);

@@ -97,6 +97,7 @@ namespace Cropper.SendToTwitPic
                 TwitPicSettings.URL_AUTHORIZE
                 .Substring(0, TwitPicSettings.URL_AUTHORIZE.LastIndexOf('?'));
             Tracing.Trace("authzUrlStub = '{0}'", authzUrlStub);
+            f.SuspendLayout();
 
             // event handlers
             WebBrowserDocumentCompletedEventHandler docCompleted = (sender, e) => {
@@ -206,9 +207,11 @@ namespace Cropper.SendToTwitPic
             f.Controls.Add(btnCancel);
             f.Name = "Authorize";
             f.Text = "Authorize the Cropper Plugin for TwitPic";
+            f.Icon = global::Cropper.SendToTwitPic.Properties.Resources.icon;
             // size to accommodate the twitter confirmation dialog
             f.MinimumSize = new System.Drawing.Size(820, 474);
             f.MaximumSize = new System.Drawing.Size(820, 474);
+            f.ResumeLayout(false);
         }
 
 
