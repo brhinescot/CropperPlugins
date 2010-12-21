@@ -122,6 +122,12 @@
     <Compile Include="Plugin.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="OptionsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AnimatedGifSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Library\AnimatedGifEncoder.cs" />
     <Compile Include="Library\GifDecoder.cs" />
