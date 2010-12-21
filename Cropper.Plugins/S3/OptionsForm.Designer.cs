@@ -39,6 +39,7 @@ namespace Cropper.SendToS3
             this.label2 = new System.Windows.Forms.Label();
             this._txtBaseKey = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.lblInstructions = new System.Windows.Forms.Label();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
@@ -57,6 +58,7 @@ namespace Cropper.SendToS3
             // tabPage1
             //
             this.tabPage1.Controls.Add(this._txtBaseKey);
+            this.tabPage1.Controls.Add(this.lblInstructions);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this._cmbBucket);
@@ -164,6 +166,16 @@ namespace Cropper.SendToS3
             this.label3.TabIndex = 40;
             this.label3.Text = "Base Key";
             //
+            // lblInstructions
+            //
+            this.lblInstructions.Location = new System.Drawing.Point(14, 114);
+            this.lblInstructions.Name = "lblInstructions";
+            this.lblInstructions.Size = new System.Drawing.Size(300, 48);
+            this.lblInstructions.TabIndex = 1;
+            this.lblInstructions.Text = "Get these values when you sign up for Amazon's " +
+                "S3 service. For information on these settings, see " +
+                "http://aws.amazon.com/s3\n";
+            //
             // btnCancel
             //
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -196,11 +208,11 @@ namespace Cropper.SendToS3
             this.ClientSize = new System.Drawing.Size(324, 391);
             this.Name = "Options";
             this.Text = "Configure S3 Connection Options";
+            this.Icon = global::Cropper.SendToS3.Properties.Resources.icon;
             this.themedTabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -217,5 +229,6 @@ namespace Cropper.SendToS3
         private System.Windows.Forms.ComboBox _cmbBucket;
         private System.Windows.Forms.TextBox _txtBaseKey;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblInstructions;
     }
 }

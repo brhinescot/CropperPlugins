@@ -78,9 +78,7 @@ namespace Cropper.SendToS3
             if (!PluginSettings.Completed)
             {
                 MessageBox.Show("You must configure S3 settings before " +
-                                "saving an image to the service.\n\n" +
-                                "For information on these settings, see " +
-                                "http://aws.amazon.com/s3\n",
+                                "uploading an image to the service.\n",
                                 "Missing S3 Settings");
                 return false;
             }
