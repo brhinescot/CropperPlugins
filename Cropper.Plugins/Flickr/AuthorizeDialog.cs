@@ -70,7 +70,7 @@ namespace Cropper.SendToFlickr
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(300, 48);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Click the button to open a browser window, which will allow you to approve the authorization. Return to this window when you finish.";
+            this.label3.Text = "Click the Authorize button to open a browser window, which will allow you to approve the authorization. Return to this window when you finish.";
             //
             // btnOK
             //
@@ -127,9 +127,10 @@ namespace Cropper.SendToFlickr
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            //this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.Name = "AuthorizeDialog";
             this.Text = "Authorize the Flickr Plugin for Cropper";
+            this.Icon = global::Cropper.SendToFlickr.Properties.Resources.icon;
             this.ResumeLayout(false);
         }
 

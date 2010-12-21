@@ -6,7 +6,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:02:23 2010
-// Last Saved : <2010-December-11 16:13:52>
+// Last Saved : <2010-December-21 12:16:50>
 //
 // ------------------------------------------------------------------
 //
@@ -152,6 +152,7 @@ namespace Cropper.SendToPicasa
             var txtUser = new System.Windows.Forms.TextBox();
             var txtPass = new System.Windows.Forms.TextBox();
             var tooltip = new System.Windows.Forms.ToolTip();
+            f.SuspendLayout();
             tooltip.AutoPopDelay = 2400;
             tooltip.InitialDelay = 500;
             tooltip.ReshowDelay = 500;
@@ -197,12 +198,14 @@ namespace Cropper.SendToPicasa
             f.Controls.Add(btnCancel);
             f.Name = "GoogleAuthenticate";
             f.Text = "Authenticate to Picasa";
+            f.Icon = global::Cropper.SendToPicasa.Properties.Resources.icon;
             f.MinimumSize = new System.Drawing.Size(320, 128);
             f.MaximumSize = new System.Drawing.Size(320, 128);
             if (String.IsNullOrEmpty(txtUser.Text))
-                txtUser.Focus();
+                f.ActiveControl = txtUser;
             else
-                txtPass.Focus();
+                f.ActiveControl = txtPass;
+            f.ResumeLayout(false);
 
             var result = f.ShowDialog();
 

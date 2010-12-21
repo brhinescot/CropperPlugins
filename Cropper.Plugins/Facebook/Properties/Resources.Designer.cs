@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cropper.SendToFlickr.Properties {
+namespace Cropper.SendToFacebook.Properties {
     using System;
 
     /// <summary>
@@ -38,7 +38,7 @@ namespace Cropper.SendToFlickr.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cropper.SendToFlickr.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cropper.SendToFacebook.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -56,13 +56,6 @@ namespace Cropper.SendToFlickr.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-
-        internal static System.Drawing.Bitmap refresh {
-            get {
-                object obj = ResourceManager.GetObject("refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
 
