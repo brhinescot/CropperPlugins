@@ -1,17 +1,19 @@
 
 _CSC=c:\.net3.5\csc.exe
 LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll
+RSK_DIR=C:\Program Files (x86)\Microsoft WCF REST\WCF REST Starter Kit Preview 2
+RSK_HTTPCLIENT_REFS=/R:"$(RSK_DIR)\Assemblies\Microsoft.Http.dll" /R:"$(RSK_DIR)\Assemblies\Microsoft.Http.Extensions.dll"
 
-CS_SOURCE=Imgur.cs ImgurLogWriter.cs Properties\AssemblyInfo.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
+CS_SOURCE=Plugin.cs ImgurLogWriter.cs ImgurOptionsForm.Designer.cs ImgurOptionsForm.cs Properties\AssemblyInfo.cs Properties\Resources.Designer.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
 
 
-check-syntax :
+check-syntax:
         <<flymake-build.cmd  $(CS_SOURCE)
     SETLOCAL ENABLEDELAYEDEXPANSION
     set errorlevel=
-    for %%I in (%*) do if NOT %%I == $(FLYMAKE_ORIGINAL) (
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
        set filesToBuild=!filesToBuild! %%I
     )
-    $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
+    $(_CSC) /t:module $(LIBSREF) $(RSK_HTTPCLIENT_REFS) $(FLYMAKE_CHECK) !filesToBuild!
     ENDLOCAL && exit /b %errorlevel%
 <<
