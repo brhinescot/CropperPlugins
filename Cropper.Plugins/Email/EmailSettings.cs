@@ -1,7 +1,16 @@
 namespace Cropper.Email
 {
+    using System;
+
     public class EmailSettings
     {
+        public static readonly String[] DEFAULT_MESSAGE = new String[] {
+            "Here's a screenshot for you.",
+            "Name: $NAME$",
+            "Size: $SIZE$",
+            "Taken with Cropper - http://cropper.codeplex.com",
+            " "
+        };
         string _format;
 
         /// <summary>
@@ -10,7 +19,9 @@ namespace Cropper.Email
         public EmailSettings()
         {
             JpgImageQuality= 80; // default
-            _format = "bmp";
+            _format = "jpg";
+            Message = String.Join( "\r\n", DEFAULT_MESSAGE );
+            Subject = "Screen shot: $NAME$";
         }
 
         /// <summary>

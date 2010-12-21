@@ -163,13 +163,7 @@ namespace Cropper.Email
             this.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtMessage.Size = new System.Drawing.Size(305, 88);
             this.txtMessage.TabIndex = 21;
-            this.txtMessage.Lines = new System.String[] {
-                "Here's a screenshot for yoinz.",
-                "Name: $NAME$",
-                "Size: $SIZE$",
-                "Taken with Cropper - http://cropper.codeplex.com",
-                " "
-            };
+            this.txtMessage.Lines = EmailSettings.DEFAULT_MESSAGE;
             this.tooltip.SetToolTip(this.txtMessage, "The body of the email message, that carries the attached image.");
             //
             // lblMessage
