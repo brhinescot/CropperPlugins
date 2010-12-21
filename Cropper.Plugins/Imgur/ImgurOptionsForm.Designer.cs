@@ -178,11 +178,11 @@ namespace Cropper.SendToImgur
             this.ClientSize = new System.Drawing.Size(324, 391);
             this.Name = "Options";
             this.Text = "Configure Imgur Options";
+            this.Icon = global::Cropper.SendToImgur.Properties.Resources.icon;
             this.themedTabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
