@@ -12,7 +12,10 @@ namespace Cropper.Email
 
             _settings = settings;
             this.txtSubjectLine.Text         = _settings.Subject;
-            this.txtMessage.Lines            = _settings.Message.Split("\r\n".ToCharArray());
+            if (_settings.Message != null)
+                this.txtMessage.Lines            = _settings.Message.Split("\r\n".ToCharArray());
+            else
+                this.txtMessage.Lines            = EmailSettings.DEFAULT_MESSAGE;
             this.qualitySlider.Value         = _settings.JpgImageQuality;
             this.cmbImageFormat.SelectedItem = settings.ImageFormat;
             HandleQualitySliderValueChanged(null,null);
