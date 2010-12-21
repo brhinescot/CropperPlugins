@@ -420,7 +420,6 @@ namespace Cropper.SendToImageShack
     }
 
 
-    // see http://twitpic.com/api.do#upload
     //
     // Example responses:
     //
