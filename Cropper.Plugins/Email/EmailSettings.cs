@@ -20,7 +20,7 @@ namespace Cropper.Email
         {
             JpgImageQuality= 80; // default
             _format = "jpg";
-            Message = String.Join( "\r\n", DEFAULT_MESSAGE );
+            Message = String.Join( "\n", DEFAULT_MESSAGE );
             Subject = "Screen shot: $NAME$";
         }
 

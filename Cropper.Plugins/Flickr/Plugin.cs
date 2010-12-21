@@ -93,7 +93,10 @@ namespace Cropper.SendToFlickr
         private bool VerifyMinimumSettings()
         {
             Tracing.Trace("Flickr::VerifyMinimumSettings");
-            if (!IsAuthorized)
+            if (String.IsNullOrEmpty(PluginSettings.Token))
+                PluginSettings.AcquireToken();
+            Tracing.Trace("Flickr::VerifyMinimumSettings tok({0})", PluginSettings.Token);
+            if (System.String.IsNullOrEmpty(PluginSettings.Token))
             {
                 MessageBox.Show("Authorization is not complete. \n\n" +
                                 ((PluginSettings.AuthorizationMessage!= null)
@@ -269,6 +272,8 @@ namespace Cropper.SendToFlickr
         {
             get
             {
+                if (PluginSettings.Token == null)
+                    PluginSettings.AcquireToken();
                 _flickr = new FlickrNet.Flickr(FlickrSettings.FLICKR_KEY,
                                                FlickrSettings.FLICKR_SHAREDSECRET,
                                                PluginSettings.Token);
@@ -356,21 +361,6 @@ namespace Cropper.SendToFlickr
         #endregion
 
 
-        /// <summary>
-        ///   True if the plugin has an authorization token from Flickr.
-        ///   The token can be retrieved from cache or retrieved from the
-        ///   Flickr service directly.
-        /// </summary>
-        private bool IsAuthorized
-        {
-            get
-            {
-                Tracing.Trace("Flickr::IsAuthorized tok({0})", PluginSettings.Token);
-                return !System.String.IsNullOrEmpty(PluginSettings.Token);
-            }
-        }
-
-
         private FlickrSettings _settings;
         private FlickrOptionsForm _configForm;
         private string _fileName;
@@ -399,6 +389,31 @@ namespace Cropper.SendToFlickr
             Tracing.Trace("FlickrSettings::ctor");
             JpgImageQuality= 80; // default
             ImageFormat = "jpg"; // default
+            PopBrowser = true;
+        }
+
+
+        public void AcquireToken()
+        {
+            if (_authzToken == null)
+            {
+                // The first time the token is requested, EVER,
+                // it will be blank.  Pop the Authorization dialog and
+                // get a token from the web.  Thereafter, the token
+                // will be stored in and retrieved from the cropper.config
+                // file, and provided to the Flickr plugin via
+                // IConfigurablePlugin.
+                Tracing.Trace("FlickrSettings::AcquireToken, is null");
+                var dlg = new AuthorizeDialog();
+                var result = dlg.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    this._authzToken = dlg.AppAuthorizationToken;
+                    Tracing.Trace("FlickrSettings::rec'd token ({0})", _authzToken);
+                }
+                else
+                    this._AuthorizationMessage = dlg.Message;
+            }
         }
 
         /// <summary>
@@ -419,25 +434,6 @@ namespace Cropper.SendToFlickr
             get
             {
                 Tracing.Trace("FlickrSettings::get_Token");
-                if (_authzToken == null)
-                {
-                    // The first time the token is requested, EVER,
-                    // it will be blank.  Pop the Authorization dialog and
-                    // get a token from the web.  Thereafter, the token
-                    // will be stored in and retrieved from the cropper.config
-                    // file, and provided to the Flickr plugin via
-                    // IConfigurablePlugin.
-                    Tracing.Trace("FlickrSettings::get_Token, is null");
-                    var dlg = new AuthorizeDialog();
-                    var result = dlg.ShowDialog();
-                    if (result == DialogResult.OK)
-                    {
-                        this._authzToken = dlg.AppAuthorizationToken;
-                        Tracing.Trace("FlickrSettings::rec'd token ({0})", _authzToken);
-                    }
-                    else
-                        this._AuthorizationMessage = dlg.Message;
-                }
                 return _authzToken;
             }
             set
@@ -494,7 +490,6 @@ namespace Cropper.SendToFlickr
                 return _AuthorizationMessage;
             }
         }
-
     }
 
 }

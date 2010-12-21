@@ -40,7 +40,7 @@ namespace Cropper.SendToPaintDotNet
                 SelectIntelligently(this.cmbDelayStart,
                                     (x)=> ((x as TimeDelay).Milliseconds ==
                                            settings.DelayStart.Milliseconds),
-                                    0);
+                                    1);
 
 
             if (settings.DelayEdit == null)
@@ -49,7 +49,7 @@ namespace Cropper.SendToPaintDotNet
                 SelectIntelligently(this.cmbDelayEdit,
                                     (x)=> ((x as TimeDelay).Milliseconds ==
                                            settings.DelayEdit.Milliseconds),
-                                    1);
+                                    2);
             UploadCheckedChanged(null,null);
         }
 
@@ -109,6 +109,11 @@ namespace Cropper.SendToPaintDotNet
                     {
                         FriendlyName = "15 seconds",
                         Milliseconds = 15 * 1000
+                    },
+                    new TimeDelay
+                    {
+                        FriendlyName = "30 seconds",
+                        Milliseconds = 15 * 1000
                     }
                 });
             this.cmbDelayEdit.Items.AddRange(new TimeDelay[]{
@@ -130,6 +135,11 @@ namespace Cropper.SendToPaintDotNet
                     new TimeDelay
                     {
                         FriendlyName = "10 minutes",
+                        Milliseconds = 10 * 60 * 1000
+                    },
+                    new TimeDelay
+                    {
+                        FriendlyName = "20 minutes",
                         Milliseconds = 10 * 60 * 1000
                     }
                 });
