@@ -14,11 +14,11 @@ goto START
 SETLOCAL
 if  _%1==_ goto USAGE
 
-set arg1=%1
-set arg2=x86
+set relVersion=%1
+set plat=x86
 shift
 if _%1==_ goto MAIN
-set arg2=%1
+set plat=%1
 goto MAIN
 
 
@@ -26,10 +26,11 @@ goto MAIN
 :MAIN
 
 set zipit=c:\users\dino\bin\zipit.exe
+if not %plat% == x86 goto PLATFORM_NO
 
-if not %arg2% == x86 goto PLATFORM_NO
+powershell.exe .\SetVersion.ps1  %relVersion%
 
-set releaseZip=CropperPlugins-v%arg1%.%arg2%.zip
+set releaseZip=CropperPlugins-v%relVersion%.%plat%.zip
 
 if exist %releaseZip% goto ALREADY_EXISTS
 
@@ -39,7 +40,7 @@ msbuild /p:Platform=x86 /p:Configuration=Release
 
 :ZIPIT
 
-%zipit% %releaseZip% -d x86 -D output\x86\Release *.*
+%zipit% %releaseZip% -d x86 -D output\x86\Release "(name != Cropper.Core.dll) and (name != Cropper.Extensibility.dll)"
 %zipit% %releaseZip% -d x86 -D "\Program Files (x86)\Microsoft WCF REST\WCF REST Starter Kit Preview 2\Assemblies" Microsoft.Http*.dll
 %zipit% %releaseZip% -d x86 -D Dependencies Flickrnet.dll
 
