@@ -9,7 +9,7 @@ check-syntax :
         <<flymake-build.cmd  $(CS_SOURCE)
     SETLOCAL ENABLEDELAYEDEXPANSION
     set errorlevel=
-    for %%I in (%*) do if NOT %%I == $(FLYMAKE_ORIGINAL) (
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
        set filesToBuild=!filesToBuild! %%I
     )
     $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
