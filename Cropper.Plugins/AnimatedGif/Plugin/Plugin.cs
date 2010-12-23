@@ -40,6 +40,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CropperPlugins.Utils;              // Tracing
 
 namespace Cropper.AnimatedGif
 {
@@ -60,7 +61,7 @@ namespace Cropper.AnimatedGif
         private Image _previousImage;
         private string _fileName;
         private bool _isDisposed;
-        private bool _record;
+        private bool _isRecording;
 
         public event ImageFormatClickEventHandler ImageFormatClick;
 
@@ -68,6 +69,7 @@ namespace Cropper.AnimatedGif
         {
             this._recordTimer = new System.Windows.Forms.Timer();
             this._imageHandler = new ImageHandler(HandleImage);
+            this._isRecording = false;
         }
 
         /// <summary>
@@ -123,17 +125,38 @@ namespace Cropper.AnimatedGif
 
         private void FinishCapture()
         {
+            if(_AnimatedGifEncoder == null) return; // nothing to do
+
             if(_previousImage != null)
                 AddImageToAnimation(DateTime.Now);
-            if(_AnimatedGifEncoder != null)
+
+            this._AnimatedGifEncoder.Finish();
+            if (PluginSettings.PlaySound)
+                Beep(4000,30);
+
+            if (this._fileName != null)
             {
-                this._AnimatedGifEncoder.Finish();
-                if (PluginSettings.PlaySound)
-                    Beep(4000,30);
-                if (PluginSettings.PopViewer && (this._fileName != null))
+                Tracing.Trace("AnimatedGif::FinishCapture");
+                Tracing.Trace("  ViewCapture= {0}", PluginSettings.ViewCapture);
+                if (PluginSettings.ViewCapture.ToLower() == "default")
                     System.Diagnostics.Process.Start(this._fileName);
+                if (PluginSettings.ViewCapture.ToLower() == "specified")
+                {
+                    Tracing.Trace("  Program: '{0}'", PluginSettings.ViewerProgram);
+                    if (!File.Exists(PluginSettings.ViewerProgram))
+                    {
+                        if (PluginSettings.PlaySound)
+                            Beep(5000,120);
+                    }
+                    else
+                        System.Diagnostics.Process.Start("\"" + PluginSettings.ViewerProgram + "\"",
+                                                         "\"" + this._fileName + "\"");
+                }
+                _fileName = null;
             }
+            this._AnimatedGifEncoder= null;
         }
+
 
         // http://www.codeproject.com/dotnet/comparingimages.asp
         private string GetHashFromImage(Image image)
@@ -164,12 +187,14 @@ namespace Cropper.AnimatedGif
         {
             this._output.ImageCaptured -= new ImageCapturedEventHandler(this.persistableOutput_ImageCaptured);
             this._output.ImageCapturing -= new ImageCapturingEventHandler(this.persistableOutput_ImageCapturing);
+            Tracing.Trace("AnimatedGif::Disconnect");
             this._recordTimer.Dispose();
             FinishCapture();
         }
 
         public void Dispose()
         {
+            Tracing.Trace("AnimatedGif::Dispose");
             if (!this._isDisposed)
             {
                 this._isDisposed = true;
@@ -196,7 +221,7 @@ namespace Cropper.AnimatedGif
 
         private void persistableOutput_ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (this._record)
+            if (this._isRecording)
             {
                 //Initialize values;
                 _previousHash = string.Empty;
@@ -221,7 +246,9 @@ namespace Cropper.AnimatedGif
 
         private void persistableOutput_ImageCapturing(object sender, ImageCapturingEventArgs e)
         {
-            this._record = !this._record;
+            // toggle here. We have to click for the start and the
+            // stop.
+            this._isRecording = !this._isRecording;
             //Sure would be nice to be able to update the UI... if (this._record{}else{}
         }
 

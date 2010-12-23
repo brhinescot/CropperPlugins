@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-16 00:59:16> -->
+  <!-- Last Saved: <2010-December-22 20:42:01> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -100,7 +100,7 @@
   <!-- ======================================================= -->
 
   <body>
-    <h1>Cropper Plugins v1.3.5</h1>
+    <h1>Cropper Plugins v1.3.9</h1>
 
     <p>
       This is the Cropper Plugins v1.3 release. These plugins are
@@ -116,35 +116,57 @@
       <li>AnimatedGif - generate an animated GIF from your
         screen. Really helpful for blog posts, illustrations. </li>
 
-      <li>AviFormat - last update c. 2007.  Not sure of the status of this.</li>
+      <li>AviFormat - last update c. 2007.  Not sure of the status of
+      this.</li>
+
       <li>CountdownPng - allows you to specify a countdown delay before
         capturing. This gives you time to set up the shot, as is necessary,
         for example, when the screen shot is a popup menu.</li>
+
       <li>SendToEmail - attaches the screen shot to a new message in  your default
         email client</li>
+
       <li>SendToFlickr - posts the screenshot on the Flickr web-based photo
         sharing service</li>
-      <li>SendToImageShack - posts the screenshot on the free <a href='http://ImageShack.us'>ImageShack</a> web-based photo
+
+      <li>SendToImageShack - posts the screenshot on the
+        free <a href='http://ImageShack.us'>ImageShack</a> web-based
+        photo sharing service</li>
+
+      <li>SendToImgur - posts the screenshot on the
+        free <a href='http://Imgur.com'>Imgur</a> web-based photo
         sharing service</li>
-      <li>SendToImgur - posts the screenshot on the free <a href='http://Imgur.com'>Imgur</a> web-based photo
-        sharing service</li>
+
       <li>SendToOneNote - attaches the screenshot to a note in Microsoft
         OneNote</li>
-      <li>SendToPaintDotNet - opens the screenshot in Paint.NET for editing. (Requires
-        installation of <a href='http://getpaint.net'>Paint.NET</a>, a free image
-        editing program. Optionally, you can automatically upload the image to
-        a photo-sharing service
-        when you're finished editing.</li>
+
+      <li>SendToPaintDotNet - opens the screenshot in Paint.NET for
+        editing. Effective use of this plugin requires that you first
+        install <a href='http://getpaint.net'>Paint.NET</a>, a free
+        image editing program. If you install the plugin, but not
+        Paint.NET, then the output option for Paint.NET will be visible
+        but not enabled. When using the Paint.NET plugin, there&#39;s an
+        option to automatically upload the image to a photo-sharing
+        service when you&#39;re finished editing. Which is nice. </li>
+
       <li>SendToS3 - sends the screen shot to Amazon&#39;s hosted storage
-        service, S3. </li>
+        service, S3. Allegedly. </li>
+
       <li>SendToTFSWorkItem - posts the screen shot to a new workitem opened in
         Microsoft&#39;s TFS. This works only with TFS 2008. </li>
+
       <li>SendToTwitPic - posts the screenshot on the
         free <a href='http://twitpic.com'>TwitPic</a> Twitter-oriented photo
-        sharing service. (new for v1.3.1)</li>
-      <li>SendToPicasa - posts the screenshot on Google&#39;s <a href='http://picasaweb.google.com/'>Picasa
-          photo sharing service</a>. (new for v1.3.2)</li>
-      <li>SendToFacebook - posts the screenshot to Facebook. (new for v1.3.3)</li>
+        sharing service. </li>
+
+      <li>SendToPicasa - posts the screenshot on
+          Google&#39;s <a href='http://picasaweb.google.com/'>Picasa
+          photo sharing service</a>. </li>
+
+      <li>SendToFacebook - posts the screenshot with a caption to
+      Facebook. (Yes, this means that everyone will see your screenshots
+      and realize you are a nerd.)</li>
+
     </ul>
 
     <h2>Installing the plugins</h2>
@@ -154,7 +176,8 @@
       plugin DLLs to the cropper plugins directory, typically something
       like <strong>\Program
       Files\Fusion8Design\Cropper\Plugins</strong>. You can copy only
-      the DLLs that you want to use.  You should be able to figure out
+      the DLLs that you want to use (along with their dependencies, see
+      below!). You should be able to figure out
       which DLLs provide which function, pretty easily, by their names.
     </p>
 
@@ -181,11 +204,11 @@
     <h2>Changes since v1.2 of the Plugins release</h2>
     <ol>
 
-      <li>The Send-to-Picasa plugin is new (for v1.3.2 of
+      <li>The Send-to-Picasa plugin is new (in v1.3.2 of
         CropperPlugins).  It uploads an image to the Picasa photo
         sharing service. </li>
 
-      <li>The Send-to-Picasa plugin is new (for v1.3.4 of
+      <li>The Send-to-Facebook plugin is new (in v1.3.4 of
         CropperPlugins).  It uploads an image and caption to Facebook.
         </li>
 
@@ -216,18 +239,24 @@
         regarding generation of the animated GIF.  All of this is done
         in IConfigurablePlugin - which means the dialog is hosted in the
         tabbed UI presented by Cropper (core) under the "Options..."
-        menu choice.  </li>
+        menu choice. New for v1.3.8, the plugin allows you to disable
+        the beep sound that signals the begin and end of capture. New for v1.3.9,
+        the plugin lets you configure a program to use to open the animated
+        gif after it is captured. This can be an editor or a viewer.</li>
 
       <li> The Send-to-Email plugin now allows you to choose the image format to
         use. Choices include BMP, JPG, and PNG. Previously you could only use
-        JPG.  Or was it PNG?  I can&#39;t remember. Anyway, it's fixed now. </li>
+        JPG.  Or was it PNG?  I can&#39;t remember. Anyway, it&#39;s fixed now. </li>
 
-      <li> The Send-to-PaintDotNet plugin now allows you to optionally
-        upload the image <em>after editing it</em>.  In the options
-        panel for Send-to-PaintDotNet, you can choose an upload plugin
-        to chain to.  You can upload to ImageShack, Imgur, TwitPic, Flickr,
-        Picasa, or Facebook. It happens as soon as you close Paint.NET,
-        or close the file within Paint.NET. This feature is new for v1.3.5. </li>
+      <li> The Send-to-PaintDotNet plugin now works on x64.  Also new,
+        it allows you to optionally upload the image to your choice of
+        photo-sharing service<em>after editing it</em>.  In the options
+        panel for Send-to-PaintDotNet, you can choose from ImageShack,
+        Imgur, TwitPic, Flickr, Picasa, or Facebook. (The DLLs have to
+        be installed in the plugins directory in order to be available
+        as choices.)  The upload happens as soon as you close Paint.NET,
+        or close the file within Paint.NET. This feature is new for
+        v1.3.5. </li>
 
       <li>The Send-to-TinyPic plugin has been removed.  TinyPic is an online
         image-sharing service, similar to ImageShack or Imgur, except that the
@@ -257,22 +286,52 @@
 
 
     <h2>CropperPlugins and Cropper are Separate</h2>
-    <p>Cropper is a screen shot tool.  It is produced in the <a href='http://Cropper.codeplex.com'>Cropper</a>
-      project hosted on <a href='http://codeplex.com'>Codeplex.com</a>.  The
-      <a href='http://CropperPlugins.codeplex.com'>CropperPlugins</a>
-      project is a separately-managed project, also hosted on
-      Codeplex, and it produces these plugins.
+
+
+    <p>Cropper is a screen shot tool.  It is produced in
+      the <a href='http://Cropper.codeplex.com'>Cropper</a> project
+      hosted on <a href='http://codeplex.com'>Codeplex.com</a>.  The
+      designer of Cropper has made it possible for third-parties to
+      construct "plugins" that enable Cropper to do different things
+      with its screenshots. </p>
+
+    <p>The <a href='http://CropperPlugins.codeplex.com'>CropperPlugins</a>
+      project is a separately-managed project, also hosted on Codeplex,
+      and it produces plugins for Cropper, as described here.
     </p>
 
     <p>The versions and release schedules between these projects are
       totally independent. The contributors to these projects are
-      different. They are distinct projects.</p>
+      different people. They are distinct projects.</p>
 
-    <p>If you have a problem or question related to  Cropper, you need
-      to go to the <A href='http://cropper.codeplex.com'>cropper
-      project page</a> for help or support.  If you have a problem with one of
-      these plugins, go to the <a href='http://cropperplugins.codeplex.com'>cropperplugins project</a> for support.
+    <p>If you have a problem or question related to Cropper, you need to
+      go to the <A href='http://cropper.codeplex.com'>cropper project
+      page</a> for help or support.  If you have a problem with one of
+      these plugins, go to
+      the <a href='http://cropperplugins.codeplex.com'>cropperplugins
+      project</a> for support.
     </p>
+
+
+    <h2>Confessions</h2>
+    <ol>
+
+    <li> I don&#39;t have an account for Amazon&#39;s S3; also I
+    don&#39;t have a credit card, so I can&#39;t even get a free
+    account.  Therefore I haven&#39;t tested the Send-to-S3 plugin,
+    beyond basic configuration.   </li>
+
+    <li> I don&#39;t have a TFS 2010 server with which I can test the
+    Send-to-TFS-Workitem plugin either.  </li>
+
+    <li> I haven&#39;t tested the OneNote plugin, for similar reasons.
+    </li>
+
+    </ol>
+
+    <p>I&#39;m interested in getting test volunteers. If anyone wants to
+    volunteer to test any of these, please let me know. Or, you could
+    just test them and let me know what you find. </p>
 
 
     <h2>More Information</h2>

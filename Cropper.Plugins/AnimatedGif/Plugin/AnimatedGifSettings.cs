@@ -12,7 +12,7 @@ namespace Cropper.AnimatedGif
         public AnimatedGifSettings()
         {
             // defaults
-            PopViewer = true;
+            ViewCapture = "Default";
             PlaySound = true;
             _CaptureInterval = DEFAULT_CAPTURE_INTERVAL;
             _EncodingQuality = DEFAULT_ENCODING_QUALITY;
@@ -20,10 +20,19 @@ namespace Cropper.AnimatedGif
         }
 
         /// <summary>
-        ///   True: pop the default GIF viewer with the capture, after it's complete.
-        ///   False: don't.
+        ///   One of { None, Default, or some other string }.
+        ///   It tells the plugin whether to open the captured gif
+        ///   in a viewer (or editor) program after capturing.
         /// </summary>
-        public bool PopViewer { get; set; }
+        public string ViewCapture { get; set; }
+
+        /// <summary>
+        ///   The custom program to use to view the capture.
+        ///   This applies only if (ViewCapture.ToLower() == "Specified")
+        ///   but it is displayed "disabled" in the form when ViewCapture
+        ///   is set to some other value.
+        /// </summary>
+        public string ViewerProgram { get; set; }
 
         /// <summary>
         ///   True: play sounds during start/stop of animation capture.
