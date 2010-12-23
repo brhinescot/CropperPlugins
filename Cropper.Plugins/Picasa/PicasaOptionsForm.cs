@@ -34,9 +34,9 @@ namespace Cropper.SendToPicasa
 
             this.cmbAlbum.Items.Clear();
             this.cmbAlbum.Items.Add(settings.Album);
-            this.cmbAlbum.SelectedItem = settings.Album;
-            this.cmbAlbum.DisplayMember = "Name";
-            this.cmbAlbum.ValueMember = "Id";
+            this.cmbAlbum.SelectedItem       = settings.Album;
+            this.cmbAlbum.DisplayMember      = "Name";
+            this.cmbAlbum.ValueMember        = "Id";
 
             HandleQualitySliderValueChanged(null,null);
             SelectedImageFormatChanged(null,null);
@@ -60,6 +60,16 @@ namespace Cropper.SendToPicasa
             ApplySettings();
         }
 
+
+        /// <summary>
+        ///   Display the qualitySlider only if the format is jpg.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     This implies that we need to move the checkbox for
+        ///     popping the browser, also.
+        ///   </para>
+        /// </remarks>
         private void SelectedImageFormatChanged(object sender, EventArgs e)
         {
             if (this.cmbImageFormat.Text == "jpg")
@@ -117,7 +127,8 @@ namespace Cropper.SendToPicasa
 
             var picasa = new HttpClient("https://picasaweb.google.com/");
 
-            var headers = GdataSession.Instance.GetHeaders(username, "picasa");
+            var headers =
+                GdataSession.Instance.GetHeaders(username, "picasa");
 
             // get a list of albums
             var response = picasa.Send(HttpMethod.GET,
@@ -161,7 +172,6 @@ namespace Cropper.SendToPicasa
                         });
                 }
             }
-
         }
     }
 }

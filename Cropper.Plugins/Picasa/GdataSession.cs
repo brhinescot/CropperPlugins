@@ -6,7 +6,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:02:23 2010
-// Last Saved : <2010-December-21 12:16:50>
+// Last Saved : <2010-December-23 18:17:41>
 //
 // ------------------------------------------------------------------
 //
@@ -23,37 +23,43 @@ using CropperPlugins.Utils;
 
 
 /// <summary>
-///   A Singleton that holds an authentication token (in the form of a request
-///   header) for a Google Gdata service.
+///   A Singleton that holds an authentication token (in the form of a
+///   request header) for a Google Gdata service.
 /// </summary>
+///
 /// <remarks>
 ///   <para>
-///   It's necessary to obtain this auth token just once per process,
-///   using GData's ClientLogin protocol.  Because getting the token
-///   requires a prompt to the user for username and password, we want
-///   to make the result a process-wide singleton and re-use it as
-///   necessary.
+///     It's necessary to obtain this auth token just once per process,
+///     using GData's ClientLogin protocol.  Because getting the token
+///     requires a prompt to the user for username and password, we want
+///     to make the result a process-wide singleton and re-use it as
+///     necessary.
 ///   </para>
 ///   <para>
-///   There are two cases where we need it: first, to upload a photo,
-///   the user needs to be authenticated.  Second, to populate the list
-///   of albums to upload to, the user needs to be authenticated. This
-///   latter bit can happen when displaying the options form for this
-///   plugin. That there are two situations where authentication will
-///   happen is why we want to make this a singleton.
+///     There are two cases where we need it: first, to upload a photo,
+///     the user needs to be authenticated.  Second, to populate the
+///     list of albums to upload to, the user needs to be
+///     authenticated. This latter bit can happen when displaying the
+///     options form for this plugin. That there are two situations
+///     where authentication will happen is why we want to make this a
+///     singleton.
 ///   </para>
 /// </remarks>
-
 namespace Cropper.SendToPicasa
 {
     public sealed class GdataSession
     {
         static readonly GdataSession instance= new GdataSession();
 
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
+        /// <summary>
+        /// Explicit static constructor to tell C# compiler
+        /// not to mark type as beforefieldinit
+        /// </summary>
         static GdataSession() { }
 
+        /// <summary>
+        ///   non-public default ctor
+        /// </summary>
         GdataSession()
         {
             Auth = new Dictionary<String,Dictionary<String,String>>();
@@ -61,6 +67,7 @@ namespace Cropper.SendToPicasa
 
 
         private Dictionary<String,Dictionary<String,String>> Auth;
+
 
         private void SetAuth(string user, string service, string auth)
         {
@@ -76,19 +83,23 @@ namespace Cropper.SendToPicasa
         }
 
 
+        /// <summary>
+        ///   Generate a new instance of headers every request.
+        ///   I found that the Microsoft.Http assembly modifies the
+        ///   headers object when it is used, causing problems on
+        ///   the 2nd call. Content-Length can be set, for example.
+        /// </summary>
         public Microsoft.Http.Headers.RequestHeaders GetHeaders(string user, string service)
         {
             try
             {
                 var userEntry = Auth[user];
 
-                // New instance of headers every request.
-                // I found that the Microsoft.Http assembly modifies the
-                // headers object when it is used, causing problems on
-                // the 2nd call. Content-Length can be set, for example.
                 var headers = Microsoft.Http.Headers.RequestHeaders.Parse
-                    ( "GData-Version: 2.0\r\n" +
-                      "Authorization: GoogleLogin auth=" + userEntry[service] + "\r\n");
+                    ("GData-Version: 2.0\r\n" +
+                     "Authorization: GoogleLogin auth=" +
+                     userEntry[service] +
+                     "\r\n");
 
                 return headers;
             }
@@ -99,13 +110,12 @@ namespace Cropper.SendToPicasa
             }
         }
 
-
+        /// <summary>
+        ///   The instance - for the singleton.
+        /// </summary>
         public static GdataSession Instance
         {
-            get
-            {
-                return instance;
-            }
+            get { return instance; }
         }
 
         /// <summary>
@@ -127,6 +137,7 @@ namespace Cropper.SendToPicasa
             return service;
         }
 
+
         class GoogleAuthInfo
         {
             public string email;
@@ -139,7 +150,11 @@ namespace Cropper.SendToPicasa
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     username may be blank on entry.
+        ///     It pops up a simple form, with a slot for username and
+        ///     another for password. Two buttons - OK and Cancel.
+        ///   </para>
+        ///   <para>p
+        ///     The username may be blank or null on entry.
         ///   </para>
         /// </remarks>
         private static GoogleAuthInfo PromptForAuthInfo(string username)
@@ -230,8 +245,12 @@ namespace Cropper.SendToPicasa
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     If the provided username is blank, then this method will prompt
-        ///     the user to provide it.
+        ///     If the provided username is blank, then this method will
+        ///     prompt the user to provide it, by displaying a form.  It
+        ///     then will send an authentication message to Google.
+        ///     Upon receipt of a successful authentication message, the
+        ///     Google authentication token will be stored into this
+        ///     (singleton) instance.
         ///   </para>
         /// </remarks>
         /// <returns>
@@ -278,8 +297,6 @@ namespace Cropper.SendToPicasa
         private static readonly string _baseLoginUrl = "https://www.google.com";
         private static readonly string _relativeLoginUrl = "/accounts/ClientLogin";
         private static readonly string _appName = "DinoChiesa-CropperPicasaPlugin-1.0";
-
-
     }
 }
 

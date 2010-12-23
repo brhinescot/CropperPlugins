@@ -21,7 +21,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Utils;       // for Tracing
-using Microsoft.Http;             // HttpClient
+using Microsoft.Http;             // HttpClient, etc
 
 namespace Cropper.SendToPicasa
 {
@@ -246,7 +246,9 @@ namespace Cropper.SendToPicasa
                 // reset this in case user has changed it in the authn dialog.
                 PluginSettings.EmailAddress = address;
 
-                var headers = GdataSession.Instance.GetHeaders(PluginSettings.EmailAddress, "picasa");
+                var headers =
+                    GdataSession.Instance.GetHeaders(PluginSettings.EmailAddress, "picasa");
+
                 // user has declined or failed to authenticate
                 if (headers == null)
                     return ;
@@ -276,16 +278,6 @@ namespace Cropper.SendToPicasa
                                               headers,
                                               uploadform.CreateHttpContent()))
                 {
-
-#if NOTNEEDED
-                    requestMsg.Headers.Host = null; // must remove Host header. why?
-                    // must remove Expect header. why?
-                    requestMsg.Headers.Expect= new Microsoft.Http.Headers.Expect
-                        {
-                            Expect100Continue = false
-                        };
-#endif
-
                     using (var picasa = new HttpClient(_basePicasaUrl))
                     {
                         var response = picasa.Send(requestMsg);
