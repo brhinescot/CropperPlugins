@@ -1,7 +1,9 @@
-#region License Information
-
-#endregion
-
+// SendToEmailFormat.cs
+//
+// Provides a Cropper Plugin that captures a screenshot, then opens
+// (begins composing) an email in the default email client, and attaches
+// the captured image to that new email.
+//
 
 using System;
 using System.Drawing;
@@ -20,11 +22,20 @@ namespace Cropper.Email
 {
     public class SendToEmailFormat : DesignablePlugin, IConfigurablePlugin
     {
-        private const string DESCRIPTION = "Send To Email";
-        private EmailOptionsForm _configForm;
-        private EmailSettings _settings;
+        public override string Description
+        {
+            get { return  "Send to Email"; }
+        }
 
+        public override string Extension
+        {
+            get { return PluginSettings.ImageFormat; }
+        }
 
+        /// <summary>
+        ///   This shows up in the list of plugins on the Dropdown
+        ///   in the plugins tab in the options.... form.
+        /// </summary>
         public override string ToString()
         {
             return "Send to e-mail [Jon Galloway]";
@@ -86,22 +97,6 @@ namespace Cropper.Email
             return null;
         }
 
-
-        public override string Description
-        {
-            get
-            {
-                return DESCRIPTION;
-            }
-        }
-
-        public override string Extension
-        {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
-        }
 
         private ImageFormat DesiredImageFormat
         {
@@ -197,6 +192,8 @@ namespace Cropper.Email
             form.ApplySettings();
         }
 
+        private EmailOptionsForm _configForm;
+        private EmailSettings _settings;
     }
 
 
