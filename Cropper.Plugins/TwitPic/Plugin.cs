@@ -88,7 +88,8 @@ namespace Cropper.SendToTwitPic
             try
             {
                 Tracing.Trace("+--------------------------------");
-                Tracing.Trace("TwitPic::SaveImage ({0})", _fileName);
+                Tracing.Trace("TwitPic::{0:X8}::SaveImage ({1})",
+                              this.GetHashCode(), _fileName);
 
                 SaveImageInDesiredFormat(stream, image);
 
@@ -141,7 +142,7 @@ namespace Cropper.SendToTwitPic
 
         private void SaveImageInDesiredFormat(Stream stream, System.Drawing.Image image)
         {
-            Tracing.Trace("TwitPic::SaveImageInDesiredFormat");
+            Tracing.Trace("TwitPic::{0:X8}::SaveImageInDesiredFormat", this.GetHashCode());
             if (String.Compare(Extension, "jpg", true) == 0)
             {
                 SaveImage_Jpg(stream, image);
@@ -252,7 +253,7 @@ namespace Cropper.SendToTwitPic
         /// </remarks>
         private void UploadImage()
         {
-            Tracing.Trace("TwitPic::UploadImage");
+            Tracing.Trace("TwitPic::{0:X8}::UploadImage", this.GetHashCode());
 
             if (!VerifyAuthentication()) return;
 
@@ -414,19 +415,19 @@ namespace Cropper.SendToTwitPic
         // these methods are needed only for diagnostic purposes.
         public override void Connect(IPersistableOutput persistableOutput)
         {
-            Tracing.Trace("TwitPic::Connect");
+            Tracing.Trace("TwitPic::{0:X8}::Connect", this.GetHashCode());
             base.Connect(persistableOutput);
         }
 
         public override void Disconnect()
         {
-            Tracing.Trace("TwitPic::Disconnect");
+            Tracing.Trace("TwitPic::{0:X8}::Disconnect", this.GetHashCode());
             base.Disconnect();
         }
 
         protected override void OnImageFormatClick(object sender, ImageFormatEventArgs e)
         {
-            Tracing.Trace("TwitPic::MenuClick");
+            Tracing.Trace("TwitPic::{0:X8}::MenuClick", this.GetHashCode());
             base.OnImageFormatClick(sender, e);
         }
 #endif
