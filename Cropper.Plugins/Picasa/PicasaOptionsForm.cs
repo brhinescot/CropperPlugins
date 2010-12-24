@@ -128,7 +128,7 @@ namespace Cropper.SendToPicasa
             var picasa = new HttpClient("https://picasaweb.google.com/");
 
             var headers =
-                GdataSession.Instance.GetHeaders(username, "picasa");
+                GdataSession.GetHeaders(username, "picasa");
 
             // get a list of albums
             var response = picasa.Send(HttpMethod.GET,

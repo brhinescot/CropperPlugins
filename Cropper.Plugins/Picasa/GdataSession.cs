@@ -6,7 +6,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:02:23 2010
-// Last Saved : <2010-December-23 18:17:41>
+// Last Saved : <2010-December-24 14:24:09>
 //
 // ------------------------------------------------------------------
 //
@@ -49,7 +49,8 @@ namespace Cropper.SendToPicasa
 {
     public sealed class GdataSession
     {
-        static readonly GdataSession instance= new GdataSession();
+        private static readonly GdataSession instance= new GdataSession();
+        private Dictionary<String,Dictionary<String,String>> Auth;
 
         /// <summary>
         /// Explicit static constructor to tell C# compiler
@@ -64,10 +65,6 @@ namespace Cropper.SendToPicasa
         {
             Auth = new Dictionary<String,Dictionary<String,String>>();
         }
-
-
-        private Dictionary<String,Dictionary<String,String>> Auth;
-
 
         private void SetAuth(string user, string service, string auth)
         {
@@ -89,11 +86,11 @@ namespace Cropper.SendToPicasa
         ///   headers object when it is used, causing problems on
         ///   the 2nd call. Content-Length can be set, for example.
         /// </summary>
-        public Microsoft.Http.Headers.RequestHeaders GetHeaders(string user, string service)
+        public static Microsoft.Http.Headers.RequestHeaders GetHeaders(string user, string service)
         {
             try
             {
-                var userEntry = Auth[user];
+                var userEntry = Current.Auth[user];
 
                 var headers = Microsoft.Http.Headers.RequestHeaders.Parse
                     ("GData-Version: 2.0\r\n" +
@@ -111,9 +108,9 @@ namespace Cropper.SendToPicasa
         }
 
         /// <summary>
-        ///   The instance - for the singleton.
+        ///   The single instance - for the singleton.
         /// </summary>
-        public static GdataSession Instance
+        public static GdataSession Current
         {
             get { return instance; }
         }
@@ -261,7 +258,7 @@ namespace Cropper.SendToPicasa
             Tracing.Trace("GDataSession::Authenticate user({0}), svc({1})",
                           username, service);
             var serviceString = LookupService(service);
-            if (instance.GetHeaders(username, service) != null) return username;
+            if (GdataSession.GetHeaders(username, service) != null) return username;
             var info = PromptForAuthInfo(username);
             if (info == null) return null;
 

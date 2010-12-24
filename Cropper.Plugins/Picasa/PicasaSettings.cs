@@ -5,7 +5,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:51:10 2010
-// Last Saved : <2010-December-15 20:11:20>
+// Last Saved : <2010-December-24 14:36:23>
 //
 // ------------------------------------------------------------------
 //
@@ -55,7 +55,23 @@ namespace Cropper.SendToPicasa
         // not to mark type as beforefieldinit
         static CachedSettings() { }
 
-        public string EmailAddress;
+        private string _emailAddress;
+        public string EmailAddress
+        {
+            get
+            {
+                Tracing.Trace("Picasa.CachedSettings::{0:X8}::get_Email '{1}'",
+                              this.GetHashCode(), _emailAddress);
+                return _emailAddress;
+            }
+
+            set
+            {
+                Tracing.Trace("Picasa.CachedSettings::{0:X8}::set_Email '{1}'",
+                              this.GetHashCode(), value);
+                _emailAddress = value;
+            }
+        }
 
         // explicit nonpublic default constructor
         CachedSettings() { EmailAddress= ""; }
@@ -74,8 +90,11 @@ namespace Cropper.SendToPicasa
 
         public PicasaSettings()
         {
-            JpgImageQuality= 80; // default
-            ImageFormat = "jpg"; // default
+            Tracing.Trace("PicasaSettings::{0:X8}::ctor", this.GetHashCode());
+
+            // defaults
+            JpgImageQuality= 80;
+            ImageFormat = "jpg";
             AllPhotosComment = "Uploaded by Cropper";
             PopBrowser = true;
             EmailAddress = CachedSettings.Instance.EmailAddress;
@@ -91,6 +110,7 @@ namespace Cropper.SendToPicasa
         {
             get
             {
+                Tracing.Trace("PicasaSettings::{0:X8}::get_Email", this.GetHashCode());
                 if (!String.IsNullOrEmpty(CachedSettings.Instance.EmailAddress)
                     && String.IsNullOrEmpty(_EmailAddress))
                     _EmailAddress= CachedSettings.Instance.EmailAddress;
@@ -99,6 +119,7 @@ namespace Cropper.SendToPicasa
             }
             set
             {
+                Tracing.Trace("PicasaSettings::{0:X8}::set_Email", this.GetHashCode());
                 _EmailAddress = value;
                 if (!String.IsNullOrEmpty(value))
                     CachedSettings.Instance.EmailAddress = value;
