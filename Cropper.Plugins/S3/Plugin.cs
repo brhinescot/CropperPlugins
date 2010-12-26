@@ -1,12 +1,13 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
-using Cropper.SendToS3.S3;
+
+using CropperPlugins.Utils;       // for Tracing
 
 namespace Cropper.SendToS3
 {
@@ -38,24 +39,28 @@ namespace Cropper.SendToS3
 
             try
             {
-                Service amazon = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
+                Service s3 = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
                 MemoryStream imageStream = new MemoryStream();
                 e.FullSizeImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
                 imageStream.Position = 0;
-                S3Object obj = new S3Object(imageStream, null);
-                SortedList headers = new SortedList();
+                S3Object obj = new S3Object
+                    {
+                        Stream = imageStream
+                    };
+                var headers = new Dictionary<String,String>();
                 headers.Add("x-amz-acl", "public-read");
                 headers.Add("Content-Type", "image/png");
                 string imageName = _settings.BaseKey + Guid.NewGuid().ToString() + ".png";
-                Response r = amazon.Put(_settings.BucketName, imageName, obj, headers);
+                var r = s3.Put(_settings.BucketName, imageName, obj, headers);
 
-                if (r.Status.ToString() != "OK")
+                if (r.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    MessageBox.Show(r.Status.ToString() + ": " + r.getResponseMessage());
+                    MessageBox.Show("Status: " + r.StatusCode + ": " + r.GetResponseMessage());
                 }
                 else
                 {
-                    string url = string.Format("http://s3.amazonaws.com/{0}/{1}", _settings.BucketName, imageName);
+                    string url = string.Format("http://s3.amazonaws.com/{0}/{1}",
+                                               _settings.BucketName, imageName);
                     Clipboard.SetText(url, TextDataFormat.Text);
                 }
             }
@@ -87,6 +92,31 @@ namespace Cropper.SendToS3
 
 
 
+#if Trace
+        public Plugin()
+        {
+            Tracing.Trace("S3::ctor ({0:X8})", this.GetHashCode());
+        }
+
+        // these methods are needed only for diagnostic purposes.
+        public override void Connect(IPersistableOutput persistableOutput)
+        {
+            Tracing.Trace("S3::{0:X8}::Connect", this.GetHashCode());
+            base.Connect(persistableOutput);
+        }
+
+        public override void Disconnect()
+        {
+            Tracing.Trace("S3::{0:X8}::Disconnect", this.GetHashCode());
+            base.Disconnect();
+        }
+
+        protected override void OnImageFormatClick(object sender, ImageFormatEventArgs e)
+        {
+            Tracing.Trace("S3::{0:X8}::MenuClick", this.GetHashCode());
+            base.OnImageFormatClick(sender, e);
+        }
+#endif
 
 
         #region IConfigurablePlugin Members

@@ -113,7 +113,7 @@ namespace Cropper.SendToS3
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(90, 13);
             this.label1.TabIndex = 20;
-            this.label1.Text = "Access Key";
+            this.label1.Text = "Secret Key";
             //
             // _cmbBucket
             //
@@ -156,6 +156,7 @@ namespace Cropper.SendToS3
             this._txtBaseKey.Name = "_txtBaseKey";
             this._txtBaseKey.Size = new System.Drawing.Size(214, 20);
             this._txtBaseKey.TabIndex = 41;
+            this.tooltip.SetToolTip(_txtBaseKey, "The prefix to apply to each uploaded image.\nCan be anything including nothing.");
             //
             // label3
             //
