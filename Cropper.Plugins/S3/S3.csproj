@@ -58,7 +58,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -74,46 +74,19 @@
     <Compile Include="OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Utils\Tracing.cs">
+      <Link>Tracing.cs</Link>
+    </Compile>
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S3Settings.cs" />
-    <Compile Include="S3\Bucket.cs">
+    <Compile Include="S3\MessageStructures.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="S3\CommonPrefixEntry.cs">
+    <Compile Include="S3\Events.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="S3\FileUploadCompleteEvent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\GetResponse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\ListAllMyBucketsResponse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\ListBucketResponse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\ListEntry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\Owner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\PutDataEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\Response.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\S3.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\S3Formatter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="S3\S3Object.cs">
+    <Compile Include="S3\Service.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="S3\Utils.cs">

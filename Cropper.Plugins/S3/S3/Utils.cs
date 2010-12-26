@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -7,227 +7,160 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
+using CropperPlugins.Utils;
 
-namespace Cropper.SendToS3.S3
+namespace Cropper.SendToS3
 {
-	class Utils
-	{
-		public static readonly string METADATA_PREFIX = "x-amz-meta-";
-		public static readonly string AMAZON_HEADER_PREFIX = "x-amz-";
-		public static readonly string ALTERNATIVE_DATE_HEADER = "x-amz-date";
+    static class Utils
+    {
+        public static readonly string METADATA_PREFIX = "x-amz-meta-";
+        public static readonly string AMAZON_HEADER_PREFIX = "x-amz-";
+        public static readonly string ALTERNATIVE_DATE_HEADER = "x-amz-date";
 
-		private static string host = "s3.amazonaws.com";
-		public static string Host 
-		{
-			get 
-			{
-				return host;
-			}
-			set 
-			{
-				host = value;
-			}
-		}
 
-		private static int securePort = 443;
-		public static int SecurePort 
-		{
-			get 
-			{
-				return securePort;
-			}
-			set 
-			{
-				securePort = value;
-			}
-		}
+        public static string MakeCanonicalString( string bucket, string resource, WebRequest request )
+        {
+            return MakeCanonicalString( bucket + "/" + resource, request );
+        }
 
-		private static int insecurePort = 80;
-		public static int InsecurePort 
-		{
-			get 
-			{
-				return insecurePort;
-			}
-			set 
-			{
-				insecurePort = value;
-			}
-		}
 
-		public static string makeCanonicalString( string resource, WebRequest request )
-		{
-			SortedList headers = new SortedList();
-			foreach ( string key in request.Headers )
-			{
-				headers.Add( key, request.Headers[ key ] );
-			}
-			if (headers["Content-Type"] == null)
-			{
-				headers.Add("Content-Type", request.ContentType);
-			}
-			return makeCanonicalString(request.Method, resource, headers, null);
-		}
+        public static string MakeCanonicalString( string resource, WebRequest request )
+        {
+            // I'm not sure why we want to clone the headers here.
+            var headersClone = new Dictionary<String,String>();
+            foreach ( string key in request.Headers )
+            {
+                headersClone.Add( key, request.Headers[ key ] );
+            }
+            if (!headersClone.ContainsKey("Content-Type"))
+                headersClone.Add("Content-Type", request.ContentType);
 
-		public static string makeCanonicalString( string verb, string resource, 
-			SortedList headers, string expires )
-		{
-			StringBuilder buf = new StringBuilder();
-			buf.Append( verb );
-			buf.Append( "\n" );
+            return MakeCanonicalString(request.Method, resource, headersClone, null);
+        }
 
-			SortedList interestingHeaders = new SortedList();
-			if (headers != null)
-			{
-				foreach (string key in headers.Keys)
-				{
-					string lk = key.ToLower();
-					if (lk.Equals("content-type") ||
-						lk.Equals("content-md5") ||
-						lk.Equals("date") ||
-						lk.StartsWith(AMAZON_HEADER_PREFIX))
-					{
-						interestingHeaders.Add(lk, headers[key]);
-					}
-				}
-			}
-			if ( interestingHeaders[ ALTERNATIVE_DATE_HEADER ] != null )
-			{
-				interestingHeaders.Add( "date", "" );
-			}
 
-			// if the expires is non-null, use that for the date field.  this
-			// trumps the x-amz-date behavior.
-			if ( expires != null )
-			{
-				interestingHeaders.Add( "date", expires );
-			}
 
-			// these headers require that we still put a new line after them,
-			// even if they don't exist.
-		{
-			string [] newlineHeaders = { "content-type", "content-md5" };
-			foreach ( string header in newlineHeaders )
-			{
-				if ( interestingHeaders.IndexOfKey( header ) == -1 )
-				{
-					interestingHeaders.Add( header, "" );
-				}
-			}
-		}
+        public static string MakeCanonicalString( string verb,
+                                                  string resource,
+                                                  Dictionary<String,String> headers,
+                                                  string expires )
+        {
+            StringBuilder buf = new StringBuilder(verb);
+            buf.Append( "\n" );
 
-			// Finally, add all the interesting headers (i.e.: all that startwith x-amz- ;-))
-			foreach ( string key in interestingHeaders.Keys )
-			{
-				if ( key.StartsWith( AMAZON_HEADER_PREFIX ) )
-				{
-					buf.Append( key ).Append( ":" ).Append( ( interestingHeaders[ key ] as string ).Trim() );
-				}
-				else
-				{
-					buf.Append( interestingHeaders[ key ] );
-				}
-				buf.Append( "\n" );
-			}
+            // AWS wants headers to be alphabetically sorted by key (header) name
+            var hdrsToSign = new SortedDictionary<String,String>();
+            if (headers != null)
+            {
+                foreach (string key in headers.Keys)
+                {
+                    //Tracing.Trace("C14n: looking at '{0}'", key);
+                    string lk = key.ToLower();
+                    if (lk.Equals("content-type") ||
+                        lk.Equals("content-md5") ||
+                        lk.Equals("date") ||
+                        lk.StartsWith(AMAZON_HEADER_PREFIX))
+                    {
+                        hdrsToSign.Add(lk, headers[key]);
+                    }
+                }
+            }
 
-			// Do not include the query string parameters
-			int queryIndex = resource.IndexOf( '?' );
-			if ( queryIndex == -1 )
-			{
-				buf.Append( "/" + resource );
-			}
-			else
-			{
-				buf.Append( "/" + resource.Substring( 0, queryIndex ) );
-			}
+            if ( expires != null  &&  !hdrsToSign.ContainsKey("date"))
+                hdrsToSign.Add( "date", expires );
 
-			Regex aclQueryStringRegEx = new Regex( ".*[&?]acl($|=|&).*" );
-			Regex torrentQueryStringRegEx = new Regex( ".*[&?]torrent($|=|&).*" );
-			Regex loggingQueryStringRegEx = new Regex(".*[&?]logging($|=|&).*");
-			if (aclQueryStringRegEx.IsMatch(resource))
-			{
-				buf.Append( "?acl" );
-			}
-			else if ( torrentQueryStringRegEx.IsMatch( resource ) )
-			{
-				buf.Append( "?torrent" );
-			}
-			else if (loggingQueryStringRegEx.IsMatch(resource))
-			{
-				buf.Append("?logging");
-			}
+            // per http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?RESTAuthentication.html
+            // encode these headers as blank lines, if they don't exist.
 
-			return buf.ToString();
-		}
+            if (!hdrsToSign.ContainsKey( "date" ) )
+                hdrsToSign.Add( "date", "" );
+            if (!hdrsToSign.ContainsKey( "content-type" ) )
+                hdrsToSign.Add( "content-type", "" );
+            if (!hdrsToSign.ContainsKey( "content-md5" ) )
+                hdrsToSign.Add( "content-md5", "" );
 
-		public static string encode( string awsSecretAccessKey, string canonicalString, bool urlEncode )
-		{
-			Encoding ae = new UTF8Encoding();
-			HMACSHA1 signature = new HMACSHA1( ae.GetBytes( awsSecretAccessKey ) );
-			string b64 = Convert.ToBase64String(
-				signature.ComputeHash( ae.GetBytes(
-				canonicalString.ToCharArray() ) )
-				);
+            // generate the string to be signed
+            foreach ( string key in hdrsToSign.Keys )
+            {
+                //Tracing.Trace("generating sig: hdr '{0}'", key);
+                if ( key.StartsWith( AMAZON_HEADER_PREFIX ) )
+                {
+                    buf.Append( key ).Append( ":" ).Append( ( hdrsToSign[ key ] as string ).Trim() );
+                }
+                else
+                {
+                    // for Non-amazon headers, insert only the value, no name
+                    buf.Append( hdrsToSign[ key ] );
+                }
+                buf.Append( "\n" );
+            }
 
-			if ( urlEncode )
-			{
-				return HttpUtility.UrlEncode(b64);
-			}
-			else
-			{
-				return b64;
-			}
-		}
+            // Do not include the query string parameters
+            int queryIndex = resource.IndexOf( '?' );
+            if ( queryIndex == -1 )
+                buf.Append( "/" + resource );
+            else
+                buf.Append( "/" + resource.Substring( 0, queryIndex ) );
 
-		public static string slurpInputStream(Stream stream)
-		{
-			System.Text.Encoding encode =
-				System.Text.Encoding.GetEncoding("utf-8");
-			StreamReader readStream = new StreamReader(stream, encode);
-			const int stride = 4096;
-			Char[] read = new Char[stride];
+            Regex aclQueryStringRegEx = new Regex( ".*[&?]acl($|=|&).*" );
+            Regex torrentQueryStringRegEx = new Regex( ".*[&?]torrent($|=|&).*" );
+            Regex loggingQueryStringRegEx = new Regex(".*[&?]logging($|=|&).*");
+            if (aclQueryStringRegEx.IsMatch(resource))
+            {
+                buf.Append( "?acl" );
+            }
+            else if ( torrentQueryStringRegEx.IsMatch( resource ) )
+            {
+                buf.Append( "?torrent" );
+            }
+            else if (loggingQueryStringRegEx.IsMatch(resource))
+            {
+                buf.Append("?logging");
+            }
 
-			int count = readStream.Read(read, 0, stride);
-			StringBuilder data = new StringBuilder();
-			while (count > 0)
-			{
-				string str = new string(read, 0, count);
-				data.Append(str);
-				count = readStream.Read(read, 0, stride);
-			}
+            return buf.ToString();
+        }
 
-			return data.ToString();
-		}
 
-		public static string getXmlChildText(XmlNode data)
-		{
-			StringBuilder builder = new StringBuilder();
-			foreach (XmlNode node in data.ChildNodes)
-			{
-				if (node.NodeType == XmlNodeType.Text ||
-					node.NodeType == XmlNodeType.CDATA)
-				{
-					builder.Append(node.Value);
-				}
-			}
-			return builder.ToString();
-		}
 
-		public static DateTime parseDate(string dateStr)
-		{
-			return DateTime.Parse(dateStr);
-		}
+        public static string SignAndEncode( string awsSecretAccessKey,
+                                            string canonicalString,
+                                            bool urlEncode )
+        {
+            Encoding utf8 = new UTF8Encoding();
+            HMACSHA1 hmac = new HMACSHA1(utf8.GetBytes(awsSecretAccessKey));
+            var signature = hmac.ComputeHash(utf8.GetBytes(canonicalString));
+            var b64sig = Convert.ToBase64String(signature);
 
-		public static string getHttpDate()
-		{
-			// Setting the Culture will ensure we get a proper HTTP Date.
-			string date = System.DateTime.UtcNow.ToString( "ddd, dd MMM yyyy HH:mm:ss ", System.Globalization.CultureInfo.InvariantCulture ) + "GMT";
-			return date;
-		}
+            return (urlEncode)
+                ? HttpUtility.UrlEncode(b64sig)
+                : b64sig;
+        }
 
-		public static long currentTimeMillis()
-		{
-			return (long)( DateTime.UtcNow - new DateTime( 1970, 1, 1 ) ).TotalMilliseconds;
-		}
-	}
+        public static string SlurpInputStream(Stream stream)
+        {
+            System.Text.Encoding encode =
+                System.Text.Encoding.GetEncoding("utf-8");
+            StringBuilder data = new StringBuilder();
+            using (StreamReader sr = new StreamReader(stream, encode))
+            {
+                const int stride = 4096;
+                char[] buffer = new char[stride];
+                int count;
+                while ((count = sr.Read(buffer, 0, stride)) > 0)
+                {
+                    data.Append(new string(buffer, 0, count));
+                }
+            }
+            return data.ToString();
+        }
+
+        public static string GetHttpDate()
+        {
+            // Setting the Culture will ensure we get a proper HTTP Date.
+            string date = DateTime.UtcNow.ToString( "ddd, dd MMM yyyy HH:mm:ss ", System.Globalization.CultureInfo.InvariantCulture ) + "GMT";
+            return date;
+        }
+
+    }
 }

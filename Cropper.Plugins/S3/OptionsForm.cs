@@ -7,7 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
-using Cropper.SendToS3.S3;
+
+using CropperPlugins.Utils;
 
 namespace Cropper.SendToS3
 {
@@ -44,6 +45,8 @@ namespace Cropper.SendToS3
         /// </summary>
         public void LoadList()
         {
+            Tracing.Trace("S3::OptionsForm::LoadList");
+
             if (string.IsNullOrEmpty(AccessKeyId) ||
                 string.IsNullOrEmpty(SecretAccessKey))
                 return;
@@ -53,9 +56,12 @@ namespace Cropper.SendToS3
             Service az = new Service(AccessKeyId, SecretAccessKey);
             try
             {
-                ListAllMyBucketsResponse buckets = az.ListAllMyBuckets(null);
-                foreach (Bucket bucket in buckets.Buckets)
+                ListAllMyBucketsResult response = az.ListAllMyBuckets(null);
+                foreach (Bucket bucket in response.Buckets)
+                {
+                    Tracing.Trace("S3::OptionsForm::LoadList {0}", bucket.Name);
                     _cmbBucket.Items.Add(bucket.Name);
+                }
 
                 if (!string.IsNullOrEmpty(_bucketName))
                     _cmbBucket.SelectedItem = _bucketName;
