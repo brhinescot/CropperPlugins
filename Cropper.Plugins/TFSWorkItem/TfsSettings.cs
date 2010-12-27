@@ -4,7 +4,7 @@ using System.IO;
 //using System.Text;
 //using System.Configuration;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 namespace Cropper.TFSWorkItem
 {
