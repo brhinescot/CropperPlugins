@@ -1,11 +1,18 @@
 
 _CSC=c:\.net3.5\csc.exe
-LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll
+LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll \
+        /R:..\Output\x86\Debug\CropperPlugins.Common.dll
+
 RSK_DIR=C:\Program Files (x86)\Microsoft WCF REST\WCF REST Starter Kit Preview 2
 RSK_HTTPCLIENT_REFS=/R:"$(RSK_DIR)\Assemblies\Microsoft.Http.dll" /R:"$(RSK_DIR)\Assemblies\Microsoft.Http.Extensions.dll"
 
-CS_SOURCE=Plugin.cs ImgurLogWriter.cs ImgurOptionsForm.Designer.cs ImgurOptionsForm.cs Properties\AssemblyInfo.cs Properties\Resources.Designer.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
-
+CS_SOURCE=Plugin.cs \
+        ImgurLogWriter.cs \
+        ImgurOptionsForm.Designer.cs \
+        ImgurOptionsForm.cs \
+        Properties\AssemblyInfo.cs \
+        Properties\Resources.Designer.cs \
+        ..\SolutionInfo.cs
 
 check-syntax:
         <<flymake-build.cmd  $(CS_SOURCE)
