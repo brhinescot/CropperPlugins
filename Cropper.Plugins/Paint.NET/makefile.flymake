@@ -1,8 +1,15 @@
 
 _CSC=c:\.net3.5\csc.exe
-LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll
+LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll \
+        /R:\.NET3.0RA\UIAutomationClient.dll
 
-CS_SOURCE=PaintDotNet.cs PdnOptionsForm.cs PdnLogWriter.cs Properties\AssemblyInfo.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
+CS_SOURCE=PaintDotNet.cs \
+          PdnOptionsForm.cs \
+          PdnLogWriter.cs \
+          Properties\AssemblyInfo.cs \
+          ..\SolutionInfo.cs \
+          ..\Common\Tracing.cs \
+          ..\Common\IUpload.cs
 
 
 check-syntax :

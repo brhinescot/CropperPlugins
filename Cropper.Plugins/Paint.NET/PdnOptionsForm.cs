@@ -1,11 +1,28 @@
+// PdnOptionsForm.cs
+//
+
+#define HACK
+
 using System;
 using System.IO;
 using System.Reflection;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
+
 
 namespace Cropper.SendToPaintDotNet
 {
+    public class TimeDelay
+    {
+        public String FriendlyName
+        {
+            get { return PdnSettings.FriendlyName(Seconds); }
+        }
+
+        public int Seconds { get; set; }
+    }
+
+
     public partial class PdnOptionsForm : BaseConfigurationForm
     {
         private PdnSettings _settings;
@@ -34,22 +51,22 @@ namespace Cropper.SendToPaintDotNet
 
             PopulateDelayComboBoxes();
 
-            if (settings.DelayStart == null)
-                this.cmbDelayStart.SelectedIndex = 0;
+            if (settings.DelayStartSeconds == 0)
+                this.cmbDelayStart.SelectedIndex = 1;
             else
                 SelectIntelligently(this.cmbDelayStart,
-                                    (x)=> ((x as TimeDelay).Milliseconds ==
-                                           settings.DelayStart.Milliseconds),
+                                    (x)=> ((x as TimeDelay).Seconds ==
+                                           settings.DelayStartSeconds),
                                     1);
 
-
-            if (settings.DelayEdit == null)
-                this.cmbDelayEdit.SelectedIndex = 0;
+            if (settings.DelayEditSeconds == 0)
+                this.cmbDelayEdit.SelectedIndex = 2;
             else
                 SelectIntelligently(this.cmbDelayEdit,
-                                    (x)=> ((x as TimeDelay).Milliseconds ==
-                                           settings.DelayEdit.Milliseconds),
+                                    (x)=> ((x as TimeDelay).Seconds ==
+                                           settings.DelayEditSeconds),
                                     2);
+
             UploadCheckedChanged(null,null);
         }
 
@@ -69,7 +86,6 @@ namespace Cropper.SendToPaintDotNet
             }
             if (cmb.SelectedIndex < 0)
             {
-                // just select the first one
                 cmb.SelectedIndex = defaultIndex;
             }
         }
@@ -81,8 +97,8 @@ namespace Cropper.SendToPaintDotNet
                 this.chkPostEditUpload.Checked
                 ? (this.cmbPlugins.SelectedItem as PluginInfo)
                 : null;
-            _settings.DelayStart = (this.cmbDelayStart.SelectedItem as TimeDelay);
-            _settings.DelayEdit = (this.cmbDelayEdit.SelectedItem as TimeDelay);
+            _settings.DelayStartSeconds = (this.cmbDelayStart.SelectedItem as TimeDelay).Seconds;
+            _settings.DelayEditSeconds = (this.cmbDelayEdit.SelectedItem as TimeDelay).Seconds;
         }
 
 
@@ -90,66 +106,25 @@ namespace Cropper.SendToPaintDotNet
         private void PopulateDelayComboBoxes()
         {
             this.cmbDelayStart.Items.AddRange(new TimeDelay[]{
-                    new TimeDelay
-                    {
-                        FriendlyName = "1 seconds",
-                        Milliseconds = 1 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "3 seconds",
-                        Milliseconds = 3 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "5 seconds",
-                        Milliseconds = 5 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "15 seconds",
-                        Milliseconds = 15 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "30 seconds",
-                        Milliseconds = 15 * 1000
-                    }
+                    new TimeDelay { Seconds = 1 },
+                    new TimeDelay { Seconds = 3 },
+                    new TimeDelay { Seconds = 5 },
+                    new TimeDelay { Seconds = 15 },
+                    new TimeDelay { Seconds = 30 },
                 });
             this.cmbDelayEdit.Items.AddRange(new TimeDelay[]{
-                    new TimeDelay
-                    {
-                        FriendlyName = "60 seconds",
-                        Milliseconds = 60 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "3 minutes",
-                        Milliseconds = 3 * 60 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "5 minutes",
-                        Milliseconds = 5 * 60 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "10 minutes",
-                        Milliseconds = 10 * 60 * 1000
-                    },
-                    new TimeDelay
-                    {
-                        FriendlyName = "20 minutes",
-                        Milliseconds = 10 * 60 * 1000
-                    }
+                    new TimeDelay { Seconds = 60 },
+                    new TimeDelay { Seconds = 3 * 60 },
+                    new TimeDelay { Seconds = 5 * 60 },
+                    new TimeDelay { Seconds = 10 * 60 },
+                    new TimeDelay { Seconds = 20 * 60 },
                 });
         }
 
 
-
         private void PopulatePluginComboBox()
         {
-            Tracing.Trace("PdnOptionsForm: Looking for plugins that do UploadImage...");
+            Tracing.Trace("PdnOptionsForm: Looking for IUpload plugins...");
             this.cmbPlugins.Items.Clear();
             var pluginDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
             var dlllFiles = Directory.GetFiles(pluginDirectory, "*.dll");
@@ -178,8 +153,6 @@ namespace Cropper.SendToPaintDotNet
         {
             var assembly = Assembly.LoadFrom(path);
             var if1Name = typeof(IPersistableImageFormat).Name;
-            var if2Name = typeof(IConfigurablePlugin).Name;
-            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
             try
             {
                 foreach (Type t in assembly.GetTypes())
@@ -188,15 +161,18 @@ namespace Cropper.SendToPaintDotNet
                     if (!t.IsClass) continue;
                     if (t.IsAbstract) continue;
                     if (t.GetInterface(if1Name, true) == null) continue;
-                    if (t.GetInterface(if2Name, true) == null) continue;
-                    if (t.GetField("_fileName", flags) == null) continue;
-                    if (t.GetMethod("UploadImage",
-                                    flags,
+#if HACK
+                    if (t.GetMethod("UploadFile",
+                                    BindingFlags.Instance | BindingFlags.Public,
                                     null,
-                                    System.Type.EmptyTypes,
+                                    new Type[] { typeof(System.String) },
                                     null) == null)
                         continue;
+#else
+                    if (t.GetInterface(typeof(CropperPlugins.Common.IUpload).Name,
+                                       true) == null) continue;
 
+#endif
                     // found a type that fits the criteria, return it.
                     return assembly.CreateInstance(t.FullName);
                 }

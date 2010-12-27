@@ -102,9 +102,6 @@
     </Compile>
     <Compile Include="PdnOptionsForm.cs"/>
     <Compile Include="PdnLogWriter.cs" />
-    <Compile Include="..\Utils\Tracing.cs">
-      <Link>Tracing.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -132,6 +129,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{8cef0116-5212-4c1c-90b7-2fd884cffc73}</Project>
+      <Name>CropperPlugins Common DLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
