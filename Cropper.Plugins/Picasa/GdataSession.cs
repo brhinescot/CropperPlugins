@@ -6,7 +6,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:02:23 2010
-// Last Saved : <2010-December-24 14:24:09>
+// Last Saved : <2010-December-26 19:57:09>
 //
 // ------------------------------------------------------------------
 //
@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Http;
 using RE=System.Text.RegularExpressions;
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 
 /// <summary>

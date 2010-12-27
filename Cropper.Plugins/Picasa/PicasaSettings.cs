@@ -5,7 +5,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 11:51:10 2010
-// Last Saved : <2010-December-24 14:36:23>
+// Last Saved : <2010-December-26 21:42:46>
 //
 // ------------------------------------------------------------------
 //
@@ -16,7 +16,7 @@
 
 using System;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 namespace Cropper.SendToPicasa
 {

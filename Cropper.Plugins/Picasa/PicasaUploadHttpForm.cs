@@ -6,7 +6,7 @@
 //
 // Author     : Dino
 // Created    : Sat Dec 11 09:37:44 2010
-// Last Saved : <2010-December-23 17:19:47>
+// Last Saved : <2010-December-26 19:56:45>
 //
 // ------------------------------------------------------------------
 //
@@ -20,7 +20,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Http;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 namespace Cropper.SendToPicasa
 {
@@ -29,9 +29,9 @@ namespace Cropper.SendToPicasa
         // workitem 14947:
         //
         // While this class is modelled after a pattern in the Microsoft.Http.dll,
-        // and so theoretically *could* explicitly support ICreateHttpContent,
-        // specifying that interface as explicitly supported by this class causes a
-        // plugin load error by Cropper, if Microsoft.Http.dll is not in the GAC.
+        // and so theoretically *could* explicitly implement ICreateHttpContent,
+        // specifying that interface as explicitly implemented by this class causes
+        // a plugin load error by Cropper, if Microsoft.Http.dll is not in the GAC.
         // This happens even if Microsoft.Http.dll is available in the
         // ApplicationBase of the plugin (eg, the plugins subdir of the Cropper
         // install directory). The symptom is that this plugin simply does not

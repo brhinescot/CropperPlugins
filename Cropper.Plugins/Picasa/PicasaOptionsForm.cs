@@ -10,7 +10,8 @@ using System.ServiceModel.Syndication;
 using Fusion8.Cropper.Extensibility;
 using RE=System.Text.RegularExpressions;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
+
 
 namespace Cropper.SendToPicasa
 {
