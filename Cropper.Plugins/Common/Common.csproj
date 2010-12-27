@@ -84,6 +84,10 @@
     <Compile Include="IUpload.cs" />
     <Compile Include="Tracing.cs" />
     <Compile Include="Hacks.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
