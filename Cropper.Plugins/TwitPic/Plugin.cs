@@ -11,6 +11,9 @@
 // Sat, 04 Dec 2010  20:58
 //
 
+// Cropper workitem 14970
+#define HACK
+
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -19,12 +22,18 @@ using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
 
 
 namespace Cropper.SendToTwitPic
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
     {
         public override string Description
         {
@@ -239,6 +248,13 @@ namespace Cropper.SendToTwitPic
             }
 
             return  "uploaded from Cropper.";
+        }
+
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
         }
 
 

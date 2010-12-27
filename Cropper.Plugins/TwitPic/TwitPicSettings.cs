@@ -3,9 +3,7 @@ namespace Cropper.SendToTwitPic
 {
     using System;
     using System.Collections.Generic;
-
-    using CropperPlugins.Utils;
-
+    using CropperPlugins.Common;
 
     /// <summary>
     ///   A singleton that the access token and secret for OAuth.
