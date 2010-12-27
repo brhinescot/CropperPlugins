@@ -48,6 +48,9 @@
 //
 // ------------------------------------------------------------------
 
+// Cropper workitem 14970
+#define HACK
+
 
 using System;
 using System.Drawing.Imaging;
@@ -57,13 +60,18 @@ using System.Windows.Forms;
 
 using FlickrNet;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
 
 
 namespace Cropper.SendToFlickr
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream,
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
         IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
     {
 
         public override string Description
@@ -227,6 +235,12 @@ namespace Cropper.SendToFlickr
             return result;
         }
 
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
+        }
 
         private void UploadImage()
         {

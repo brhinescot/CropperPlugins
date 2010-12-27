@@ -5,7 +5,8 @@ using System.IO;
 using System.Windows.Forms;
 
 using FlickrNet;
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
+
 
 namespace Cropper.SendToFlickr
 {
@@ -256,7 +257,6 @@ namespace Cropper.SendToFlickr
         {
             LoadPhotosets(true);
         }
-
     }
 }
 
