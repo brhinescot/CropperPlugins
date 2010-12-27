@@ -11,6 +11,9 @@
 // Sat, 04 Dec 2010  20:58
 //
 
+// Cropper workitem 14970
+#define HACK
+
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -18,8 +21,8 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;        // for Tracing
-using System.Text;                 // Encoding, StringBuilder
+using CropperPlugins.Common;        // for Tracing
+using System.Text;                  // Encoding, StringBuilder
 using RE=System.Text.RegularExpressions;
 
 using System.Web.Script.Serialization;  // for JavaScriptSerializer
@@ -27,7 +30,13 @@ using System.Web.Script.Serialization;  // for JavaScriptSerializer
 
 namespace Cropper.SendToFacebook
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
     {
         public override string Description
         {
@@ -317,6 +326,13 @@ namespace Cropper.SendToFacebook
             }
 
             return  "uploaded from Cropper.";
+        }
+
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
         }
 
 
