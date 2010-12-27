@@ -2,14 +2,20 @@
 _CSC=c:\.net3.5\csc.exe
 LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll
 
-CS_SOURCE=Plugin.cs ImageShackOptionsForm.Designer.cs ImageShackOptionsForm.cs  Properties\AssemblyInfo.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
+CS_SOURCE=Plugin.cs \
+        ImageShackOptionsForm.Designer.cs \
+        ImageShackOptionsForm.cs \
+        Properties\AssemblyInfo.cs \
+        ..\SolutionInfo.cs \
+        ..\Common\Tracing.cs
+        ..\Common\IUpload.cs
 
 
 check-syntax :
         <<flymake-build.cmd  $(CS_SOURCE)
     SETLOCAL ENABLEDELAYEDEXPANSION
     set errorlevel=
-    for %%I in (%*) do if NOT %%I == $(FLYMAKE_ORIGINAL) (
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
        set filesToBuild=!filesToBuild! %%I
     )
     $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
