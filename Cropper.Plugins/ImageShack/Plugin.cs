@@ -23,6 +23,8 @@
 // Sat, 04 Dec 2010  20:58
 //
 
+// Cropper workitem 14970
+#define HACK
 
 using System;
 using System.Collections.Generic;
@@ -32,27 +34,27 @@ using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
-using Microsoft.Http;             // HttpClient
+using CropperPlugins.Common;       // for Tracing
+using Microsoft.Http;              // HttpClient
 
 namespace Cropper.SendToImageShack
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
     {
         public override string Description
         {
-            get
-            {
-                return "Send to ImageShack";
-            }
+            get { return "Send to ImageShack"; }
         }
 
         public override string Extension
         {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
+            get { return PluginSettings.ImageFormat; }
         }
 
         public override string ToString()
@@ -197,6 +199,12 @@ namespace Cropper.SendToImageShack
             return result;
         }
 
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
+        }
 
         /// <summary>
         ///  This does the real work of the plugin - uploading to imgur.com.
