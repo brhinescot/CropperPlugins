@@ -13,6 +13,8 @@
 
 // #define Trace
 
+#define HACK
+
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -21,27 +23,34 @@ using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
-using Microsoft.Http;             // HttpClient
+using CropperPlugins.Common;       // for Tracing
+using Microsoft.Http;              // HttpClient
 
 namespace Cropper.SendToImgur
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
+
     {
+        public Plugin()
+        {
+            Tracing.Trace("+--------------------------------");
+            Tracing.Trace("Imgur::ctor ({0:X8})", this.GetHashCode());
+        }
+
         public override string Description
         {
-            get
-            {
-                return "Send to Imgur";
-            }
+            get { return "Send to Imgur"; }
         }
 
         public override string Extension
         {
-            get
-            {
-                return PluginSettings.ImageFormat;
-            }
+            get { return PluginSettings.ImageFormat; }
         }
 
         public override string ToString()
@@ -202,6 +211,8 @@ namespace Cropper.SendToImgur
 
             if (!VerifyBasicSettings()) return;
 
+            Hacks.BootstrapSettings(PluginSettings);
+
             try
             {
                 var http = new HttpClient(_baseUri);
@@ -251,6 +262,12 @@ namespace Cropper.SendToImgur
                                 MessageBoxIcon.Error);
             }
             return ;
+        }
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
         }
 
 
@@ -327,7 +344,11 @@ namespace Cropper.SendToImgur
         /// </remarks>
         public object Settings
         {
-            get { return PluginSettings; }
+            get
+            {
+                Tracing.Trace("Imgur::get_Settings");
+                return PluginSettings;
+            }
             set { PluginSettings = value as ImgurSettings; }
         }
 
@@ -396,15 +417,39 @@ namespace Cropper.SendToImgur
     }
 
 
+    internal sealed class CachedSettings
+    {
+        static readonly CachedSettings instance= new CachedSettings();
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static CachedSettings() { }
+
+        public string Key { get; set; }
+
+        // explicit nonpublic default constructor
+        CachedSettings() { Key= ""; }
+
+        public static CachedSettings Instance
+        {
+            get { return instance; }
+        }
+    }
+
 
     public class ImgurSettings
     {
-        string _format;
+        //private string _Key;
+        private string _format;
+
         public ImgurSettings()
         {
+            Tracing.Trace("+--------------------------------");
+            Tracing.Trace("ImgurSettings::ctor ({0:X8})", this.GetHashCode());
             JpgImageQuality= 80; // default
             ImageFormat = "png"; // default
             PopBrowser = true;
+            Key="";
         }
 
         /// <summary>
@@ -412,11 +457,42 @@ namespace Cropper.SendToImgur
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     For an explanation, see http://imgur.com/register/api_anon .
+        ///     For an explanation of what this is, see
+        ///     http://imgur.com/register/api_anon .
+        ///   </para>
+        ///   <para>
+        ///     There's a singleton used as a backing store for this.
+        ///     This is because it can change outside the scope of an
+        ///     options form, and we want to retain any non-null value
+        ///     across instances of the Plugin (and the Settings class).
         ///   </para>
         /// </remarks>
         public string Key { get; set; }
 
+
+#if NOT
+        {
+            get
+            {
+                Tracing.Trace("ImgurSettings::{0:X8}::get_Key", this.GetHashCode());
+                if (!String.IsNullOrEmpty(CachedSettings.Instance.Key)
+                    && String.IsNullOrEmpty(_Key))
+                    _Key= CachedSettings.Instance.Key;
+
+                Tracing.Trace("ImgurSettings::{0:X8}::get_Key value({1})",
+                              this.GetHashCode(), _Key);
+                return _Key;
+            }
+            set
+            {
+                Tracing.Trace("ImgurSettings::{0:X8}::set_Key ({1})",
+                              this.GetHashCode(), value);
+                _Key = value;
+                if (!String.IsNullOrEmpty(value))
+                    CachedSettings.Instance.Key = value;
+            }
+        }
+#endif
 
         /// <summary>
         ///   Quality level to use when saving an image in JPG format.

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Fusion8.Cropper.Extensibility;
+using CropperPlugins.Common;
 
 namespace Cropper.SendToImgur
 {
@@ -50,6 +51,8 @@ namespace Cropper.SendToImgur
 
         public void ApplySettings()
         {
+            Tracing.Trace("ImgurOptionsForm::{0:X8}::ApplySettings key({1})",
+                          this.GetHashCode(), this.txtKey.Text.Trim());
             _settings.Key = this.txtKey.Text.Trim();
             _settings.JpgImageQuality =  this.qualitySlider.Value;
             _settings.ImageFormat = this.cmbImageFormat.Text;
