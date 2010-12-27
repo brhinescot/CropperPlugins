@@ -8,15 +8,18 @@ using System.Text;
 using System.Web;
 using System.Xml.Serialization;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;    // for Tracing
 
 namespace Cropper.SendToS3
 {
+    /// <summary>
+    ///   Used to package up a stream and headers for a PUT/POST
+    ///   request to S3.
+    /// </summary>
     public class S3Object
     {
         public System.IO.Stream Stream { get; set; }
         public Dictionary<String,String> Metadata { get; set; }
-
     }
 
     public static class Extensions
@@ -30,6 +33,9 @@ namespace Cropper.SendToS3
     }
 
 
+    /// <summary>
+    ///   A class to connect to S3.
+    /// </summary>
     public class Service
     {
         private string awsAccessKeyId;

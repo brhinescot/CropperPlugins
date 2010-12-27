@@ -1,3 +1,9 @@
+// S3\Plugin.cs
+//
+
+// Cropper workitem 14970
+#define HACK
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,11 +13,17 @@ using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
 
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
 
 namespace Cropper.SendToS3
 {
-    public class Plugin : DesignablePlugin, IConfigurablePlugin
+    public class Plugin : DesignablePlugin,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
+
     {
         OptionsForm _optionsForm;
         S3Settings _settings;
@@ -35,34 +47,12 @@ namespace Cropper.SendToS3
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
-            if (!VerifyBasicSettings()) return;
-
             try
             {
-                Service s3 = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
                 MemoryStream imageStream = new MemoryStream();
                 e.FullSizeImage.Save(imageStream, System.Drawing.Imaging.ImageFormat.Png);
                 imageStream.Position = 0;
-                S3Object obj = new S3Object
-                    {
-                        Stream = imageStream
-                    };
-                var headers = new Dictionary<String,String>();
-                headers.Add("x-amz-acl", "public-read");
-                headers.Add("Content-Type", "image/png");
-                string imageName = _settings.BaseKey + Guid.NewGuid().ToString() + ".png";
-                var r = s3.Put(_settings.BucketName, imageName, obj, headers);
-
-                if (r.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    MessageBox.Show("Status: " + r.StatusCode + ": " + r.GetResponseMessage());
-                }
-                else
-                {
-                    string url = string.Format("http://s3.amazonaws.com/{0}/{1}",
-                                               _settings.BucketName, imageName);
-                    Clipboard.SetText(url, TextDataFormat.Text);
-                }
+                UploadImageStream(imageStream, GenerateUniqueImageName(".png"));
             }
             catch (Exception ex)
             {
@@ -70,6 +60,11 @@ namespace Cropper.SendToS3
             }
         }
 
+        private string GenerateUniqueImageName(string extension)
+        {
+            return _settings.BaseKey + Guid.NewGuid().ToString() +
+                extension;
+        }
 
         private bool VerifyBasicSettings()
         {
@@ -88,6 +83,44 @@ namespace Cropper.SendToS3
                 return false;
             }
             return true;
+        }
+
+
+        private void UploadImageStream(Stream imageStream, string imageName)
+        {
+            if (!VerifyBasicSettings()) return;
+
+            Service s3 = new Service(_settings.AccessKeyId, _settings.SecretAccessKey);
+            S3Object obj = new S3Object
+                {
+                    Stream = imageStream
+                };
+            var headers = new Dictionary<String,String>();
+            headers.Add("x-amz-acl", "public-read");
+            headers.Add("Content-Type", "image/png");
+            var r = s3.Put(_settings.BucketName, imageName, obj, headers);
+
+            if (r.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                MessageBox.Show("Status: " + r.StatusCode + ": " + r.GetResponseMessage());
+            }
+            else
+            {
+                string url = string.Format("http://s3.amazonaws.com/{0}/{1}",
+                                           _settings.BucketName, imageName);
+                Clipboard.SetText(url, TextDataFormat.Text);
+            }
+        }
+
+
+
+        public void UploadFile(string fileName)
+        {
+            using (var fs = File.OpenRead(fileName))
+            {
+                string uniqueName = GenerateUniqueImageName(Path.GetExtension(fileName));
+                UploadImageStream(fs, uniqueName);
+            }
         }
 
 

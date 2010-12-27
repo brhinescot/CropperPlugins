@@ -74,8 +74,11 @@
     <Compile Include="OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="..\Utils\Tracing.cs">
+    <Compile Include="..\Common\Tracing.cs">
       <Link>Tracing.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\IUpload.cs">
+      <Link>IUpload.cs</Link>
     </Compile>
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

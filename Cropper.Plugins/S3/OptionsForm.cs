@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 using Fusion8.Cropper.Extensibility;
 
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 namespace Cropper.SendToS3
 {
