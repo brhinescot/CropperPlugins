@@ -5,6 +5,9 @@
 // the captured image to that new email.
 //
 
+// Cropper workitem 14970
+#define HACK
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -14,13 +17,19 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
 using Fusion8.Cropper.Extensibility;
 
 
 namespace Cropper.Email
 {
-    public class SendToEmailFormat : DesignablePlugin, IConfigurablePlugin
+    public class SendToEmailFormat :
+        DesignablePlugin,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
     {
         public override string Description
         {
@@ -48,11 +57,21 @@ namespace Cropper.Email
             Tracing.Trace("Email::ImageCaptured filename={0}", e.ImageNames.FullSize);
             this.output.FetchOutputStream(new StreamHandler(this.SaveImage), e.ImageNames.FullSize, e.FullSizeImage);
             FileInfo file = new FileInfo(e.ImageNames.FullSize);
+            SendImageInEmail(file);
+        }
 
+        public void UploadFile(string fileName)
+        {
+            FileInfo file = new FileInfo(fileName);
+            SendImageInEmail(file);
+        }
+
+        private void SendImageInEmail(FileInfo file)
+        {
             string subject = PluginSettings.Subject.ReplaceTokens(file);
             string body = PluginSettings.Message.ReplaceTokens(file);
             MapiMailMessage message = new MapiMailMessage(subject, body);
-            message.Files.Add(e.ImageNames.FullSize);
+            message.Files.Add(file.Name);
             message.ShowDialog();
         }
 
