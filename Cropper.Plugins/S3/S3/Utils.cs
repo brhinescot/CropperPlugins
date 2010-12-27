@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
-using CropperPlugins.Utils;
+using CropperPlugins.Common;
 
 namespace Cropper.SendToS3
 {
@@ -17,12 +17,10 @@ namespace Cropper.SendToS3
         public static readonly string AMAZON_HEADER_PREFIX = "x-amz-";
         public static readonly string ALTERNATIVE_DATE_HEADER = "x-amz-date";
 
-
         public static string MakeCanonicalString( string bucket, string resource, WebRequest request )
         {
             return MakeCanonicalString( bucket + "/" + resource, request );
         }
-
 
         public static string MakeCanonicalString( string resource, WebRequest request )
         {
@@ -37,7 +35,6 @@ namespace Cropper.SendToS3
 
             return MakeCanonicalString(request.Method, resource, headersClone, null);
         }
-
 
 
         public static string MakeCanonicalString( string verb,
@@ -158,7 +155,9 @@ namespace Cropper.SendToS3
         public static string GetHttpDate()
         {
             // Setting the Culture will ensure we get a proper HTTP Date.
-            string date = DateTime.UtcNow.ToString( "ddd, dd MMM yyyy HH:mm:ss ", System.Globalization.CultureInfo.InvariantCulture ) + "GMT";
+            string date = DateTime.UtcNow.ToString( "ddd, dd MMM yyyy HH:mm:ss ",
+                                                    System.Globalization.CultureInfo.InvariantCulture ) +
+                "GMT";
             return date;
         }
 
