@@ -119,9 +119,6 @@
     <Compile Include="..\..\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\Utils\Tracing.cs">
-      <Link>Tracing.cs</Link>
-    </Compile>
     <Compile Include="Plugin.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -136,6 +133,12 @@
     <Compile Include="Library\GifDecoder.cs" />
     <Compile Include="Library\LZWEncoder.cs" />
     <Compile Include="Library\NeuQuant.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{8cef0116-5212-4c1c-90b7-2fd884cffc73}</Project>
+      <Name>CropperPlugins Common DLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
