@@ -86,8 +86,11 @@
     </Compile>
     <Compile Include="PhotoSetItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\Utils\Tracing.cs">
+    <Compile Include="..\Common\Tracing.cs">
       <Link>Tracing.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\IUpload.cs">
+      <Link>IUpload.cs</Link>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

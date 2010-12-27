@@ -1,0 +1,28 @@
+
+_CSC=c:\.net3.5\csc.exe
+LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll \
+        /R:..\Dependencies\Flickrnet.dll
+
+CS_SOURCE=Plugin.cs \
+        AuthorizeDialog.cs \
+        FlickrOptionsForm.Designer.cs \
+        FlickrOptionsForm.cs \
+        Properties\AssemblyInfo.cs \
+        Properties\Resources.Designer.cs \
+        PhotoDetails.cs \
+        PhotoSetItem.cs \
+        ..\SolutionInfo.cs \
+        ..\Common\Tracing.cs \
+        ..\Common\IUpload.cs
+
+
+check-syntax:
+        <<flymake-build.cmd  $(CS_SOURCE)
+    SETLOCAL ENABLEDELAYEDEXPANSION
+    set errorlevel=0
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
+       set filesToBuild=!filesToBuild! %%I
+    )
+    $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
+    ENDLOCAL && exit /b %errorlevel%
+<<
