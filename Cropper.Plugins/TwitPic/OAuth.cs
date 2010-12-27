@@ -22,8 +22,7 @@ namespace OAuth
     using System.Linq;
     using System.Collections.Generic;
     using System.Security.Cryptography;
-
-    using CropperPlugins.Utils;
+    using CropperPlugins.Common;
 
     /// <summary>
     ///   A class to manage OAuth interactions.  This works with

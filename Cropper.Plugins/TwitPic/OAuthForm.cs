@@ -54,7 +54,7 @@ namespace Cropper.SendToTwitPic
     using System;
     using System.Windows.Forms;
     using System.Reflection;
-    using CropperPlugins.Utils;
+    using CropperPlugins.Common;
     using RE=System.Text.RegularExpressions;
 
     class TwitPicOauthForm : System.Windows.Forms.Form
