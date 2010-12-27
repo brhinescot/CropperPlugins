@@ -1,5 +1,5 @@
 <html>
-  <!-- Last Saved: <2010-December-22 23:42:58> -->
+  <!-- Last Saved: <2010-December-27 11:09:48> -->
   <head>
 
     <title>Cropper Plugins v1.3</title>
@@ -100,7 +100,7 @@
   <!-- ======================================================= -->
 
   <body>
-    <h1>Cropper Plugins v1.3.9</h1>
+    <h1>Cropper Plugins v1.3.10</h1>
 
     <p>
       This is the Cropper Plugins v1.3 release. These plugins are
@@ -173,15 +173,24 @@
 
     <p>To install plugins, you must first have installed Cropper.  After
       insuring that Cropper has been installed, copy the appropriate
-      plugin DLLs to the cropper plugins directory, typically something
-      like <strong>\Program
+      plugin DLLs and their dependencies to the Cropper <em>plugins</em>
+      directory, typically something like <strong>\Program
       Files\Fusion8Design\Cropper\Plugins</strong>. You can copy only
-      the DLLs that you want to use (along with their dependencies, see
-      below!). You should be able to figure out
-      which DLLs provide which function, pretty easily, by their names.
+      the DLLs that you want to use along with their dependencies (**see
+      below). You should be able to figure out which DLLs provide which
+      function, pretty easily, by their names.
     </p>
 
     <h3>Dependencies</h3>
+
+    <p>All of the plugins in this package depend on the
+      CropperPlugins.Common.dll assembly, which is included in the
+      download.  CropperPlugins.Common is not a plugin itself; it merely
+      provides some commonly-used logic to all plugins.  The
+      CropperPlugins.Common.dll must be copied to the <em>plugins</em>
+      directory  of Cropper, if you use any of the plugins in this
+      package.
+    </p>
 
     <p>The ImageShack, Imgur, and Picasa plugins all depend on the
       Microsoft.Http.dll assembly, which is shipped as part of
@@ -189,17 +198,35 @@
         REST Starter Kit beta 2</a>, which is produced by Microsoft. You
       must copy the
       Microsoft.Http.dll and Microsoft.Http.Extensions.dll assemblies
-      to the Plugins directory of Cropper in order to
+      to the <em>plugins</em> directory of Cropper in order to
       be able to use any of these three plugins. </p>
 
     <p>The Send-to-Flickr plugin depends on the Flickrnet library, which is
       produced under the <a href='http://Flickrnet.codeplex.com'>Flickrnet
         project on Codeplex</a>.  You must copy the FlickrNet.dll assembly
-      to the Plugins directory of Cropper in order to use the Send-to-Flickr
+      to the <em>plugins</em> directory of Cropper in order to use the Send-to-Flickr
       plugin.
    </p>
 
 
+    <h3>Versioning</h3>
+
+    <p>The plugins of a particular version of the CropperPlugins
+      project, for example v1.3.10, are intended to all be used
+      together. They share a common dependency,
+      CropperPlugins.Common.dll, of the same version.  Therefore it is
+      not possible to mix plugins from different versions of the
+      CropperPlugins project.  If you use the Email plugin from v1.3.10,
+      and you also wish to use the Flickr plugin, then you must use the
+      Flickr plugin from v1.3.10.  You cannot use the Flickr plugin from
+      CropperPlugins v1.3.9.
+    </p>
+
+    <p>When updating any plugins that you use from CropperPlugins, you should
+      update <em>all</em> of the plugins you use.  You need not use all
+      plugins, but any of them you choose to use, should be of the same
+      version.
+    </p>
 
     <h2>Changes since v1.2 of the Plugins release</h2>
     <ol>
@@ -321,14 +348,13 @@
     <li> I don&#39;t have an account for Amazon&#39;s S3; also I
     don&#39;t have a credit card, so I can&#39;t even get a free
     account.  Therefore I haven&#39;t tested the Send-to-S3 plugin,
-    beyond basic configuration.   </li>
+    beyond basic configuration. </li>
 
     <li> I don&#39;t have a TFS 2010 server with which I can test the
     Send-to-TFS-Workitem plugin either.  </li>
 
     <li> I haven&#39;t tested the OneNote plugin, for similar reasons.
     </li>
-
     </ol>
 
     <p>I&#39;m interested in getting test volunteers. If anyone wants to

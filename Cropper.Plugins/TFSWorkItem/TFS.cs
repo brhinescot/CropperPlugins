@@ -47,7 +47,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Client;
 using System.Diagnostics;
 
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
 
 
 namespace Cropper.TFSWorkItem
