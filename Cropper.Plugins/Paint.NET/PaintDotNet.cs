@@ -8,6 +8,8 @@
 // 2010 Nov 9
 //
 
+#define HACK
+
 using System;
 using System.Linq;
 using System.Collections.Specialized;
@@ -24,11 +26,14 @@ using System.Reflection;               // Assembly, etc..
 using Fusion8.Cropper.Extensibility;
 using System.Collections.Generic;
 
-using CropperPlugins.Utils;       // for Tracing
+using CropperPlugins.Common;       // for Tracing
+
+
 
 namespace Cropper.SendToPaintDotNet
 {
-    public class PaintDotNet : DesignablePluginThatUsesFetchOutputStream,
+    public class PaintDotNet :
+        DesignablePluginThatUsesFetchOutputStream,
         IConfigurablePlugin
     {
         public override string Description
@@ -179,7 +184,7 @@ namespace Cropper.SendToPaintDotNet
         /// </summary>
         private Process WaitForPdn()
         {
-            System.Threading.Thread.Sleep(PluginSettings.DelayStart.Milliseconds);
+            System.Threading.Thread.Sleep(PluginSettings.DelayStartSeconds * 1000);
             for (int i=0; i < 5; i++)
             {
                 System.Threading.Thread.Sleep(250*(i*i+1));
@@ -242,7 +247,7 @@ namespace Cropper.SendToPaintDotNet
                     name = window.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
                     if (!name.StartsWith(shortFileName)) break;
                     cycles++;
-                } while (cycles < (PluginSettings.DelayEdit.Milliseconds / 800));
+                } while (cycles < (PluginSettings.DelayEditSeconds * 1000 / 800));
 
                 if (!name.StartsWith(shortFileName))
                 {
@@ -270,7 +275,7 @@ namespace Cropper.SendToPaintDotNet
                 .Current
                 .PluginSettings;
 
-            var GetSettings = new Func<Type,object>((t) => {
+            var GetSettingsForPlugin = new Func<Type,object>( t => {
                     foreach (object o in pluginSettings)
                     {
                         if (o.GetType() == t)
@@ -285,7 +290,6 @@ namespace Cropper.SendToPaintDotNet
             var dllName = Path.Combine(pluginDirectory, PluginSettings.PostEditUpload.DllName);
             var assembly = Assembly.LoadFrom(dllName.Replace("\\\\","\\"));
             var plugin = assembly.CreateInstance(PluginSettings.PostEditUpload.TypeName);
-            var ipif = plugin as IPersistableImageFormat;
 
             var icp = plugin as IConfigurablePlugin;
 
@@ -293,7 +297,7 @@ namespace Cropper.SendToPaintDotNet
             if (icp != null)
             {
                 var settingsType = icp.Settings.GetType();
-                object settings = GetSettings(settingsType);
+                object settings = GetSettingsForPlugin(settingsType);
                 if (settings != null)
                 {
                     Tracing.Trace("applying settings...");
@@ -301,27 +305,23 @@ namespace Cropper.SendToPaintDotNet
                 }
             }
 
-            var flags1 = BindingFlags.SetField |
+#if HACK
+            var flags1 = BindingFlags.InvokeMethod |
                 BindingFlags.Instance |
-                BindingFlags.NonPublic;
+                BindingFlags.Public;
 
-            // set field:
-            plugin.GetType().InvokeMember("_fileName",
+            // invoke the UploadFile method:
+            plugin.GetType().InvokeMember("UploadFile",
                                           flags1,
                                           null,
                                           plugin,
-                                          new Object[]{  this._fileName });
+                                          new Object[] { this._fileName }  // args
+                                          );
+#else
+            var iuf = plugin as CropperPlugins.Common.IUpload;
+            iuf.UploadFile(this._fileName);
 
-            var flags2 = BindingFlags.InvokeMethod |
-                BindingFlags.Instance |
-                BindingFlags.NonPublic;
-
-            // invoke the UploadImage method:
-            plugin.GetType().InvokeMember("UploadImage",
-                                          flags2,
-                                          null,
-                                          plugin,
-                                          null);
+#endif
         }
 
 
@@ -378,7 +378,6 @@ namespace Cropper.SendToPaintDotNet
                              }
                         }
                     }
-
                 }
                 return _PdnExecutable;
             }
@@ -514,16 +513,28 @@ namespace Cropper.SendToPaintDotNet
         public PluginInfo Self { get { return this;}}
     }
 
-    public class TimeDelay
-    {
-        public String FriendlyName { get; set; }
-        public int Milliseconds { get; set; }
-    }
+
 
     public class PdnSettings
     {
         public PdnSettings()
         {
+            DelayStartSeconds = 6;
+            DelayEditSeconds = 720;
+        }
+
+        /// <summary>
+        ///   a friendly name for a time period.
+        /// </summary>
+        public static string FriendlyName(int seconds)
+        {
+            if ((seconds % 3600) == 0)
+                return (seconds / 3600) + " hours";
+
+            if ((seconds % 60) == 0)
+                return (seconds / 60) + " minutes";
+
+            return seconds + " seconds";
         }
 
         /// <summary>
@@ -534,12 +545,12 @@ namespace Cropper.SendToPaintDotNet
         /// <summary>
         ///   The time for the plugin to wait for PDN to start.
         /// </summary>
-        public TimeDelay DelayStart { get; set; }
+        public int DelayStartSeconds { get; set; }
 
         /// <summary>
         ///   The time allowed for user edits before the plugin gives up.
         /// </summary>
-        public TimeDelay DelayEdit { get; set; }
+        public int DelayEditSeconds { get; set; }
     }
 
 }
