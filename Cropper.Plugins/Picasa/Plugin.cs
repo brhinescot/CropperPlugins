@@ -12,6 +12,9 @@
 
 // #define Trace
 
+// Cropper workitem 14970
+#define HACK
+
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -20,13 +23,20 @@ using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
-using CropperPlugins.Utils;       // for Tracing
-using Microsoft.Http;             // HttpClient, etc
+using CropperPlugins.Common;       // for Tracing
+using Microsoft.Http;              // HttpClient, etc
 using System.Reflection;
 
 namespace Cropper.SendToPicasa
 {
-    public class Plugin : DesignablePluginThatUsesFetchOutputStream, IConfigurablePlugin
+    public class Plugin :
+        DesignablePluginThatUsesFetchOutputStream,
+        IConfigurablePlugin
+#if HACK
+#else
+        , CropperPlugins.Common.IUpload
+#endif
+
     {
         public override string Description
         {
@@ -48,112 +58,12 @@ namespace Cropper.SendToPicasa
         {
             Tracing.Trace("Picasa::{0:X8}::ImageCaptured", this.GetHashCode());
 
-            BootstrapSettings(PluginSettings);
-
-            if (!VerifyBasicSettings()) return;
+            Hacks.BootstrapSettings(PluginSettings);
 
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
 
-
-        /// <summary>
-        ///   Put settings into the static property within Cropper.Core, via
-        ///   reflection.
-        /// </summary>
-        /// <remarks>
-        ///   <para>
-        ///     This is necessary because the settings (email address) may
-        ///     change during normal execution of the Picasa plugin, without
-        ///     opening the options form, and there's no way for the plugin to
-        ///     communicate that back to Cropper before Cropper saves its settings.
-        ///   </para>
-        ///   <para>
-        ///     When Cropper starts, it reads the config file and stores all
-        ///     the plugin settings "objects".  If it finds no settings
-        ///     stored for a particular plugin, as will occur when the user
-        ///     uses a plugin the very first time, no settings object is
-        ///     stored for that plugin at all.  Also, there's no way for the
-        ///     plugin to give Cropper the default settings for the plugin,
-        ///     unless the options form is opened for that plugin.
-        ///   </para>
-        ///   <para>
-        ///     This method works around that.
-        ///   </para>
-        ///   <para>
-        ///     The first time a user uses the Picasa plugin, he enters his
-        ///     google email address. We want to store that in the
-        ///     persistent store.  (There's a singleton called
-        ///     SendToPicasa.CachedSettings to insure that only one email
-        ///     address gets stored, regardless how many plugin instances
-        ///     get created. That's not relevant here.)  What's necessary is
-        ///     to put the settings instance for this plugin into the array
-        ///     of settings objects for all plugins.  There's no public
-        ///     method for doing so, therefore this plugin relies on
-        ///     Reflection to do it.
-        ///   </para>
-        ///   <para>
-        ///     This needs to happen only once, ever. After the settings object
-        ///     gets inserted into the array,
-        ///   </para>
-        /// </remarks>
-        private void BootstrapSettings(object pluginSettingsObject)
-        {
-            Tracing.Trace("Picasa::{0:X8}::EnsureSettingsAreStored",
-                          this.GetHashCode());
-            var ctype = Type.GetType("Fusion8.Cropper.Core.Configuration, Cropper.Core");
-
-            if (ctype == null)
-            {
-                Tracing.Trace("Picasa::{0:X8}::EnsureSettingsAreStored no type!",
-                              this.GetHashCode());
-                return;
-            }
-
-            // get the value of the named public static property on the
-            // Configuration type.
-            var settings = ctype.GetProperty("Current").GetValue(null, null);
-
-            // now, get the value of a public instance property on *that*
-            var ps = settings.GetType().GetProperty("PluginSettings");
-            object[] psettings = (object[]) ps.GetValue(settings, null);
-
-            if (psettings == null)
-            {
-                // There are no plugin settings at all.  Seems likely that
-                // this is the first time Cropper has been run, ever.
-                // Insert a new 1-elt array containing settings for this
-                // plugin.
-                psettings = new object[1];
-                psettings[0] = pluginSettingsObject;
-            }
-            else
-            {
-                foreach (object o in psettings)
-                {
-                    if (o.GetType() == typeof(PicasaSettings))
-                        return; // nothing to do
-                }
-                // create a new array, with all the existing plugin settings
-                // instances, along with our settings instance.
-                var list = new List<object>(psettings);
-                list.Add(pluginSettingsObject);
-                psettings = list.ToArray();
-            }
-
-            Tracing.Trace("Picasa::{0:X8}::EnsureSettingsAreStored  put PluginSettings",
-                          this.GetHashCode());
-            // set the value of the PluginSettings property
-            ps.SetValue(settings, psettings, null);
-        }
-
-
-
-
-        private bool VerifyBasicSettings()
-        {
-            return true;
-        }
 
 
         /// <summary>
@@ -322,6 +232,13 @@ namespace Cropper.SendToPicasa
 
             // user has cancelled, so we return "no comment"
             return "";
+        }
+
+
+        public void UploadFile(string fileName)
+        {
+            this._fileName = fileName;
+            UploadImage();
         }
 
 

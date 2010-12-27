@@ -1,8 +1,19 @@
 
 _CSC=c:\.net3.5\csc.exe
-LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll /R:\rsk\assemblies\Microsoft.Http.dll /R:\rsk\assemblies\Microsoft.Http.Extensions.dll
+LIBSREF=/R:..\Dependencies\Cropper.Extensibility.dll \
+        /R:..\Output\x86\Debug\CropperPlugins.Common.dll \
+        /R:\rsk\assemblies\Microsoft.Http.dll \
+        /R:\rsk\assemblies\Microsoft.Http.Extensions.dll
 
-CS_SOURCE=Plugin.cs PicasaSettings.cs PicasaUploadHttpForm.cs GdataSession.cs PicasaOptionsForm.Designer.cs PicasaOptionsForm.cs Properties\AssemblyInfo.cs Properties\Resources.Designer.cs ..\SolutionInfo.cs ..\Utils\Tracing.cs
+CS_SOURCE=Plugin.cs \
+        PicasaSettings.cs \
+        PicasaUploadHttpForm.cs \
+        GdataSession.cs \
+        PicasaOptionsForm.Designer.cs \
+        PicasaOptionsForm.cs \
+        Properties\AssemblyInfo.cs \
+        Properties\Resources.Designer.cs \
+        ..\SolutionInfo.cs
 
 
 check-syntax :
