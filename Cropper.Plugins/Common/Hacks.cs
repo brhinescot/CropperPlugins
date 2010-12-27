@@ -61,7 +61,7 @@ namespace CropperPlugins.Common
         ///     shutdown time.
         ///   </para>
         /// </remarks>
-        internal static void BootstrapSettings(object pluginSettingsObject)
+        public static void BootstrapSettings(object pluginSettingsObject)
         {
             Tracing.Trace("Utils::BootstrapSettings");
 
