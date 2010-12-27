@@ -1,25 +1,25 @@
-/// Tracing.cs
-///
-/// Part of Cropper - used to aid in development only.  To use this
-/// class from within a plugin, build the plugin with the compile-time
-/// symbol "Trace" defined, and include this source file into the plugin dll.
-///
-/// From the command line, like this:
-///
-///     msbuild /p:Platform=x86 /p:DefineConstants=Trace
-///
-/// From within Visual Studio, right click on the solution, select Properties.
-/// In the Build tab, enter the name "Trace" there.
-///
-/// If you do not define Trace, then this code does not compile into
-/// Cropper and will not run. This code should be used only during development
-/// and testing.
-///
+// Tracing.cs
+//
+// Part of Cropper - used to aid in development only.  To use this
+// class from within a plugin, build the plugin with the compile-time
+// symbol "Trace" defined, and include this source file into the plugin dll.
+//
+// From the command line, like this:
+//
+//     msbuild /p:Platform=x86 /p:DefineConstants=Trace
+//
+// From within Visual Studio, right click on the solution, select Properties.
+// In the Build tab, enter the name "Trace" there.
+//
+// If you do not define Trace, then this code does not compile into
+// Cropper and will not run. This code should be used only during development
+// and testing.
+//
 
 
 using System;
 
-namespace CropperPlugins.Utils
+namespace CropperPlugins.Common
 {
     public static class Tracing
     {
@@ -54,6 +54,5 @@ namespace CropperPlugins.Utils
 
         private static System.Diagnostics.Process _process;
         private static bool _initialized = false;
-
     }
 }

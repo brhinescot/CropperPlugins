@@ -1,0 +1,19 @@
+
+_CSC=c:\.net3.5\csc.exe
+LIBSREF=
+
+CS_SOURCE=Tracing.cs \
+        IUpload.cs \
+        Hacks.cs
+
+
+check-syntax :
+        <<flymake-build.cmd  $(CS_SOURCE)
+    SETLOCAL ENABLEDELAYEDEXPANSION
+    set errorlevel=
+    for %%I in (%*) do if NOT x%%I == x$(FLYMAKE_ORIGINAL) (
+       set filesToBuild=!filesToBuild! %%I
+    )
+    $(_CSC) /t:module $(LIBSREF) $(FLYMAKE_CHECK) !filesToBuild!
+    ENDLOCAL && exit /b %errorlevel%
+<<
