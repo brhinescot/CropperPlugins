@@ -40,7 +40,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using CropperPlugins.Utils;              // Tracing
+using CropperPlugins.Common;              // Tracing
 
 namespace Cropper.AnimatedGif
 {
