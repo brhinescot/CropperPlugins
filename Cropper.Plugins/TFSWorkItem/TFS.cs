@@ -28,8 +28,8 @@
 // "Options..." menu cjhoice in the Cropper popup menu, clicking the
 // plugins tab, then selecting the TFS plugin panel.
 //
-// Dino Chiesa Sat,
-// 04 Dec 2010 20:58
+// Dino Chiesa
+// Sat, 04 Dec 2010 20:58
 //
 
 
@@ -52,7 +52,10 @@ using CropperPlugins.Common;       // for Tracing
 
 namespace Cropper.TFSWorkItem
 {
-    public class TFS : DesignablePlugin, IConfigurablePlugin
+    public class TFS :
+        DesignablePlugin,
+        IConfigurablePlugin,
+        Microsoft.TeamFoundation.Client.IClientLinking  // see ExecuteDefaultAction below
     {
         public static  string PluginDescription = "TFS Work Item";
 
@@ -86,6 +89,32 @@ namespace Cropper.TFSWorkItem
                                      this._fileName, e.FullSizeImage);
         }
 
+
+        /// <summary>
+        ///   Implements the method specified in
+        ///   Microsoft.TeamFoundation.Client.IClientLinking .
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     This is the only method on for the vs2008 version of
+        ///     IClientLinking.  This method doesn't actually do anything, and
+        ///     the expectation is that it will never actually be called.  The
+        ///     purpose of providing it here is to force .NET to resolve the
+        ///     Microsoft.TeamFoundation.Client.dll at the time Cropper does its
+        ///     plugin scan.
+        ///   </para>
+        ///   <para>
+        ///     Without explicitly implementing the interface, the TFS plugin
+        ///     might load on a machine without the TFS client installed on it.
+        ///     This will lead to assembly load failures later, and hence
+        ///     crashes in Cropper (See workitem 14952).  By implementing the
+        ///     interface we avoid that runtime error.
+        ///   </para>
+        /// </remarks>
+        public bool ExecuteDefaultAction(string a, string b)
+        {
+            return false;
+        }
 
 
         /// <summary>
@@ -130,17 +159,12 @@ namespace Cropper.TFSWorkItem
             get
             {
                 if (String.Compare(Extension, "jpg", true) == 0)
-                {
                     return ImageFormat.Jpeg;
-                }
-                else if (String.Compare(Extension, "bmp", true) == 0)
-                {
+
+                if (String.Compare(Extension, "bmp", true) == 0)
                     return ImageFormat.Bmp;
-                }
-                else
-                {
-                    return ImageFormat.Png;
-                }
+
+                return ImageFormat.Png;
             }
         }
 
@@ -204,15 +228,17 @@ namespace Cropper.TFSWorkItem
                     WorkItem workItem = dlg.SelectedWorkItem;
                     if (openImageInEditor)
                     {
-                        ProcessStartInfo processStartInfo = new ProcessStartInfo(_settings.ImageEditor, "\"" + fileName + "\"");
-                        Process process = new Process();
-                        process.StartInfo = processStartInfo;
+                        Process process = new Process
+                            {
+                                StartInfo = new ProcessStartInfo(_settings.ImageEditor,
+                                                                 "\"" + fileName + "\"")
+                            };
                         process.Start();
                         process.WaitForExit();
                     }
                     workItem.Attachments.Add(new Attachment(fileName, attachmentComment));
-                    WorkItemEditorForm frmWorkItemEditor = new WorkItemEditorForm(SelectedWorkItemType, workItem);
-                    frmWorkItemEditor.Show();
+                    var form = new WorkItemEditorForm(SelectedWorkItemType, workItem);
+                    form.Show();
                 }
                 catch (Exception ex)
                 {
@@ -241,28 +267,20 @@ namespace Cropper.TFSWorkItem
             get
             {
                 if (!String.IsNullOrEmpty(_settings.DefaultImageFormat))
-                {
                     return _settings.DefaultImageFormat;
-                }
-                else
-                {
-                    return "png";
-                }
+                return "png";
             }
         }
 
-        public WorkItemType SelectedWorkItemType
-        {
-            get ;
-            set ;
-        }
+        public WorkItemType SelectedWorkItemType { get; set; }
 
         private void SetWorkItemType()
         {
             _tfs = new TeamFoundationServer(_settings.TeamServer);
             _tfs.EnsureAuthenticated();
             _wis = _tfs.GetService(typeof(WorkItemStore)) as WorkItemStore;
-            SelectedWorkItemType = _wis.Projects[_settings.TeamProject].WorkItemTypes[_settings.WorkItemType];
+            SelectedWorkItemType = _wis.Projects[_settings.TeamProject]
+                .WorkItemTypes[_settings.WorkItemType];
         }
 
 
@@ -290,7 +308,10 @@ namespace Cropper.TFSWorkItem
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, Cropper.TFSWorkItem.TFS.PluginDescription, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message,
+                                Cropper.TFSWorkItem.TFS.PluginDescription,
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                 Disconnect();
                 return false;
             }
@@ -342,11 +363,9 @@ namespace Cropper.TFSWorkItem
         public object Settings
         {
             get {
-                //System.Diagnostics.Debugger.Break();
                 return PluginSettings;
             }
             set {
-                //System.Diagnostics.Debugger.Break();
                 PluginSettings = value as Cropper.TFSWorkItem.TfsSettings;
             }
         }
