@@ -22,7 +22,6 @@ namespace OAuth
     using System.Linq;
     using System.Collections.Generic;
     using System.Security.Cryptography;
-    using CropperPlugins.Common;
 
     /// <summary>
     ///   A class to manage OAuth interactions.  This works with
@@ -51,7 +50,7 @@ namespace OAuth
     ///   <para>
     ///     The public methods on the class include:
     ///     AcquireRequestToken, AcquireAccessToken,
-    ///     GenerateCredsHeader, and GenerateAuthorizationHeader.  The
+    ///     GenerateCredsHeader, and GenerateAuthzHeader.  The
     ///     first two are used only on the first run of an applicaiton,
     ///     or after a user has explicitly de-authorized an application
     ///     for use with OAuth.  Normally, the GenerateXxxHeader methods
@@ -383,7 +382,50 @@ namespace OAuth
         ///
         /// <seealso cref='AcquireAccessToken'>
         ///
+        ///
+        /// <example>
+        ///   <para>
+        ///     This example shows how to request an access token and key
+        ///     from Twitter. It presumes you've already obtained a
+        ///     consumer key and secret via app registration. Requesting
+        ///     an access token is necessary only the first time you
+        ///     contact the service. You can cache the access key and
+        ///     token for subsequent runs, later.
+        ///   </para>
+        ///   <code>
+        ///   // the URL to obtain a temporary "request token"
+        ///   var rtUrl = "https://api.twitter.com/oauth/request_token";
+        ///   var oauth = new OAuth.Manager();
+        ///   // The consumer_{key,secret} are obtained via registration
+        ///   oauth["consumer_key"] = "~~~CONSUMER_KEY~~~~";
+        ///   oauth["consumer_secret"] = "~~~CONSUMER_SECRET~~~";
+        ///   oauth.AcquireRequestToken(rtUrl, "POST");
+        ///   var authzUrl = "https://api.twitter.com/oauth/authorize?oauth_token=" + oauth["token"];
+        ///   System.Diagnostics.Process.Start(authzUrl);
+        ///   // instruct the user to type in the PIN from that browser window
+        ///   var pin = "...";
+        ///   var atUrl = "https://api.twitter.com/oauth/access_token";
+        ///   oauth.AcquireAccessToken(atUrl, "POST", pin);
+        ///
+        ///   // now, update twitter status using that access token
+        ///   var appUrl = "http://api.twitter.com/1/statuses/update.xml?status=Hello";
+        ///   var authzHeader = oauth.GenerateAuthzHeader(appUrl, "POST");
+        ///   var request = (HttpWebRequest)WebRequest.Create(appUrl);
+        ///   request.Method = "POST";
+        ///   request.PreAuthenticate = true;
+        ///   request.AllowWriteStreamBuffering = true;
+        ///   request.Headers.Add("Authorization", authzHeader);
+        ///
+        ///   using (var response = (HttpWebResponse)request.GetResponse())
+        ///   {
+        ///     if (response.StatusCode != HttpStatusCode.OK)
+        ///       MessageBox.Show("There's been a problem trying to tweet:" +
+        ///                       Environment.NewLine +
+        ///                       response.StatusDescription);
+        ///   }
+        ///   </code>
         /// </example>
+        ///
         /// <returns>
         ///   a response object that contains the entire text of the response,
         ///   as well as extracted parameters. This method presumes the
@@ -452,7 +494,6 @@ namespace OAuth
         ///
         /// <seealso cref='AcquireRequestToken'>
         ///
-        /// </example>
         /// <returns>
         ///   a response object that contains the entire text of the response,
         ///   as well as extracted parameters. This method presumes the
@@ -527,7 +568,36 @@ namespace OAuth
         ///   </para>
         /// </remarks>
         ///
-        /// <seealso cref='GenerateAuthzHeader'>
+        /// <example>
+        ///   <para>
+        ///     This example shows how to update the Twitter status
+        ///     using the stored consumer key and secret, and a previously
+        ///     obtained access token and secret.
+        ///   </para>
+        ///   <code>
+        ///   var oauth = new OAuth.Manager();
+        ///   oauth["consumer_key"]    = "~~ your stored consumer key ~~";
+        ///   oauth["consumer_secret"] = "~~ your stored consumer secret ~~";
+        ///   oauth["token"]           = "~~ your stored access token ~~";
+        ///   oauth["token_secret"]    = "~~ your stored access secret ~~";
+        ///   var appUrl = "http://api.twitter.com/1/statuses/update.xml?status=Hello";
+        ///   var authzHeader = oauth.GenerateAuthzHeader(appUrl, "POST");
+        ///   var request = (HttpWebRequest)WebRequest.Create(appUrl);
+        ///   request.Method = "POST";
+        ///   request.PreAuthenticate = true;
+        ///   request.AllowWriteStreamBuffering = true;
+        ///   request.Headers.Add("Authorization", authzHeader);
+        ///
+        ///   using (var response = (HttpWebResponse)request.GetResponse())
+        ///   {
+        ///     if (response.StatusCode != HttpStatusCode.OK)
+        ///       MessageBox.Show("There's been a problem trying to tweet:" +
+        ///                       Environment.NewLine +
+        ///                       response.StatusDescription);
+        ///   }
+        ///   </code>
+        /// </example>
+        /// <seealso cref='GenerateCredsHeader'>
         public string GenerateAuthzHeader(string uri, string method)
         {
             NewRequest();
@@ -551,7 +621,6 @@ namespace OAuth
             Sign(uri, method);
 
             var erp = EncodeRequestParameters(this._params);
-            Tracing.Trace("erp = {0}", erp);
             return (String.IsNullOrEmpty(realm))
                 ? "OAuth " + erp
                 : String.Format("OAuth realm=\"{0}\", ", realm) + erp;
@@ -618,7 +687,6 @@ namespace OAuth
             // append the UrlEncoded version of that string to the sigbase
             sb.Append(UrlEncode(sb1.ToString().TrimEnd('&')));
             var result = sb.ToString();
-            Tracing.Trace("Sigbase: '{0}'", result);
             return result;
         }
 
@@ -632,7 +700,6 @@ namespace OAuth
             string keystring = string.Format("{0}&{1}",
                                              UrlEncode(this["consumer_secret"]),
                                              UrlEncode(this["token_secret"]));
-            Tracing.Trace("keystring: '{0}'", keystring);
             var hmacsha1 = new HMACSHA1
                 {
                     Key = System.Text.Encoding.ASCII.GetBytes(keystring)
