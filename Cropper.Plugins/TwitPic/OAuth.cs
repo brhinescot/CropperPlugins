@@ -19,13 +19,14 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-April-20 21:58:36>
+// Last saved: <2011-April-20 23:28:58>
 //
 
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Text;
 
 #if STANDALONE
 using System.Reflection;
@@ -423,16 +424,22 @@ namespace OAuth
         /// <returns>the Url-encoded version of that string</returns>
         public static string UrlEncode(string value)
         {
-            var result = new System.Text.StringBuilder();
+            var result = new StringBuilder();
             foreach (char symbol in value)
             {
                 if (unreservedChars.IndexOf(symbol) != -1)
                     result.Append(symbol);
                 else
-                    result.Append('%' + String.Format("{0:X2}", (int)symbol));
+                {
+                    foreach (byte b in Encoding.UTF8.GetBytes(symbol.ToString()))
+                    {
+                        result.Append('%' + String.Format("{0:X2}", b));
+                    }
+                }
             }
             return result.ToString();
         }
+
         private static string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
 
