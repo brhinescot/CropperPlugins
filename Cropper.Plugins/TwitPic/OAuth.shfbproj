@@ -1,0 +1,84 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{c7da4509-da57-4624-babb-88288873072a}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.0.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>.\Help\</OutputPath>
+    <HtmlHelpName>OAuthHelp</HtmlHelpName>
+    <ProjectSummary>
+    </ProjectSummary>
+    <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <HtmlHelp1xCompilerPath>
+    </HtmlHelp1xCompilerPath>
+    <HtmlHelp2xCompilerPath>
+    </HtmlHelp2xCompilerPath>
+    <SandcastlePath>
+    </SandcastlePath>
+    <WorkingPath>
+    </WorkingPath>
+    <BuildLogFile>
+    </BuildLogFile>
+    <FrameworkVersion>2.0.50727</FrameworkVersion>
+    <HelpTitle>OAuth.Manager Developer Reference</HelpTitle>
+    <CopyrightHref>http://cropperplugins.CodePlex.com/</CopyrightHref>
+    <CopyrightText>CropperPlugins on CodePlex</CopyrightText>
+    <FeedbackEMailAddress>dpchiesa%40hotmail.com</FeedbackEMailAddress>
+    <PresentationStyle>vs2005</PresentationStyle>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
+    <HelpAttributes>
+      <HelpAttribute name="DocSet" value="{@HtmlHelpName}" xmlns="" />
+      <HelpAttribute name="DocSet" value="NetFramework" xmlns="" />
+      <HelpAttribute name="TargetOS" value="Windows" xmlns="" />
+    </HelpAttributes>
+    <PlugInConfigurations>
+    </PlugInConfigurations>
+    <FooterText>OAuth.Manager originated as part of CropperPlugins, but is available as a standalone DLL.</FooterText>
+    <ComponentConfigurations>
+      <ComponentConfig id="Post-transform Component" enabled="True">
+        <component id="Post-transform Component" type="SandcastleBuilder.Components.PostTransformComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+          <!-- Code colorizer files (required).
+                 Attributes:
+                    Stylesheet file (required)
+                    Script file (required)
+                    "Copy" image file (required) -->
+          <colorizer stylesheet="{@SHFBFolder}Colorizer\highlight.css" scriptFile="{@SHFBFolder}Colorizer\highlight.js" copyImage="{@SHFBFolder}Colorizer\CopyCode.gif" />
+          <!-- Base output paths for the files (required).  These should match
+                 the parent folder of the output path of the HTML files (see
+                 each of the SaveComponent instances below). -->
+          <outputPaths>
+{@HelpFormatOutputPaths}
+            </outputPaths>
+        </component>
+      </ComponentConfig>
+    </ComponentConfigurations>
+    <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="OAuth.dll" />
+      <DocumentationSource sourceFile="OAuth.xml" />
+    </DocumentationSources>
+    <NamingMethod>MemberName</NamingMethod>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="OAuth" isDocumented="True" xmlns="">OAuth has two classes; one main class called Manager that manages the oauth communication protocol.  A second class, OAuthResponse, is a supporting class.  Use OAuth.Manager to simplify the oauth authorization to Twitter and affiliated services likeTwitPic.</NamespaceSummaryItem>
+    </NamespaceSummaries>
+  </PropertyGroup>
+  <!-- There are no properties for these two groups but they need to appear in
+       order for Visual Studio to perform the build. -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>
