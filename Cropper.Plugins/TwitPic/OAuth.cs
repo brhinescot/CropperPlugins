@@ -19,7 +19,7 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-April-25 06:48:48>
+// Last saved: <2011-April-25 06:59:36>
 //
 
 using System;
@@ -161,7 +161,6 @@ namespace OAuth
                        string consumerSecret,
                        string token,
                        string tokenSecret) : this()
-
         {
             _params["consumer_key"] = consumerKey;
             _params["consumer_secret"] = consumerSecret;
@@ -199,9 +198,7 @@ namespace OAuth
         /// <param name="consumerSecret">The oauth_consumer_secret
         /// parameter for oauth.</param>
         ///
-        public Manager(string consumerKey,
-                       string consumerSecret) : this()
-
+        public Manager(string consumerKey, string consumerSecret) : this()
         {
             _params["consumer_key"] = consumerKey;
             _params["consumer_secret"] = consumerSecret;
@@ -1044,17 +1041,19 @@ namespace OAuth
                 .Append(UrlEncode(normUrl))
                 .Append('&');
 
-            // the parameters follow - all oauth params plus any params on
-            // the uri
-            // each uri may have a distinct set of query params
+            // The parameters follow. This must include all oauth params
+            // plus any query params on the uri.  Also, each uri may
+            // have a distinct set of query params.
+
+            // first, get the query params
             var p = ExtractQueryParameters(uri.Query);
-            // add all non-empty params to the "current" params
+
+            // add to that list all non-empty oauth params
             foreach (var p1 in this._params)
             {
                 // Exclude all oauth params that are secret or
-                // signatures; any secrets should be kept to ourselves,
+                // signatures; any secrets must not be shared,
                 // and any existing signature will be invalid.
-
 
                 if (!String.IsNullOrEmpty(this._params[p1.Key]) &&
                     !p1.Key.EndsWith("_secret") &&
@@ -1066,7 +1065,7 @@ namespace OAuth
                 }
             }
 
-            // concat+format all those params
+            // concat+format the sorted list of all those params
             var sb1 = new System.Text.StringBuilder();
             foreach (KeyValuePair<String,String> item in p.OrderBy(x => x.Key))
             {
@@ -1079,6 +1078,7 @@ namespace OAuth
             var result = sb.ToString();
             return result;
         }
+
 
 
 
