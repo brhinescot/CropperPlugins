@@ -19,7 +19,7 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-April-20 23:28:58>
+// Last saved: <2011-April-25 06:48:48>
 //
 
 using System;
@@ -1054,10 +1054,16 @@ namespace OAuth
                 // Exclude all oauth params that are secret or
                 // signatures; any secrets should be kept to ourselves,
                 // and any existing signature will be invalid.
+
+
                 if (!String.IsNullOrEmpty(this._params[p1.Key]) &&
                     !p1.Key.EndsWith("_secret") &&
                     !p1.Key.EndsWith("signature"))
-                    p.Add("oauth_" + p1.Key, p1.Value);
+                {
+                    // workitem 15756 - handle non-oob scenarios
+                    p.Add("oauth_" + p1.Key,
+                          (p1.Key == "callback")?UrlEncode(p1.Value) : p1.Value);
+                }
             }
 
             // concat+format all those params
