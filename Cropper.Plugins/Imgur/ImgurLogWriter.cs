@@ -49,6 +49,13 @@ namespace Cropper.SendToImgur
                 element3.InnerText = thumburl;
                 element1.AppendChild(element3);
             }
+
+            // add a timestamp
+            XmlAttribute attr1 = this._xdoc.CreateAttribute("dt");
+            attr1.InnerText = DateTime.Now.ToString("G");
+            element1.AppendChild(attr1);
+
+            // entries appear in the file, in reverse order
             if (this._imagesRoot.FirstChild == null)
             {
                 this._imagesRoot.AppendChild(element1);
