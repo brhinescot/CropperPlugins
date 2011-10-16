@@ -19,7 +19,7 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-April-25 06:59:36>
+// Last saved: <2011-October-16 13:53:47>
 //
 
 using System;
@@ -385,18 +385,31 @@ namespace OAuth
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     The default .NET encoder outputs the percent encoding in lower
-        ///     case.  While this is not a problem with the percent encoding
-        ///     defined in <see href="http://tools.ietf.org/html/rfc3986">RFC
-        ///     3986</see>, (<see
-        ///     href="http://tools.ietf.org/html/rfc5849">RFC 5849</see>)
-        ///     requires that the encoding characters be upper case throughout
-        ///     OAuth.
+        ///     This class provides an OAuth-friendly URL encoder.  .NET includes
+        ///     a Url encoder in the base class library; see <see
+        ///     href='http://msdn.microsoft.com/en-us/library/zttxte6w(v=VS.90).aspx'>
+        ///     HttpServerUtility.UrlEncode</see>. But that encoder is not
+        ///     sufficient for use with OAuth.
         ///   </para>
         ///   <para>
-        ///     For example, if you try to post a tweet message that
-        ///     includes ampersands, those need to be encoded, and the
-        ///     hex digits need to be uppercase.
+        ///     The builtin encoder emits the percent encoding in lower case,
+        ///     which works for HTTP purposes, as described in the latest HTTP
+        ///     specification (see <see
+        ///     href="http://tools.ietf.org/html/rfc3986">RFC 3986</see>). But the
+        ///     Oauth specification, provided in <see
+        ///     href="http://tools.ietf.org/html/rfc5849">RFC 5849</see>, requires
+        ///     that the encoding characters be upper case throughout OAuth.
+        ///   </para>
+        ///   <para>
+        ///     For example, if you try to post a tweet message that includes a
+        ///     forward slash, the slash needs to be encoded as %2F, and the
+        ///     second hex digit needs to be uppercase.
+        ///   </para>
+        ///   <para>
+        ///     It's not enough to simply convert the entire message to uppercase,
+        ///     because that would of course convert un-encoded characters to
+        ///     uppercase as well, which is undesirable.  This class provides an
+        ///     OAuth-friendly encoder to do the right thing.
         ///   </para>
         /// </remarks>
         ///
