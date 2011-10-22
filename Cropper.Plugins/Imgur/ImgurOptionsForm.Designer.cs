@@ -37,6 +37,12 @@ namespace Cropper.SendToImgur
             this.lblFormat = new System.Windows.Forms.Label();
             this.lblPopBrowser = new System.Windows.Forms.Label();
             this.chkPopBrowser = new System.Windows.Forms.CheckBox();
+            this.lblPlaySound = new System.Windows.Forms.Label();
+            this.chkPlaySound = new System.Windows.Forms.CheckBox();
+            this.lblWatermark = new System.Windows.Forms.Label();
+            this.chkWatermark = new System.Windows.Forms.CheckBox();
+            this.lblWantLogging = new System.Windows.Forms.Label();
+            this.chkWantLogging = new System.Windows.Forms.CheckBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.themedTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -63,6 +69,12 @@ namespace Cropper.SendToImgur
             this.tabPage1.Controls.Add(this.linkLabel1);
             this.tabPage1.Controls.Add(this.lblPopBrowser);
             this.tabPage1.Controls.Add(this.chkPopBrowser);
+            this.tabPage1.Controls.Add(this.lblPlaySound);
+            this.tabPage1.Controls.Add(this.chkPlaySound);
+            this.tabPage1.Controls.Add(this.lblWatermark);
+            this.tabPage1.Controls.Add(this.chkWatermark);
+            this.tabPage1.Controls.Add(this.lblWantLogging);
+            this.tabPage1.Controls.Add(this.chkWantLogging);
             this.tabPage1.Controls.Add(this.btnCancel);
             this.tabPage1.Controls.Add(this.btnOK);
             //
@@ -146,6 +158,57 @@ namespace Cropper.SendToImgur
             this.lblPopBrowser.TabIndex = 70;
             this.lblPopBrowser.Text = "Pop Browser?";
             //
+            // chkPlaySound
+            //
+            this.chkPlaySound.Location = new System.Drawing.Point(94, 156);
+            this.chkPlaySound.Text = "";
+            this.chkPlaySound.Name = "chkPlaySound";
+            this.chkPlaySound.TabIndex = 81;
+            this.tooltip.SetToolTip(chkPlaySound, "check to chirp with each\nnewly uploaded image.");
+            //
+            // lblPlaySound
+            //
+            this.lblPlaySound.AutoSize = true;
+            this.lblPlaySound.Location = new System.Drawing.Point(4, 160);
+            this.lblPlaySound.Name = "lblPlaySound";
+            this.lblPlaySound.Size = new System.Drawing.Size(68, 13);
+            this.lblPlaySound.TabIndex = 80;
+            this.lblPlaySound.Text = "Chirp?";
+            //
+            // chkWatermark
+            //
+            this.chkWatermark.Location = new System.Drawing.Point(94, 182);
+            this.chkWatermark.Text = "";
+            this.chkWatermark.Name = "chkWatermark";
+            this.chkWatermark.TabIndex = 91;
+            this.tooltip.SetToolTip(chkWatermark, "check to add a 'CROPPER' watermark to each\nnewly uploaded image.");
+            //
+            // lblWatermark
+            //
+            this.lblWatermark.AutoSize = true;
+            this.lblWatermark.Location = new System.Drawing.Point(4, 186);
+            this.lblWatermark.Name = "lblWatermark";
+            this.lblWatermark.Size = new System.Drawing.Size(68, 13);
+            this.lblWatermark.TabIndex = 90;
+            this.lblWatermark.Text = "Add Watermark?";
+            //
+            // chkWantLogging
+            //
+            this.chkWantLogging.Location = new System.Drawing.Point(94, 208);
+            this.chkWantLogging.Text = "";
+            this.chkWantLogging.Name = "chkWantLogging";
+            this.chkWantLogging.TabIndex = 101;
+            this.tooltip.SetToolTip(chkWantLogging, "check to log each upload in a logfile.");
+            //
+            // lblWantLogging
+            //
+            this.lblWantLogging.AutoSize = true;
+            this.lblWantLogging.Location = new System.Drawing.Point(4, 212);
+            this.lblWantLogging.Name = "lblWantLogging";
+            this.lblWantLogging.Size = new System.Drawing.Size(68, 13);
+            this.lblWantLogging.TabIndex = 100;
+            this.lblWantLogging.Text = "Log uploads?";
+            //
             // btnCancel
             //
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -154,7 +217,7 @@ namespace Cropper.SendToImgur
             this.btnCancel.Visible = false;
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(76, 23);
-            this.btnCancel.TabIndex = 61;
+            this.btnCancel.TabIndex = 111;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             //
@@ -193,6 +256,12 @@ namespace Cropper.SendToImgur
         private System.Windows.Forms.ToolTip tooltip;
         private System.Windows.Forms.CheckBox chkPopBrowser;
         private System.Windows.Forms.Label lblPopBrowser;
+        private System.Windows.Forms.CheckBox chkPlaySound;
+        private System.Windows.Forms.Label lblPlaySound;
+        private System.Windows.Forms.CheckBox chkWatermark;
+        private System.Windows.Forms.Label lblWatermark;
+        private System.Windows.Forms.CheckBox chkWantLogging;
+        private System.Windows.Forms.Label lblWantLogging;
         private System.Windows.Forms.TextBox txtKey;
         private System.Windows.Forms.Label lblKey;
         private System.Windows.Forms.Label lblFormat;
