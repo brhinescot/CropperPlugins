@@ -1,14 +1,14 @@
-// TwitPic/Plugin.cs
+// Twitter/Plugin.cs
 //
 // Code for a cropper plugin that sends a screen snap to
-// TwitPic.com, and optionally tweets a message. (updates Twitter status).
+// Twitter.com.
 //
 // To enable tracing for this DLL, build like so:
 //    msbuild /p:Platform=x86 /p:DefineConstants=Trace
 //
 //
 // Dino Chiesa
-// Sat, 04 Dec 2010  20:58
+// Sat, 22 Oct 2011  13:36
 //
 
 // Cropper workitem 14970
@@ -25,7 +25,7 @@ using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Common;       // for Tracing
 using CropperPlugins.OAuth;
 
-namespace Cropper.SendToTwitPic
+namespace Cropper.SendToTwitter
 {
     public class Plugin :
         DesignablePluginThatUsesFetchOutputStream,
@@ -37,7 +37,7 @@ namespace Cropper.SendToTwitPic
     {
         public override string Description
         {
-            get { return "Send to TwitPic"; }
+            get { return "Send to Twitter"; }
         }
 
         public override string Extension
@@ -47,7 +47,7 @@ namespace Cropper.SendToTwitPic
 
         public override string ToString()
         {
-            return "Send to TwitPic [Dino Chiesa]";
+            return "Send to Twitter [Dino Chiesa]";
         }
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
@@ -71,9 +71,9 @@ namespace Cropper.SendToTwitPic
 
             if (!PluginSettings.Completed)
             {
-                MessageBox.Show("You must approve this plugin for use with Twitter\n" +
-                                "before uploading an image to TwitPic.\n\n",
-                                "No Authorizaiton for TwitPic plugin",
+                MessageBox.Show("You must grant approval for this plugin with Twitter\n" +
+                                "before uploading an image to Twitter.\n\n",
+                                "No Authorizaiton for Tweet plugin",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Exclamation);
                 return false;
@@ -269,7 +269,7 @@ namespace Cropper.SendToTwitPic
         /// </remarks>
         private void UploadImage()
         {
-            Tracing.Trace("TwitPic::{0:X8}::UploadImage", this.GetHashCode());
+            Tracing.Trace("Tweet::{0:X8}::UploadImage", this.GetHashCode());
 
             if (!VerifyAuthentication()) return;
 
@@ -277,96 +277,74 @@ namespace Cropper.SendToTwitPic
             {
                 oauth["token"] = PluginSettings.AccessToken;
                 oauth["token_secret"] = PluginSettings.AccessSecret;
-                var authzHeader = oauth.GenerateCredsHeader(OAuthConstants.URL_VERIFY_CREDS,
-                                                            "GET",
-                                                            OAuthConstants.AUTHENTICATION_REALM);
                 string tweet = GetTweet();
+                var url = TwitterSettings.URL_UPLOAD;
+                var authzHeader = oauth.GenerateAuthzHeader(url, "POST");
+                var request = (HttpWebRequest)WebRequest.Create(url);
 
-                // prepare the upload POST request
-                var request = (HttpWebRequest)WebRequest.Create(TwitPicSettings.URL_UPLOAD);
                 request.Method = "POST";
                 request.PreAuthenticate = true;
                 request.AllowWriteStreamBuffering = true;
-                var boundary = "xxx"+Guid.NewGuid().ToString().Substring(12).Replace("-","");
-                request.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
-                request.Headers.Add("X-Auth-Service-Provider", OAuthConstants.URL_VERIFY_CREDS);
-                request.Headers.Add("X-Verify-Credentials-Authorization",
-                                    authzHeader);
+                request.Headers.Add("Authorization", authzHeader);
 
-                // prepare the payload
+                string boundary = "~~~~~~" +
+                                  Guid.NewGuid().ToString().Substring(18).Replace("-","") +
+                                  "~~~~~~";
+
                 var separator = "--" + boundary;
-                var footer = separator + "--";
-
-                var contents = new System.Text.StringBuilder();
-                contents.AppendLine(separator);
-
-                contents.AppendLine("Content-Disposition: form-data; name=\"key\"");
-                contents.AppendLine();
-                contents.AppendLine(TwitPicSettings.TWITPIC_API_KEY);
-                contents.AppendLine(separator);
-
-                // THE TWITPIC DOC SAYS that the message parameter is required;
-                // it is not. We'll send it anyway.  Keep in mind that posting
-                // this message to TwitPic does not "tweet" the message.
-                // Apparently the OAuth implementation is not developed enough
-                // to do that, yet.
-                //
-                contents.AppendLine("Content-Disposition: form-data; name=\"message\"");
-                contents.AppendLine();
-                contents.AppendLine(String.Format("{0} at {1}",
-                                                  tweet,
-                                                  DateTime.Now.ToString("G")));
-                contents.AppendLine(separator);
-
+                var footer = "\r\n" + separator + "--\r\n";
                 string shortFileName = Path.GetFileName(this._fileName);
                 string fileContentType = GetMimeType(shortFileName);
                 string fileHeader = string.Format("Content-Disposition: file; " +
                                                   "name=\"media\"; filename=\"{0}\"",
                                                   shortFileName);
-                // TODO:  make this so I don't have to store
-                // all the image data in a single buffer. One option is
-                // to do it chunked transfer. need to do the proper encoding in
-                // any case.
                 var encoding = System.Text.Encoding.GetEncoding("iso-8859-1");
-                string fileData = encoding
-                    .GetString(File.ReadAllBytes(this._fileName));
 
+                var contents = new System.Text.StringBuilder();
+                contents.AppendLine(separator);
+                contents.AppendLine("Content-Disposition: form-data; name=\"status\"");
+                contents.AppendLine();
+                contents.AppendLine(tweet);
+                contents.AppendLine(separator);
                 contents.AppendLine(fileHeader);
                 contents.AppendLine(string.Format("Content-Type: {0}", fileContentType));
                 contents.AppendLine();
-                contents.AppendLine(fileData);
-
-                contents.AppendLine(footer);
-
-                byte[] bytes = encoding.GetBytes(contents.ToString());
-                request.ContentLength = bytes.Length;
 
                 // actually send the request
+                request.ServicePoint.Expect100Continue = false;
+                request.ContentType = "multipart/form-data; boundary=" + boundary;
+
                 using (var s = request.GetRequestStream())
                 {
+                    byte[] bytes = encoding.GetBytes(contents.ToString());
                     s.Write(bytes, 0, bytes.Length);
+                    bytes = File.ReadAllBytes(this._fileName);
+                    s.Write(bytes, 0, bytes.Length);
+                    bytes = encoding.GetBytes(footer);
+                    s.Write(bytes, 0, bytes.Length);
+                }
 
-                    using (var r = (HttpWebResponse)request.GetResponse())
+
+                using (var response = (HttpWebResponse)request.GetResponse())
+                {
+                    if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        using (var reader = new StreamReader(r.GetResponseStream()))
-                        {
-                            var responseText = reader.ReadToEnd();
-                            var s1 = new XmlSerializer(typeof(TwitPicUploadResponse));
-                            var sr = new System.IO.StringReader(responseText);
-                            var tpur= (TwitPicUploadResponse) s1.Deserialize(new System.Xml.XmlTextReader(sr));
+                        MessageBox.Show("There's been a problem trying to tweet:" +
+                                        Environment.NewLine +
+                                        response.StatusDescription +
+                                        Environment.NewLine +
+                                        Environment.NewLine +
+                                        "You will have to tweet manually." +
+                                        Environment.NewLine);
 
-                            if (PluginSettings.PopBrowser)
-                                System.Diagnostics.Process.Start(tpur.url);
+                    }
+                    else
+                    {
+                        // parse the response from Twitter here,
+                        // to gran the URL of the tweeted image ?
 
-                            Clipboard.SetDataObject(tpur.url, true);
-
-                            if (PluginSettings.Tweet)
-                                Tweet(tweet, tpur.url);
-                        }
                     }
                 }
-                Tracing.Trace("all done.");
-                Tracing.Trace("---------------------------------");
             }
             catch (Exception exception2)
             {
@@ -385,33 +363,6 @@ namespace Cropper.SendToTwitPic
                                 MessageBoxIcon.Error);
             }
             return ;
-        }
-
-        private void Tweet(string message, string imageUri)
-        {
-            var twitterUpdateUrlBase = "http://api.twitter.com/1/statuses/update.xml?status=";
-            var msg = String.Format("{0} {1}", message, imageUri);
-            var url = twitterUpdateUrlBase + global::OAuth.Manager.UrlEncode(msg);
-
-            var authzHeader = oauth.GenerateAuthzHeader(url, "POST");
-
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.PreAuthenticate = true;
-            request.AllowWriteStreamBuffering = true;
-            request.Headers.Add("Authorization", authzHeader);
-
-            using (var response = (HttpWebResponse)request.GetResponse())
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                MessageBox.Show("There's been a problem trying to tweet:" +
-                                Environment.NewLine +
-                                response.StatusDescription +
-                                Environment.NewLine +
-                                Environment.NewLine +
-                                "You will have to tweet manually." +
-                                Environment.NewLine);
-            }
         }
 
 
@@ -461,7 +412,7 @@ namespace Cropper.SendToTwitPic
             {
                 if (_configForm == null)
                 {
-                    _configForm = new TwitPicOptionsForm(PluginSettings);
+                    _configForm = new TwitterOptionsForm(PluginSettings);
                     _configForm.OptionsSaved += OptionsSaved;
                 }
                 return _configForm;
@@ -470,7 +421,7 @@ namespace Cropper.SendToTwitPic
 
         private void OptionsSaved(object sender, EventArgs e)
         {
-            TwitPicOptionsForm form = sender as TwitPicOptionsForm;
+            TwitterOptionsForm form = sender as TwitterOptionsForm;
             if (form == null) return;
             form.ApplySettings();
         }
@@ -501,16 +452,16 @@ namespace Cropper.SendToTwitPic
         public object Settings
         {
             get { return PluginSettings; }
-            set { PluginSettings = value as TwitPicSettings; }
+            set { PluginSettings = value as TwitterSettings; }
         }
 
         // Helper property for IConfigurablePlugin Implementation
-        private TwitPicSettings PluginSettings
+        private TwitterSettings PluginSettings
         {
             get
             {
                 if (_settings == null)
-                    _settings = new TwitPicSettings();
+                    _settings = new TwitterSettings();
                 return _settings;
             }
             set { _settings = value; }
@@ -527,46 +478,17 @@ namespace Cropper.SendToTwitPic
                 if (_oauth == null)
                 {
                     _oauth = new OAuth.Manager();
-                    _oauth["consumer_key"] = TwitPicSettings.TWITTER_CONSUMER_KEY;
-                    _oauth["consumer_secret"] = TwitPicSettings.TWITTER_CONSUMER_SECRET;
+                    _oauth["consumer_key"] = TwitterSettings.TWITTER_CONSUMER_KEY;
+                    _oauth["consumer_secret"] = TwitterSettings.TWITTER_CONSUMER_SECRET;
                 }
                 return _oauth;
             }
         }
 
-        private TwitPicSettings _settings;
-        private TwitPicOptionsForm _configForm;
+        private TwitterSettings _settings;
+        private TwitterOptionsForm _configForm;
         private string _fileName;
     }
 
-
-
-    // Example of response from http://api.twitpic.com/2/upload.xml :
-    //
-    // <image>
-    //     <id>3fq924</id>
-    //     <text />
-    //     <url>http://twitpic.com/3fq924</url>
-    //     <width>747</width>
-    //     <height>158</height>
-    //     <size>14318</size>
-    //     <type>jpg</type>
-    //     <timestamp>Tue, 14 Dec 2010 01:50:38 +0000</timestamp>
-    //     <user>
-    //         <id>59152613</id>
-    //         <screen_name>dpchiesa</screen_name>
-    //     </user>
-    // </image>
-
-
-    /// <summary>
-    ///   Class to de-serialize the upload response from TwitPic.
-    /// </summary>
-    [XmlRoot("image")]
-    [XmlType("image")]
-    public class TwitPicUploadResponse
-    {
-        public string url { get;set; }
-    }
 }
 
