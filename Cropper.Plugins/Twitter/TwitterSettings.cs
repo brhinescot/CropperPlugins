@@ -1,12 +1,12 @@
 
-namespace Cropper.SendToTwitPic
+namespace Cropper.SendToTwitter
 {
     using System;
     using System.Collections.Generic;
     using CropperPlugins.Common;
 
     /// <summary>
-    ///   A singleton that the access token and secret for OAuth.
+    ///   A singleton that stores the access token and secret for OAuth.
     /// </summary>
     ///
     /// <remarks>
@@ -47,19 +47,19 @@ namespace Cropper.SendToTwitPic
 
 
 
-    public class TwitPicSettings : CropperPlugins.OAuth.IOAuthSettings
+    public class TwitterSettings : CropperPlugins.OAuth.IOAuthSettings
     {
         public static readonly string
-            TWITTER_CONSUMER_KEY    = "Dv1er93yKzEMn74hZfPmJA",
-            TWITTER_CONSUMER_SECRET = "N7MIzrpdKZHs6789xa4Hz10RQPL2JvS4M3nHWj0do",
-            URL_UPLOAD              = "http://api.twitpic.com/2/upload.xml",
-            TWITPIC_API_KEY         = "490795eada0ecab994a9ee8aa9d7821e";
+            TWITTER_CONSUMER_KEY    = "CVzLPskR3ll4OEwyNGvXBw",
+            TWITTER_CONSUMER_SECRET = "HFLdkTg1cjriPwaSJ9zwc93HLox6n4YTwoXqfvaMwk",
+            TWITPIC_API_KEY         = "490795eada0ecab994a9ee8aa9d7821e",
+            URL_UPLOAD              = "https://upload.twitter.com/1/statuses/update_with_media.xml";
 
         private string _format;
         private string _AccessToken;
         private string _AccessSecret;
 
-        public TwitPicSettings()
+        public TwitterSettings()
         {
             JpgImageQuality= 80; // default
             ImageFormat = "jpg"; // default

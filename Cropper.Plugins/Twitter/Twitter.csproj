@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{e0b2ec2a-c9e0-46a8-91ec-5cf3cec08bd7}</ProjectGuid>
+    <ProjectGuid>{1c12f08b-d50c-4aff-9065-09dfdcf61ae5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cropper.SendToTwitPic</RootNamespace>
-    <AssemblyName>Cropper.SendToTwitPic</AssemblyName>
+    <RootNamespace>Cropper.SendToTwitter</RootNamespace>
+    <AssemblyName>Cropper.SendToTwitter</AssemblyName>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -95,17 +95,17 @@
     <Compile Include="Plugin.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TwitPicOptionsForm.cs">
+    <Compile Include="TwitterOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TwitPicSettings.cs">
+    <Compile Include="TwitterSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\OAuth1.0\*.cs">
       <Link>OAuth\%(FileName)</Link>
     </Compile>
-    <Compile Include="TwitPicOptionsForm.Designer.cs">
-      <DependentUpon>TwitPicOptionsForm.cs</DependentUpon>
+    <Compile Include="TwitterOptionsForm.Designer.cs">
+      <DependentUpon>TwitterOptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -114,9 +114,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TwitPicOptionsForm.resx">
+    <EmbeddedResource Include="TwitterOptionsForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TwitPicOptionsForm.cs</DependentUpon>
+      <DependentUpon>TwitterOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

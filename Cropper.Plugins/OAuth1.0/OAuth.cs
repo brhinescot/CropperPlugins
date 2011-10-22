@@ -1,7 +1,7 @@
-// TwitPic/OAuth.cs
+// OAuth/OAuth.cs
 //
 // Code to do OAuth stuff, in support of a cropper plugin that sends
-// a screen snap to TwitPic.com.
+// a screen snap to TwitPic.com or the other that sends to Twitter.
 //
 // There's one main class: OAuth.Manager.  It handles interaction with the OAuth-
 // enabled service, for requesting temporary tokens (aka request tokens), as well
@@ -19,7 +19,7 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-October-16 13:53:47>
+// Last saved: <2011-October-22 14:07:10>
 //
 
 using System;
@@ -49,7 +49,7 @@ namespace OAuth
 {
     /// <summary>
     ///   A class to manage OAuth 1.0A interactions. This works with
-    ///   Twitter, not sure about other OAuth-enabled services.
+    ///   Twitter; not sure about other OAuth-enabled services.
     /// </summary>
     /// <remarks>
     ///   <para>

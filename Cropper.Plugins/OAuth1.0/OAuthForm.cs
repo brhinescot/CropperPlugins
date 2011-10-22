@@ -49,7 +49,7 @@
 //
 // ------------------------------------------------------------------
 
-namespace Cropper.SendToTwitPic
+namespace CropperPlugins.OAuth
 {
     using System;
     using System.Windows.Forms;
@@ -57,7 +57,7 @@ namespace Cropper.SendToTwitPic
     using CropperPlugins.Common;
     using RE=System.Text.RegularExpressions;
 
-    class TwitPicOauthForm : System.Windows.Forms.Form
+    class TwitterOauthForm : System.Windows.Forms.Form
     {
         private System.Windows.Forms.WebBrowser web1;
         private System.Windows.Forms.Button btnCancel;
@@ -72,16 +72,16 @@ namespace Cropper.SendToTwitPic
               "Something has gone wrong while trying to approve this Plugin.\n" +
               "You'll need to try again.";
 
-        private OAuth.Manager _oauth;
+        private global::OAuth.Manager _oauth;
 
-        public TwitPicOauthForm(OAuth.Manager oauth)
+        public TwitterOauthForm(global::OAuth.Manager oauth)
         {
             InitializeComponent();
             _oauth= oauth;
             GetRequestToken();
         }
 
-        public void StoreTokens(TwitPicSettings s)
+        public void StoreTokens(IOAuthSettings s)
         {
             s.AccessToken = this._oauth["token"];
             s.AccessSecret = this._oauth["token_secret"];
@@ -94,8 +94,8 @@ namespace Cropper.SendToTwitPic
             var cursor = f.Cursor;
             f.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             string authzUrlStub =
-                TwitPicSettings.URL_AUTHORIZE
-                .Substring(0, TwitPicSettings.URL_AUTHORIZE.LastIndexOf('?'));
+                OAuthConstants.URL_AUTHORIZE
+                .Substring(0, OAuthConstants.URL_AUTHORIZE.LastIndexOf('?'));
             Tracing.Trace("authzUrlStub = '{0}'", authzUrlStub);
             f.SuspendLayout();
 
@@ -105,7 +105,7 @@ namespace Cropper.SendToTwitPic
                 var url2 = web1.Url.ToString();
 
                 // It's possible there will be multiple pages in the flow.
-                if (url2.StartsWith(TwitPicSettings.URL_AUTHORIZE))
+                if (url2.StartsWith(OAuthConstants.URL_AUTHORIZE))
                 {
                     // The login page has been displayed completely
                     f.Cursor = cursor;
@@ -207,8 +207,8 @@ namespace Cropper.SendToTwitPic
             f.Controls.Add(lblInstructions);
             f.Controls.Add(btnCancel);
             f.Name = "Authorize";
-            f.Text = "Authorize the Cropper Plugin for TwitPic";
-            f.Icon = global::Cropper.SendToTwitPic.Properties.Resources.icon;
+            f.Text = "Authorize the Cropper Plugin...";
+            //f.Icon = global::Cropper.SendToTwitPicUgh.Properties.Resources.icon;
             // size to accommodate the twitter confirmation dialog
             f.MinimumSize = new System.Drawing.Size(820, 474);
             f.MaximumSize = new System.Drawing.Size(820, 474);
@@ -223,12 +223,12 @@ namespace Cropper.SendToTwitPic
             this.Update(); // show the wait cursor while sending request out...
 
             var response =
-                this._oauth.AcquireRequestToken(TwitPicSettings.URL_REQUEST_TOKEN, "POST");
+                this._oauth.AcquireRequestToken(OAuthConstants.URL_REQUEST_TOKEN, "POST");
 
             Tracing.Trace("Request token response: {0}", response.AllText);
             if (!String.IsNullOrEmpty(response["oauth_token"]))
             {
-                var uriString = TwitPicSettings.URL_AUTHORIZE + response["oauth_token"];
+                var uriString = OAuthConstants.URL_AUTHORIZE + response["oauth_token"];
                 web1.Url = new Uri(uriString);
             }
             else
@@ -248,7 +248,7 @@ namespace Cropper.SendToTwitPic
             Cursor cursor = this.Cursor;
             this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             var response =
-                this._oauth.AcquireAccessToken(TwitPicSettings.URL_ACCESS_TOKEN,
+                this._oauth.AcquireAccessToken(OAuthConstants.URL_ACCESS_TOKEN,
                                                "POST",
                                                pin);
 
