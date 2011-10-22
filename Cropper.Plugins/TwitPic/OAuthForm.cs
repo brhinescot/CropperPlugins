@@ -130,7 +130,8 @@ namespace Cropper.SendToTwitPic
                         // upload".
                     }
 
-                    if (web1.DocumentText.Contains("You've successfully granted access"))
+                    // workitem 15917
+                    if (web1.DocumentText.Contains("You've granted access"))
                     {
                         var divMarker = "<div id=\"oauth_pin\">";
                         var index = web1.DocumentText.LastIndexOf(divMarker) +

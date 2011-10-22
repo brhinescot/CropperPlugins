@@ -162,4 +162,37 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+
+
+   <!-- This ItemGroup includes every .cs source file in the directory,           -->
+   <!-- except for the one indicated by OriginalSourceFile.  In flymake, that     -->
+   <!-- property indicates the currently edited file. So the result is that the   -->
+   <!-- ItemGroup CSFile will include all files, including the _flymake.cs clone, -->
+   <!-- but not including the original file.  Which is what we want.              -->
+   <ItemGroup>
+     <CSFile Include="*.cs" Exclude="$(FlymakeExclude)" />
+   </ItemGroup>
+
+   <!-- Stuff the FlymakeExclude property into an ItemGroup.                  -->
+   <!-- We do this so we can get at the metadata, which is available only         -->
+   <!-- through an item within an ItemGroup.  We want the root filename, which    -->
+   <!-- we use to name the output netmodule.                                      -->
+   <ItemGroup>
+     <ExcludedCSFile Include="$(FlymakeExclude)" />
+   </ItemGroup>
+
+   <Target Name="CheckSyntax"
+           DependsOnTargets="ResolveAssemblyReferences"
+           >
+     <!-- Run the Visual C# compilation on the specified set of .cs files. -->
+     <CSC
+        Sources="@(CSFile)"
+        References="@(ReferencePath)"
+        TargetType="module"
+        Toolpath="$(MSBuildToolsPath)"
+        OutputAssembly="%(ExcludedCSFile.Filename)_flymake.netmodule"
+        Nologo="true"
+        />
+   </Target>
+
 </Project>

@@ -10,15 +10,18 @@
 // Dino Chiesa
 // 2010 Nov 9
 //
+// -------------------------------------------------------
+// flymake: msbuild Imgur.csproj /t:CheckSyntax /property:FlymakeCheck=@@SRC@@ /property:FlymakeExclude=@@ORIG@@
+// compile: msbuild
+//
 
 // #define Trace
-
-#define HACK
 
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -31,12 +34,8 @@ namespace Cropper.SendToImgur
     public class Plugin :
         DesignablePluginThatUsesFetchOutputStream,
         IConfigurablePlugin
-#if HACK
-#else
-        , CropperPlugins.Common.IUpload
-#endif
-
     {
+    // FIXME CropperPlugins.Common.IUpload
         public Plugin()
         {
             Tracing.Trace("+--------------------------------");
@@ -61,6 +60,9 @@ namespace Cropper.SendToImgur
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
+            if (PluginSettings.PlaySound)
+                Beep(4000,30);
+
             this._logger = new ImgurLogWriter(new FileInfo(e.ImageNames.FullSize).DirectoryName);
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
@@ -159,15 +161,38 @@ namespace Cropper.SendToImgur
         private void SaveImageInDesiredFormat(Stream stream, System.Drawing.Image image)
         {
             Tracing.Trace("Imgur::SaveImageInDesiredFormat");
+
+            // Add watermark text on image
+            int height = image.Height;
+            int width = image.Width;
+            var bitmap = new System.Drawing.Bitmap(image, width, height);
+            var g = System.Drawing.Graphics.FromImage(bitmap);
+            var brush = new SolidBrush(Color.FromArgb(113, 255, 255, 255));
+            g.TranslateTransform(50, 50);
+            g.RotateTransform(-45);
+            g.DrawString("CROPPER",
+                         new Font("Arial", 18, System.Drawing.FontStyle.Bold),
+                         brush, 0, 100);
+
+            var ms = new MemoryStream();
+            bitmap.Save(ms, DesiredImageFormat);
+            ms.Seek(0, SeekOrigin.Begin);
+            image = Image.FromStream(ms);
+
             if (String.Compare(Extension, "jpg", true) == 0)
             {
-                SaveImage_Jpg(stream, image);
+                SaveImage_Jpg(stream, bitmap);  // image
             }
             else
             {
                 image.Save(stream, DesiredImageFormat);
             }
+
+            ////     Response.ContentType = "image/jpeg";
+            // bitmapimage.Save(Response.OutputStream, ImageFormat.Jpeg);
+
         }
+
 
 
         private void SaveImage_Jpg(Stream stream, System.Drawing.Image image)
@@ -215,7 +240,7 @@ namespace Cropper.SendToImgur
 
             try
             {
-                var http = new HttpClient(_baseUri);
+                var http = new HttpClient(this._baseUri);
                 var form = new HttpMultipartMimeForm();
                 using (var fs = File.Open(this._fileName, FileMode.Open, FileAccess.Read))
                 {
@@ -296,17 +321,18 @@ namespace Cropper.SendToImgur
         #region IConfigurablePlugin Implementation
 
         /// <summary>
-        /// Gets the plug-ins impementation of the <see cref="BaseConfigurationForm"/> used
-        /// for setting plug-in specific options.
+        /// Gets the plug-ins impementation of the <see
+        /// cref="BaseConfigurationForm"/> used for setting plug-in
+        /// specific options.
         /// </summary>
         BaseConfigurationForm IConfigurablePlugin.ConfigurationForm
         {
             get
             {
-                if (_configForm == null)
+                if (this._configForm == null)
                 {
-                    _configForm = new ImgurOptionsForm(PluginSettings);
-                    _configForm.OptionsSaved += OptionsSaved;
+                    this._configForm = new ImgurOptionsForm(PluginSettings);
+                    this._configForm.OptionsSaved += OptionsSaved;
                 }
                 return _configForm;
             }
@@ -315,7 +341,7 @@ namespace Cropper.SendToImgur
         private void OptionsSaved(object sender, EventArgs e)
         {
             ImgurOptionsForm form = sender as ImgurOptionsForm;
-            if (form == null) return;
+            if (this.form == null) return;
             form.ApplySettings();
         }
 
@@ -357,11 +383,11 @@ namespace Cropper.SendToImgur
         {
             get
             {
-                if (_settings == null)
-                    _settings = new ImgurSettings();
-                return _settings;
+                if (this._settings == null)
+                    this._settings = new ImgurSettings();
+                return this._settings;
             }
-            set { _settings = value; }
+            set { this._settings = value; }
         }
 
         #endregion
