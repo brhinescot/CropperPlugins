@@ -20,6 +20,9 @@ namespace Cropper.SendToImgur
             _settings                        = settings;
             this.txtKey.Text                 = _settings.Key;
             this.chkPopBrowser.Checked       = _settings.PopBrowser;
+            this.chkPlaySound.Checked        = _settings.PlaySound;
+            this.chkWatermark.Checked        = _settings.AddWatermark;
+            this.chkWantLogging.Checked        = _settings.WantLogging;
             this.qualitySlider.Value         = _settings.JpgImageQuality;
             this.cmbImageFormat.SelectedItem = settings.ImageFormat;
             HandleQualitySliderValueChanged(null,null);
@@ -57,6 +60,9 @@ namespace Cropper.SendToImgur
             _settings.JpgImageQuality =  this.qualitySlider.Value;
             _settings.ImageFormat = this.cmbImageFormat.Text;
             _settings.PopBrowser = this.chkPopBrowser.Checked;
+            _settings.PlaySound = this.chkPlaySound.Checked;
+            _settings.AddWatermark = this.chkWatermark.Checked;
+            _settings.WantLogging = this.chkWantLogging.Checked;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -72,6 +78,12 @@ namespace Cropper.SendToImgur
                 qualitySlider.Enabled = true;
                 this.chkPopBrowser.Location = new System.Drawing.Point(94, 130);
                 this.lblPopBrowser.Location = new System.Drawing.Point(4, 134);
+                this.chkPlaySound.Location = new System.Drawing.Point(94, 156);
+                this.lblPlaySound.Location = new System.Drawing.Point(4, 160);
+                this.chkWatermark.Location = new System.Drawing.Point(94, 182);
+                this.lblWatermark.Location = new System.Drawing.Point(4, 186);
+                this.chkWantLogging.Location = new System.Drawing.Point(94, 208);
+                this.lblWantLogging.Location = new System.Drawing.Point(4, 212);
             }
             else
             {
@@ -79,6 +91,12 @@ namespace Cropper.SendToImgur
                 qualitySlider.Enabled = false;
                 this.chkPopBrowser.Location = new System.Drawing.Point(94, 92);
                 this.lblPopBrowser.Location = new System.Drawing.Point(4, 96);
+                this.chkPlaySound.Location = new System.Drawing.Point(94, 118);
+                this.lblPlaySound.Location = new System.Drawing.Point(4, 122);
+                this.chkWatermark.Location = new System.Drawing.Point(94, 144);
+                this.lblWatermark.Location = new System.Drawing.Point(4, 148);
+                this.chkWantLogging.Location = new System.Drawing.Point(94, 170);
+                this.lblWantLogging.Location = new System.Drawing.Point(4, 174);
             }
         }
 

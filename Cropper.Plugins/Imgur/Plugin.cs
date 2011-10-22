@@ -36,6 +36,9 @@ namespace Cropper.SendToImgur
         IConfigurablePlugin
     {
     // FIXME CropperPlugins.Common.IUpload
+        [System.Runtime.InteropServices.DllImport("Kernel32.dll")]
+        public static extern bool Beep(UInt32 frequency, UInt32 duration);
+
         public Plugin()
         {
             Tracing.Trace("+--------------------------------");
@@ -63,7 +66,8 @@ namespace Cropper.SendToImgur
             if (PluginSettings.PlaySound)
                 Beep(4000,30);
 
-            this._logger = new ImgurLogWriter(new FileInfo(e.ImageNames.FullSize).DirectoryName);
+            if (PluginSettings.WantLogging)
+                this._logger = new ImgurLogWriter(new FileInfo(e.ImageNames.FullSize).DirectoryName);
             this._fileName = e.ImageNames.FullSize;
             output.FetchOutputStream(new StreamHandler(this.SaveImage), this._fileName, e.FullSizeImage);
         }
@@ -162,17 +166,20 @@ namespace Cropper.SendToImgur
         {
             Tracing.Trace("Imgur::SaveImageInDesiredFormat");
 
-            // Add watermark text on image
+            // optionally Add watermark text on image
             int height = image.Height;
             int width = image.Width;
             var bitmap = new System.Drawing.Bitmap(image, width, height);
-            var g = System.Drawing.Graphics.FromImage(bitmap);
-            var brush = new SolidBrush(Color.FromArgb(113, 255, 255, 255));
-            g.TranslateTransform(50, 50);
-            g.RotateTransform(-45);
-            g.DrawString("CROPPER",
-                         new Font("Arial", 18, System.Drawing.FontStyle.Bold),
-                         brush, 0, 100);
+            if (PluginSettings.AddWatermark)
+            {
+                var g = System.Drawing.Graphics.FromImage(bitmap);
+                var brush = new SolidBrush(Color.FromArgb(113, 255, 255, 255));
+                g.TranslateTransform(50, 50);
+                g.RotateTransform(-27);
+                g.DrawString("CROPPER",
+                             new Font("Arial", 18, System.Drawing.FontStyle.Bold),
+                             brush, 0, 100);
+            }
 
             var ms = new MemoryStream();
             bitmap.Save(ms, DesiredImageFormat);
@@ -190,7 +197,6 @@ namespace Cropper.SendToImgur
 
             ////     Response.ContentType = "image/jpeg";
             // bitmapimage.Save(Response.OutputStream, ImageFormat.Jpeg);
-
         }
 
 
@@ -240,7 +246,7 @@ namespace Cropper.SendToImgur
 
             try
             {
-                var http = new HttpClient(this._baseUri);
+                var http = new HttpClient(Plugin._baseUri);
                 var form = new HttpMultipartMimeForm();
                 using (var fs = File.Open(this._fileName, FileMode.Open, FileAccess.Read))
                 {
@@ -264,10 +270,22 @@ namespace Cropper.SendToImgur
 
                     Clipboard.SetDataObject(rawImageUri, true);
                     if (this._logger != null)
-                        this._logger.Log(rawImageUri);
-
-                    Tracing.Trace("all done.");
-                    Tracing.Trace("---------------------------------");
+                    {
+                        try
+                        {
+                            this._logger.Log(rawImageUri);
+                        }
+                        catch (Exception ex2)
+                        {
+                            MessageBox.Show("There's been an exception writing the ImgUr log?" +
+                                            Environment.NewLine +
+                                            ex2.Message +
+                                            Environment.NewLine,
+                                            "This isn't serious",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Information);
+                        }
+                    }
                 }
             }
             catch (Exception exception2)
@@ -341,7 +359,7 @@ namespace Cropper.SendToImgur
         private void OptionsSaved(object sender, EventArgs e)
         {
             ImgurOptionsForm form = sender as ImgurOptionsForm;
-            if (this.form == null) return;
+            if (form == null) return;
             form.ApplySettings();
         }
 
@@ -475,6 +493,9 @@ namespace Cropper.SendToImgur
             JpgImageQuality= 80; // default
             ImageFormat = "png"; // default
             PopBrowser = true;
+            PlaySound = true;
+            AddWatermark = false;
+            WantLogging = true;
             Key="";
         }
 
@@ -529,6 +550,21 @@ namespace Cropper.SendToImgur
         ///   True: pop a browser after upload. False: Don't.
         /// </summary>
         public bool PopBrowser { get; set; }
+
+        /// <summary>
+        ///   True: play a short beep after upload. False: Don't.
+        /// </summary>
+        public bool PlaySound { get; set; }
+
+        /// <summary>
+        ///   True: add a watermark to each uploaded image.
+        /// </summary>
+        public bool AddWatermark { get; set; }
+
+        /// <summary>
+        ///   True: log each uploaded image into an XML file in the Cropper Captures dir
+        /// </summary>
+        public bool WantLogging { get; set; }
 
         /// <summary>
         ///   The Image format; one of Jpeg, Png, Bmp.
