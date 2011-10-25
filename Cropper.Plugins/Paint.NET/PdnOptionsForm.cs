@@ -68,6 +68,8 @@ namespace Cropper.SendToPaintDotNet
                                     2);
 
             UploadCheckedChanged(null,null);
+
+            this.chkWantChirp.Checked = _settings.WantChirp;
         }
 
 
@@ -99,6 +101,7 @@ namespace Cropper.SendToPaintDotNet
                 : null;
             _settings.DelayStartSeconds = (this.cmbDelayStart.SelectedItem as TimeDelay).Seconds;
             _settings.DelayEditSeconds = (this.cmbDelayEdit.SelectedItem as TimeDelay).Seconds;
+            _settings.WantChirp = this.chkWantChirp.Checked;
         }
 
 
@@ -223,6 +226,8 @@ namespace Cropper.SendToPaintDotNet
         {
             this.chkPostEditUpload = new System.Windows.Forms.CheckBox();
             this.lblPostEditUpload = new System.Windows.Forms.Label();
+            this.chkWantChirp = new System.Windows.Forms.CheckBox();
+            this.lblWantChirp = new System.Windows.Forms.Label();
             this.cmbPlugins = new System.Windows.Forms.ComboBox();
             this.lblPlugins = new System.Windows.Forms.Label();
             this.cmbDelayStart = new System.Windows.Forms.ComboBox();
@@ -254,6 +259,8 @@ namespace Cropper.SendToPaintDotNet
             this.tabPage1.Controls.Add(this.cmbDelayEdit);
             this.tabPage1.Controls.Add(this.lblPostEditUpload);
             this.tabPage1.Controls.Add(this.chkPostEditUpload);
+            this.tabPage1.Controls.Add(this.lblWantChirp);
+            this.tabPage1.Controls.Add(this.chkWantChirp);
             //
             // chkPostEditUpload
             //
@@ -343,6 +350,24 @@ namespace Cropper.SendToPaintDotNet
             this.lblDelayEdit.TabIndex = 40;
             this.lblDelayEdit.Text = "Edit Period:";
             //
+            // chkWantChirp
+            //
+            this.chkWantChirp.Location = new System.Drawing.Point(108, 116);
+            this.chkWantChirp.Text = "";
+            this.chkWantChirp.Name = "chkWantChirp";
+            this.chkWantChirp.TabIndex = 11;
+            this.chkWantChirp.CheckedChanged += UploadCheckedChanged;
+            this.tooltip.SetToolTip(chkWantChirp, "check to upload the image after editing.");
+            //
+            // lblWantChirp
+            //
+            this.lblWantChirp.AutoSize = true;
+            this.lblWantChirp.Location = new System.Drawing.Point(4, 120);
+            this.lblWantChirp.Name = "lblWantChirp";
+            this.lblWantChirp.Size = new System.Drawing.Size(68, 13);
+            this.lblWantChirp.TabIndex = 70;
+            this.lblWantChirp.Text = "Chirp on capture?";
+            //
             // Options
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -366,6 +391,8 @@ namespace Cropper.SendToPaintDotNet
         private System.Windows.Forms.Label lblDelayEdit;
         private System.Windows.Forms.CheckBox chkPostEditUpload;
         private System.Windows.Forms.Label lblPostEditUpload;
+        private System.Windows.Forms.CheckBox chkWantChirp;
+        private System.Windows.Forms.Label lblWantChirp;
         private System.Windows.Forms.ToolTip tooltip;
     }
 

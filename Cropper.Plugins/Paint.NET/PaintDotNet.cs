@@ -36,6 +36,9 @@ namespace Cropper.SendToPaintDotNet
         DesignablePluginThatUsesFetchOutputStream,
         IConfigurablePlugin
     {
+        [System.Runtime.InteropServices.DllImport("Kernel32.dll")]
+        public static extern bool Beep(UInt32 frequency, UInt32 duration);
+
         public override string Description
         {
             get { return "Send to Paint.NET"; }
@@ -74,6 +77,9 @@ namespace Cropper.SendToPaintDotNet
 
         protected override void ImageCaptured(object sender, ImageCapturedEventArgs e)
         {
+            if (PluginSettings.WantChirp)
+                Beep(4000,30);
+
             ImagePairNames names1 = e.ImageNames;
             this._logger = new PdnLogWriter(new FileInfo(names1.FullSize).DirectoryName);
 
@@ -521,6 +527,7 @@ namespace Cropper.SendToPaintDotNet
         {
             DelayStartSeconds = 6;
             DelayEditSeconds = 720;
+            WantChirp = true;
         }
 
         /// <summary>
@@ -551,6 +558,11 @@ namespace Cropper.SendToPaintDotNet
         ///   The time allowed for user edits before the plugin gives up.
         /// </summary>
         public int DelayEditSeconds { get; set; }
+
+        /// <summary>
+        ///   Whether to chirp on capture of an image.
+        /// </summary>
+        public bool WantChirp { get; set; }
     }
 
 }
