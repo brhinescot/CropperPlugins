@@ -19,7 +19,7 @@
 // Tue, 14 Dec 2010  12:31
 //
 // -------------------------------------------------------
-// Last saved: <2011-October-22 14:07:10>
+// Last saved: <2012-May-18 15:36:17>
 //
 
 using System;
@@ -38,7 +38,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dino Chiesa")]
 [assembly: AssemblyProduct("Tools")]
-[assembly: AssemblyCopyright("Copyright © Dino Chiesa 2011")]
+[assembly: AssemblyCopyright("Copyright © Dino Chiesa 2011,2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.1.0.0")]
@@ -581,7 +581,7 @@ namespace OAuth
         public OAuthResponse AcquireRequestToken(string uri, string method)
         {
             NewRequest();
-            var authzHeader =  GetAuthorizationHeader(uri, method);
+            var authzHeader = GetAuthorizationHeader(uri, method);
 
             // prepare the token request
             var request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(uri);
@@ -780,25 +780,39 @@ namespace OAuth
         /// </returns>
         public OAuthResponse AcquireAccessToken(string uri, string method, string pin)
         {
+            Tracing.Trace("AcquireAccessToken.");
             NewRequest();
+            _params.Remove("callback"); // no longer needed
             _params["verifier"] = pin;
 
             var authzHeader = GetAuthorizationHeader(uri, method);
 
-            // prepare the token request
-            var request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(uri);
-            request.Headers.Add("Authorization", authzHeader);
-            request.Method = method;
-
-            using (var response = (System.Net.HttpWebResponse)request.GetResponse())
+            try
             {
-                using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+                // prepare the token request
+                var request = (System.Net.HttpWebRequest) System.Net.WebRequest.Create(uri);
+                request.Headers.Add("Authorization", authzHeader);
+                request.Method = method;
+
+                using (var response = (System.Net.HttpWebResponse)request.GetResponse())
                 {
-                    var r = new OAuthResponse(reader.ReadToEnd());
-                    this["token"] = r["oauth_token"];
-                    this["token_secret"] = r["oauth_token_secret"];
-                    return r;
+                    using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+                    {
+                        var s = reader.ReadToEnd();
+                        Tracing.Trace("resp: {0}", s);
+                        var r = new OAuthResponse(s);
+                        this["token"] = r["oauth_token"];
+                        this["token_secret"] = r["oauth_token_secret"];
+                        _params.Remove("verifier"); // not needed any longer
+                        return r;
+                    }
                 }
+            }
+            catch (Exception ex1)
+            {
+                Tracing.Trace("Exception: {0}", ex1.ToString());
+                _params.Remove("verifier"); // not needed any longer
+                return null;
             }
         }
 
@@ -1006,6 +1020,8 @@ namespace OAuth
 
         private string GetAuthorizationHeader(string uri, string method, string realm)
         {
+                Tracing.Trace("GetAuthorizationHeader.");
+
             if (string.IsNullOrEmpty(this._params["consumer_key"]))
                 throw new ArgumentNullException("consumer_key");
 
@@ -1023,13 +1039,15 @@ namespace OAuth
 
         private void Sign(string uri, string method)
         {
+            Tracing.Trace("Sign.");
             var signatureBase = GetSignatureBase(uri, method);
             var hash = GetHash();
 
-            byte[] dataBuffer = System.Text.Encoding.ASCII.GetBytes(signatureBase);
+            byte[] dataBuffer = Encoding.ASCII.GetBytes(signatureBase);
             byte[] hashBytes = hash.ComputeHash(dataBuffer);
-
-            this["signature"] = Convert.ToBase64String(hashBytes);
+            var sig = Convert.ToBase64String(hashBytes);
+            Tracing.Trace("Signatiure: {0}", sig);
+            this["signature"] = sig;
         }
 
         /// <summary>
@@ -1053,6 +1071,8 @@ namespace OAuth
                 .Append('&')
                 .Append(UrlEncode(normUrl))
                 .Append('&');
+
+            Tracing.Trace("Sigbase start: {0}", sb.ToString());
 
             // The parameters follow. This must include all oauth params
             // plus any query params on the uri.  Also, each uri may
@@ -1086,13 +1106,15 @@ namespace OAuth
                 sb1.AppendFormat("{0}={1}&", item.Key, item.Value);
             }
 
+            Tracing.Trace("oauth piece: {0}", sb1.ToString());
+
             // append the UrlEncoded version of that string to the sigbase
             sb.Append(UrlEncode(sb1.ToString().TrimEnd('&')));
             var result = sb.ToString();
+            Tracing.Trace("Sigbase final: {0}", result);
+
             return result;
         }
-
-
 
 
         private HashAlgorithm GetHash()
@@ -1100,14 +1122,14 @@ namespace OAuth
             if (this["signature_method"] != "HMAC-SHA1")
                 throw new NotImplementedException();
 
-            string keystring = string.Format("{0}&{1}",
-                                             UrlEncode(this["consumer_secret"]),
-                                             UrlEncode(this["token_secret"]));
-            var hmacsha1 = new HMACSHA1
-                {
-                    Key = System.Text.Encoding.ASCII.GetBytes(keystring)
-                };
-            return hmacsha1;
+            var keystring = string.Format("{0}&{1}",
+                                   UrlEncode(this["consumer_secret"]),
+                                          UrlEncode(this["token_secret"]));
+            Tracing.Trace("signing keystring: {0}", keystring);
+            return new HMACSHA1
+            {
+                Key = Encoding.ASCII.GetBytes(keystring)
+            };
         }
 
 #if BROKEN
@@ -1126,6 +1148,43 @@ namespace OAuth
         private Random _random;
     }
 
+#if INCLUDE_TRACE
+    public static class Tracing
+    {
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int pid);
+
+        //[System.Diagnostics.Conditional("Trace")]
+        private static void SetupDebugConsole()
+        {
+            if ( !AttachConsole(-1) )  // Attach to a parent process console
+                AllocConsole(); // Alloc a new console
+
+            _process= System.Diagnostics.Process.GetCurrentProcess();
+            System.Console.WriteLine();
+            _initialized= true;
+        }
+
+        [System.Diagnostics.Conditional("Trace")]
+        public static void Trace(string format, params object[] args)
+        {
+            if (!_initialized)
+            {
+                SetupDebugConsole();
+            }
+
+            System.Console.Write("{0:D5} ", _process.Id);
+            System.Console.WriteLine(format, args);
+        }
+
+        private static System.Diagnostics.Process _process;
+        private static bool _initialized = false;
+    }
+
+#endif
 
     /// <summary>
     ///   A class to hold an OAuth response message.
@@ -1157,10 +1216,12 @@ namespace OAuth
         internal OAuthResponse(string alltext)
         {
             AllText = alltext;
+            Tracing.Trace("OAuthResponse.ctor: {0}", alltext);
             _params = new Dictionary<String,String>();
             var kvpairs = alltext.Split('&');
             foreach (var pair in kvpairs)
             {
+                Tracing.Trace("pair: {0}", pair);
                 var kv = pair.Split('=');
                 _params.Add(kv[0],kv[1]);
             }
