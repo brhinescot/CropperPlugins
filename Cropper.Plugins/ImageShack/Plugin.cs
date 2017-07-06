@@ -31,11 +31,11 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Fusion8.Cropper.Extensibility;
 using CropperPlugins.Common;       // for Tracing
-using Microsoft.Http;              // HttpClient
 
 namespace Cropper.SendToImageShack
 {

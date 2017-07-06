@@ -1,8 +1,0 @@
-..\Output\Release\Cropper.AviFormat.dll
-obj\Release\ResolveAssemblyReference.cache
-obj\Release\Cropper.AviFormat.dll
-..\Output\Debug\Cropper.AviFormat.dll
-..\Output\Debug\Cropper.AviFormat.pdb
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\Cropper.AviFormat.dll
-obj\Debug\Cropper.AviFormat.pdb

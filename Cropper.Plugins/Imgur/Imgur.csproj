@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -15,10 +15,12 @@
     <SccProvider>SAK</SccProvider>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,11 +33,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +44,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -53,6 +53,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +65,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -74,6 +76,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cropper.Extensibility, Version=1.9.1.89, Culture=neutral, processorArchitecture=MSIL">
@@ -86,17 +89,15 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
-    <Reference Include="Microsoft.Http"/>
-    <Reference Include="Microsoft.Http.Extensions"/>
+    <Reference Include="Microsoft.Http" />
+    <Reference Include="Microsoft.Http.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Plugin.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Plugin.cs" />
     <Compile Include="ImgurLogWriter.cs" />
     <Compile Include="ImgurOptionsForm.cs">
       <SubType>Form</SubType>
@@ -162,37 +163,23 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
-
-   <!-- This ItemGroup includes every .cs source file in the directory,           -->
-   <!-- except for the one indicated by OriginalSourceFile.  In flymake, that     -->
-   <!-- property indicates the currently edited file. So the result is that the   -->
-   <!-- ItemGroup CSFile will include all files, including the _flymake.cs clone, -->
-   <!-- but not including the original file.  Which is what we want.              -->
-   <ItemGroup>
-     <CSFile Include="*.cs" Exclude="$(FlymakeExclude)" />
-   </ItemGroup>
-
-   <!-- Stuff the FlymakeExclude property into an ItemGroup.                  -->
-   <!-- We do this so we can get at the metadata, which is available only         -->
-   <!-- through an item within an ItemGroup.  We want the root filename, which    -->
-   <!-- we use to name the output netmodule.                                      -->
-   <ItemGroup>
-     <ExcludedCSFile Include="$(FlymakeExclude)" />
-   </ItemGroup>
-
-   <Target Name="CheckSyntax"
-           DependsOnTargets="ResolveAssemblyReferences"
-           >
-     <!-- Run the Visual C# compilation on the specified set of .cs files. -->
-     <CSC
-        Sources="@(CSFile)"
-        References="@(ReferencePath)"
-        TargetType="module"
-        Toolpath="$(MSBuildToolsPath)"
-        OutputAssembly="%(ExcludedCSFile.Filename)_flymake.netmodule"
-        Nologo="true"
-        />
-   </Target>
-
+  <!-- This ItemGroup includes every .cs source file in the directory,           -->
+  <!-- except for the one indicated by OriginalSourceFile.  In flymake, that     -->
+  <!-- property indicates the currently edited file. So the result is that the   -->
+  <!-- ItemGroup CSFile will include all files, including the _flymake.cs clone, -->
+  <!-- but not including the original file.  Which is what we want.              -->
+  <ItemGroup>
+    <CSFile Include="*.cs" Exclude="$(FlymakeExclude)" />
+  </ItemGroup>
+  <!-- Stuff the FlymakeExclude property into an ItemGroup.                  -->
+  <!-- We do this so we can get at the metadata, which is available only         -->
+  <!-- through an item within an ItemGroup.  We want the root filename, which    -->
+  <!-- we use to name the output netmodule.                                      -->
+  <ItemGroup>
+    <ExcludedCSFile Include="$(FlymakeExclude)" />
+  </ItemGroup>
+  <Target Name="CheckSyntax" DependsOnTargets="ResolveAssemblyReferences">
+    <!-- Run the Visual C# compilation on the specified set of .cs files. -->
+    <CSC Sources="@(CSFile)" References="@(ReferencePath)" TargetType="module" Toolpath="$(MSBuildToolsPath)" OutputAssembly="%(ExcludedCSFile.Filename)_flymake.netmodule" Nologo="true" />
+  </Target>
 </Project>

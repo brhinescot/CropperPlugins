@@ -488,12 +488,13 @@ namespace AviFile
 			return null;
 		}
 
-		/// <summary>Copy all frames into a new file</summary>
-		/// <param name="fileName">Name of the new file</param>
-		/// <param name="recompress">true: Compress the new stream</param>
-		/// <returns>AviManager for the new file</returns>
-		/// <remarks>Use this method if you want to append frames to an existing, compressed stream</remarks>
-		public AviManager DecompressToNewFile(String fileName, bool recompress, out VideoStream newStream2)
+	    /// <summary>Copy all frames into a new file</summary>
+	    /// <param name="fileName">Name of the new file</param>
+	    /// <param name="recompress">true: Compress the new stream</param>
+	    /// <param name="newStream2"></param>
+	    /// <returns>AviManager for the new file</returns>
+	    /// <remarks>Use this method if you want to append frames to an existing, compressed stream</remarks>
+	    public AviManager DecompressToNewFile(String fileName, bool recompress, out VideoStream newStream2)
 		{
 			AviManager newFile = new AviManager(fileName, false);
 
